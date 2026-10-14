@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "name": "operating",
+  "description": "환경 설정과 영상 목록에 사용자가 입력한 운영 메타데이터를 그대로 사용합니다.",
+  "defaults": {"record_interval_s": 10},
+  "environments": {}
+}

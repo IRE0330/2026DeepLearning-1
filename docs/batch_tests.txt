@@ -1,0 +1,101 @@
+일괄 결과 폴더: <TEMP>/tmp98kpfsx0\outputs\batch_demo_20261014_185452_d39468ca
+항목 1 실패, 다음 영상 계속: FileNotFoundError: 등록 영상이 없습니다: <TEMP>/tmp98kpfsx0\missing.bin
+10초 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 3 실패, 다음 영상 계속: ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요.
+10초 기록 저장: south_2026-10-14.csv (원본 10.000s)
+10초 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 6 실패, 다음 영상 계속: ValueError: duplicate_registration: 같은 영상 ID 또는 경로가 중복 등록됐습니다.
+항목 7 실패, 다음 영상 계속: ValueError: duplicate_registration: 다른 경로에 같은 영상 내용이 중복 등록됐습니다.
+완료 3개 / 실패 4개: <TEMP>/tmp98kpfsx0\outputs\batch_demo_20261014_185452_d39468ca\batch_summary.json
+일괄 결과 폴더: <TEMP>/tmp98kpfsx0\outputs\batch_demo_20261014_185452_3579deec
+항목 1 실패, 다음 영상 계속: FileNotFoundError: 등록 영상이 없습니다: <TEMP>/tmp98kpfsx0\missing.bin
+10초 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 3 실패, 다음 영상 계속: ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요.
+10초 기록 저장: south_2026-10-14.csv (원본 10.000s)
+10초 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 6 실패, 다음 영상 계속: ValueError: duplicate_registration: 같은 영상 ID 또는 경로가 중복 등록됐습니다.
+항목 7 실패, 다음 영상 계속: ValueError: duplicate_registration: 다른 경로에 같은 영상 내용이 중복 등록됐습니다.
+완료 3개 / 실패 4개: <TEMP>/tmp98kpfsx0\outputs\batch_demo_20261014_185452_3579deec\batch_summary.json
+프레임 0 처리 중: <TEMP>/tmpfz7abel0\result
+결과 폴더: <TEMP>/tmpfz7abel0\result
+결과 폴더: <TEMP>/tmphj5u45ks\outputs\north_20261014_185452_eb084f0b
+처리 4.9s (50 frames)
+처리 9.9s (100 frames)
+처리 14.9s (150 frames)
+처리 19.9s (200 frames)
+처리 24.9s (250 frames)
+결과 폴더: <TEMP>/tmpwlxbdm7r\outputs\test_20261014_185453_ca2ee195
+결과 폴더: <TEMP>/tmpwlxbdm7r\outputs\test_20261014_185453_d3b2cf10
+{
+  "scope": "development_video_only",
+  "event_time": "prediction_confirmation_time",
+  "run": "<TEMP>/tmpwlxbdm7r\\outputs\\test_20261014_185453_ca2ee195",
+  "truth_dir": "<TEMP>/tmpwlxbdm7r\\truth",
+  "undefined_metric": "null means undefined/no ground truth",
+  "event_metrics": null,
+  "waiting": null,
+  "inside": null,
+  "notes": [
+    "출입 정답이 없거나 해당 구간 전체 라벨링 확인이 없어 성능 수치를 생성하지 않았습니다.",
+    "대기 정답이 비어 있어 MAE를 계산하지 않았습니다.",
+    "내부 정답 또는 일치하는 초기 인원·기준 시각이 없어 내부 인원 평가를 생략했습니다."
+  ],
+  "outside_run_truth_rows": {
+    "events": 0,
+    "waiting": 0,
+    "inside": 0
+  }
+}
+평가 파일: <TEMP>/tmpwlxbdm7r\outputs\test_20261014_185453_ca2ee195\evaluations\evaluation_20261014_185453_679feb27\metrics.json
+
+test_boundaries_once_and_cumulative_inside_not_interval_counts (test_batch.PeriodicRecords.test_boundaries_once_and_cumulative_inside_not_interval_counts) ... ok
+test_latest_past_frame_never_future_and_end_exclusive_coverage (test_batch.PeriodicRecords.test_latest_past_frame_never_future_and_end_exclusive_coverage) ... ok
+test_midnight_room_files_sort_bom_immediate_flush_and_missing_date (test_batch.PeriodicRecords.test_midnight_room_files_sort_bom_immediate_flush_and_missing_date) ... ok
+test_partial_analysis_origin_short_remainder_and_time_reversal (test_batch.PeriodicRecords.test_partial_analysis_origin_short_remainder_and_time_reversal) ... ok
+test_zero_capacity_unknown_negative_and_free_stalls_not_denominator (test_batch.PeriodicRecords.test_zero_capacity_unknown_negative_and_free_stalls_not_denominator) ... ok
+test_demo_overlay_preserves_geometry_and_other_environments (test_batch.RegistryBatch.test_demo_overlay_preserves_geometry_and_other_environments) ... ok
+test_failures_continue_duplicates_skip_envs_isolated_and_results_preserved (test_batch.RegistryBatch.test_failures_continue_duplicates_skip_envs_isolated_and_results_preserved) ... ok
+test_boundary_jitter_and_return_no_count (test_core.Rules.test_boundary_jitter_and_return_no_count) ... ok
+test_candidate_does_not_confirm_during_occlusion (test_core.Rules.test_candidate_does_not_confirm_during_occlusion) ... ok
+test_confirmed_wait_sticky_during_advance (test_core.Rules.test_confirmed_wait_sticky_during_advance) ... ok
+test_duplicate_grace_suppressed_without_identity_merge (test_core.Rules.test_duplicate_grace_suppressed_without_identity_merge) ... ok
+test_entry_exit_reentry (test_core.Rules.test_entry_exit_reentry) ... ok
+test_even_short_missing_time_is_not_waiting_evidence (test_core.Rules.test_even_short_missing_time_is_not_waiting_evidence) ... ok
+test_fast_transit_not_waiting (test_core.Rules.test_fast_transit_not_waiting) ... ok
+test_finite_segment_only (test_core.Rules.test_finite_segment_only) ... ok
+test_first_inside_and_disappearance_do_not_count (test_core.Rules.test_first_inside_and_disappearance_do_not_count) ... ok
+test_gap_does_not_interpolate_crossing (test_core.Rules.test_gap_does_not_interpolate_crossing) ... ok
+test_grace_expiry_and_short_reobservation (test_core.Rules.test_grace_expiry_and_short_reobservation) ... ok
+test_sampler_never_uses_future (test_core.Rules.test_sampler_never_uses_future) ... ok
+test_short_gap_invalidates_pending_crossing (test_core.Rules.test_short_gap_invalidates_pending_crossing) ... ok
+test_short_gap_resets_candidate_slow_evidence (test_core.Rules.test_short_gap_resets_candidate_slow_evidence) ... ok
+test_short_missing_frame_invalidates_crossing_order (test_core.Rules.test_short_missing_frame_invalidates_crossing_order) ... ok
+test_unset_zero_and_negative_inside (test_core.Rules.test_unset_zero_and_negative_inside) ... ok
+test_configuration_guard_and_geometry (test_core.ValidationAndEvaluation.test_configuration_guard_and_geometry) ... ok
+test_matching_cardinality_against_exhaustive_search (test_core.ValidationAndEvaluation.test_matching_cardinality_against_exhaustive_search) ... ok
+test_maximum_one_to_one_matching (test_core.ValidationAndEvaluation.test_maximum_one_to_one_matching) ... ok
+test_missing_truth_not_zero_and_missing_prediction_reported (test_core.ValidationAndEvaluation.test_missing_truth_not_zero_and_missing_prediction_reported) ... ok
+test_frame_only_export_and_directory_evidence (test_micc.SequenceReview.test_frame_only_export_and_directory_evidence) ... ok
+test_numeric_order_and_metadata_exclusion (test_micc.SequenceReview.test_numeric_order_and_metadata_exclusion) ... ok
+test_real_export_ten_seconds_remainder_and_live_sink (test_pipeline.ExportSmoke.test_real_export_ten_seconds_remainder_and_live_sink) ... ok
+test_video_csv_final_state_and_empty_truth (test_pipeline.ExportSmoke.test_video_csv_final_state_and_empty_truth) ... ok
+test_candidate_missing_has_no_grace (test_usage.CandidatePolicy.test_candidate_missing_has_no_grace) ... ok
+test_candidate_to_confirmed_does_not_double_count (test_usage.CandidatePolicy.test_candidate_to_confirmed_does_not_double_count) ... ok
+test_confirmed_grace_adds_six_and_candidates_reach_q_and_seconds (test_usage.CandidatePolicy.test_confirmed_grace_adds_six_and_candidates_reach_q_and_seconds) ... ok
+test_entry_confirmation_excludes_id_on_same_frame (test_usage.CandidatePolicy.test_entry_confirmation_excludes_id_on_same_frame) ... ok
+test_observed_candidate_suppresses_nearby_confirmed_grace (test_usage.CandidatePolicy.test_observed_candidate_suppresses_nearby_confirmed_grace) ... ok
+test_two_candidates_three_confirmed_equal_five (test_usage.CandidatePolicy.test_two_candidates_three_confirmed_equal_five) ... ok
+test_baseline_does_not_export_fake_zero_counts (test_usage.UsageSummary.test_baseline_does_not_export_fake_zero_counts) ... ok
+test_capture_base_uses_actual_interval_offsets_and_virtual_label (test_usage.UsageSummary.test_capture_base_uses_actual_interval_offsets_and_virtual_label) ... ok
+test_exact_thirteen_headers_bom_and_one_interval_row (test_usage.UsageSummary.test_exact_thirteen_headers_bom_and_one_interval_row) ... ok
+test_invalid_capacity_and_missing_assumptions (test_usage.UsageSummary.test_invalid_capacity_and_missing_assumptions) ... ok
+test_no_internal_wait_when_inside_under_capacity_keeps_plus_one (test_usage.UsageSummary.test_no_internal_wait_when_inside_under_capacity_keeps_plus_one) ... ok
+test_time_reversal_bad_capture_and_overflow_are_rejected (test_usage.UsageSummary.test_time_reversal_bad_capture_and_overflow_are_rejected) ... ok
+test_unbound_video_identity_rejected_before_analysis (test_usage.UsageSummary.test_unbound_video_identity_rejected_before_analysis) ... ok
+test_unknown_initial_blank_and_negative_inside_raw_preserved (test_usage.UsageSummary.test_unknown_initial_blank_and_negative_inside_raw_preserved) ... ok
+test_video_id_stable_and_new_content_requires_different_id (test_usage.UsageSummary.test_video_id_stable_and_new_content_requires_different_id) ... ok
+
+----------------------------------------------------------------------
+Ran 46 tests in 0.701s
+
+OK

@@ -1,0 +1,12 @@
+결과 폴더: <TEMP>/tmpg1ln1fr9\outputs\north_20261014_232045_d55cc6bf
+
+test_fractional_origin_never_uses_future_and_finishes_cfr_boundary (test_record_intervals.RecordingIntervals.test_fractional_origin_never_uses_future_and_finishes_cfr_boundary) ... ok
+test_invalid_recording_intervals_rejected (test_record_intervals.RecordingIntervals.test_invalid_recording_intervals_rejected) ... ok
+test_one_second_edge_events_once_cumulative_inside_and_remainder (test_record_intervals.RecordingIntervals.test_one_second_edge_events_once_cumulative_inside_and_remainder) ... ok
+test_pipeline_appends_and_flushes_each_record_with_detail_only_tail (test_record_intervals.RecordingIntervals.test_pipeline_appends_and_flushes_each_record_with_detail_only_tail) ... ok
+test_profiles_and_legacy_default_only_change_recording_interval (test_record_intervals.RecordingIntervals.test_profiles_and_legacy_default_only_change_recording_interval) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.364s
+
+OK

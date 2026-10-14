@@ -1,0 +1,21 @@
+{
+  "configs\\environment_c.json": "859bdcb97829030d07bde2a8aa0dcc35c6c90a701b71c79b1a34bb571540bf22",
+  "configs\\north.json": "bbebea53d286e9ba4ecf8fd33810aa314a2fc13f26eb839520452356e70c2e2f",
+  "configs\\south.json": "3b93aca4031d8049a175dc994673f8565ffd9bccc563ad71c101579ee0032b9e",
+  "ground_truth\\environment_c\\events.csv": "7026932f7457419e1020ca7907c9e3e22b4a0863be668a988d7a6f621a28bdd5",
+  "ground_truth\\environment_c\\inside.csv": "df8bc0d2fae09b8f64265cd6df890bee1db67f4063a54f37d375e3e2fb52e2c4",
+  "ground_truth\\environment_c\\metadata.json": "2c7a566ceac9d9b69eee0ccd02e6961e15dba26cdd0b20786885ff6092308c60",
+  "ground_truth\\environment_c\\waiting.csv": "55015e0516c7ea8468e81f0f84314b4842a22df5e578bd79ab8faa4af7a32357",
+  "ground_truth\\example_only\\events.csv": "1a191b983ae387dc5ca4d41cbc9d6e16ce67ea680d9443cd0c39a86ff8bf8f81",
+  "ground_truth\\example_only\\inside.csv": "626ea3de315cbca9e339672e49556c187493f85df816f744c822a141fc6f7b25",
+  "ground_truth\\example_only\\metadata.json": "b3e707374f3584c2f91b18f277c1a33f777028a2192cd7e21cb8f5fc70e2a4f7",
+  "ground_truth\\example_only\\waiting.csv": "173a84cc57b2401ec6e4e70f535b87f4ab79c1bb321868a729c98f980140d1b3",
+  "ground_truth\\north\\events.csv": "7026932f7457419e1020ca7907c9e3e22b4a0863be668a988d7a6f621a28bdd5",
+  "ground_truth\\north\\inside.csv": "df8bc0d2fae09b8f64265cd6df890bee1db67f4063a54f37d375e3e2fb52e2c4",
+  "ground_truth\\north\\metadata.json": "68fe1cdcedc3bbebba23c876c8ed4648555490a788f5140d754f2438243f5eb9",
+  "ground_truth\\north\\waiting.csv": "55015e0516c7ea8468e81f0f84314b4842a22df5e578bd79ab8faa4af7a32357",
+  "ground_truth\\south\\events.csv": "7026932f7457419e1020ca7907c9e3e22b4a0863be668a988d7a6f621a28bdd5",
+  "ground_truth\\south\\inside.csv": "df8bc0d2fae09b8f64265cd6df890bee1db67f4063a54f37d375e3e2fb52e2c4",
+  "ground_truth\\south\\metadata.json": "766bc838b80eaa820d03ef12a4b208e39be5b539bc739efd2ca1a50c8d9825f5",
+  "ground_truth\\south\\waiting.csv": "55015e0516c7ea8468e81f0f84314b4842a22df5e578bd79ab8faa4af7a32357"
+}
