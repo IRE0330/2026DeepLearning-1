@@ -1,0 +1,31 @@
+일괄 결과 폴더: <TEMP>/tmpcq5rtep0\outputs\batch_demo_20261014_232324_28b67663
+항목 1 실패, 다음 영상 계속: FileNotFoundError: 등록 영상이 없습니다: <TEMP>/tmpcq5rtep0\missing.bin
+구간 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 3 실패, 다음 영상 계속: ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요.
+구간 기록 저장: south_2026-10-14.csv (원본 10.000s)
+구간 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 6 실패, 다음 영상 계속: ValueError: duplicate_registration: 같은 영상 ID 또는 경로가 중복 등록됐습니다.
+항목 7 실패, 다음 영상 계속: ValueError: duplicate_registration: 다른 경로에 같은 영상 내용이 중복 등록됐습니다.
+완료 3개 / 실패 4개: <TEMP>/tmpcq5rtep0\outputs\batch_demo_20261014_232324_28b67663\batch_summary.json
+일괄 결과 폴더: <TEMP>/tmpcq5rtep0\outputs\batch_demo_20261014_232324_0ab37aec
+항목 1 실패, 다음 영상 계속: FileNotFoundError: 등록 영상이 없습니다: <TEMP>/tmpcq5rtep0\missing.bin
+구간 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 3 실패, 다음 영상 계속: ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요.
+구간 기록 저장: south_2026-10-14.csv (원본 10.000s)
+구간 기록 저장: north_2026-10-14.csv (원본 10.000s)
+항목 6 실패, 다음 영상 계속: ValueError: duplicate_registration: 같은 영상 ID 또는 경로가 중복 등록됐습니다.
+항목 7 실패, 다음 영상 계속: ValueError: duplicate_registration: 다른 경로에 같은 영상 내용이 중복 등록됐습니다.
+완료 3개 / 실패 4개: <TEMP>/tmpcq5rtep0\outputs\batch_demo_20261014_232324_0ab37aec\batch_summary.json
+
+test_boundaries_once_and_cumulative_inside_not_interval_counts (test_batch.PeriodicRecords.test_boundaries_once_and_cumulative_inside_not_interval_counts) ... ok
+test_latest_past_frame_never_future_and_end_exclusive_coverage (test_batch.PeriodicRecords.test_latest_past_frame_never_future_and_end_exclusive_coverage) ... ok
+test_midnight_room_files_sort_bom_immediate_flush_and_missing_date (test_batch.PeriodicRecords.test_midnight_room_files_sort_bom_immediate_flush_and_missing_date) ... ok
+test_partial_analysis_origin_short_remainder_and_time_reversal (test_batch.PeriodicRecords.test_partial_analysis_origin_short_remainder_and_time_reversal) ... ok
+test_zero_capacity_unknown_negative_and_free_stalls_not_denominator (test_batch.PeriodicRecords.test_zero_capacity_unknown_negative_and_free_stalls_not_denominator) ... ok
+test_demo_overlay_preserves_geometry_and_other_environments (test_batch.RegistryBatch.test_demo_overlay_preserves_geometry_and_other_environments) ... ok
+test_failures_continue_duplicates_skip_envs_isolated_and_results_preserved (test_batch.RegistryBatch.test_failures_continue_duplicates_skip_envs_isolated_and_results_preserved) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.210s
+
+OK

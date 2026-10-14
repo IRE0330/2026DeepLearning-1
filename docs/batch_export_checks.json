@@ -1,0 +1,156 @@
+{
+  "kind": "export_consistency_not_accuracy",
+  "tests": [
+    {
+      "batch": "outputs/batch_demo_20261014_184050_53150edc",
+      "status": "completed_with_failures",
+      "items": [
+        {
+          "run_dir": "outputs/batch_demo_20261014_184050_53150edc/videos/entry_0001/north_20261014_184051_2548a1fb",
+          "status": "completed",
+          "rows": 2,
+          "frames": 480,
+          "elapsed_s": 28.717165400041267,
+          "device": "cpu",
+          "final_state": {
+            "restroom_id": "north",
+            "source_time_s": 19.958333333333332,
+            "frame_index": 479,
+            "entries": 1,
+            "exits": 0,
+            "waiting_observed": 4,
+            "waiting_grace": 0,
+            "waiting_candidate_observed": 0,
+            "waiting_confirmed_observed": 4,
+            "waiting_total": 4,
+            "grace_suppressed": 0,
+            "net_inflow": 1,
+            "inside_estimate": 30,
+            "measurement_status": "measuring;observation_gap_reset_recorded",
+            "internal_waiting_estimate": 3,
+            "current_waiting_estimate": 7,
+            "total_queue_estimate": 7,
+            "available_stalls_estimate": 0,
+            "expected_wait_s": 31.11111111111111
+          },
+          "remainder_s": 0,
+          "all_output_frames_decoded": true
+        },
+        {
+          "registration": {
+            "restroom_id": "south",
+            "video": "남쪽 화장실_CCTV.mov",
+            "video_id": "south_66e33f774b247cd0",
+            "video_sha256": "66e33f774b247cd0313453a058f770f332fa3a5c83d339caed549415c9ba250c",
+            "capture_start_time": null,
+            "capture_time_kind": null,
+            "initial_inside": null,
+            "config": "configs/south.json"
+          },
+          "status": "failed",
+          "error": "ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요."
+        },
+        {
+          "registration": {
+            "restroom_id": "east",
+            "video": "동쪽_화장실_cctv.mov",
+            "video_id": "east_9b25794e5b6aff09",
+            "video_sha256": "9b25794e5b6aff09c84d60b85d715221bf19d4e0651155886f9a6d364ff35568",
+            "capture_start_time": null,
+            "capture_time_kind": null,
+            "initial_inside": null,
+            "config": "configs/east.json"
+          },
+          "status": "failed",
+          "error": "ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요."
+        }
+      ],
+      "shared_csv": [
+        {
+          "path": "outputs/batch_demo_20261014_184050_53150edc/shared/north_2026-10-14.csv",
+          "rows": 2
+        }
+      ]
+    },
+    {
+      "batch": "outputs/batch_demo_20261014_184158_d218fec0",
+      "status": "completed_with_failures",
+      "items": [
+        {
+          "run_dir": "outputs/batch_demo_20261014_184158_d218fec0/videos/entry_0001/north_20261014_184158_4f0b7394",
+          "status": "completed",
+          "rows": 10,
+          "frames": 2524,
+          "elapsed_s": 103.72891189996153,
+          "device": "cpu",
+          "final_state": {
+            "restroom_id": "north",
+            "source_time_s": 105.125,
+            "frame_index": 2523,
+            "entries": 5,
+            "exits": 9,
+            "waiting_observed": 0,
+            "waiting_grace": 0,
+            "waiting_candidate_observed": 0,
+            "waiting_confirmed_observed": 0,
+            "waiting_total": 0,
+            "grace_suppressed": 0,
+            "net_inflow": -4,
+            "inside_estimate": 25,
+            "measurement_status": "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+            "internal_waiting_estimate": 0,
+            "current_waiting_estimate": 0,
+            "total_queue_estimate": 0,
+            "available_stalls_estimate": 2,
+            "expected_wait_s": 3.888888888888889
+          },
+          "remainder_s": 5.166666666666671,
+          "all_output_frames_decoded": true
+        },
+        {
+          "registration": {
+            "restroom_id": "south",
+            "video": "남쪽 화장실_CCTV.mov",
+            "video_id": "south_66e33f774b247cd0",
+            "video_sha256": "66e33f774b247cd0313453a058f770f332fa3a5c83d339caed549415c9ba250c",
+            "capture_start_time": null,
+            "capture_time_kind": null,
+            "initial_inside": null,
+            "config": "configs/south.json"
+          },
+          "status": "failed",
+          "error": "ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요."
+        },
+        {
+          "registration": {
+            "restroom_id": "east",
+            "video": "동쪽_화장실_cctv.mov",
+            "video_id": "east_9b25794e5b6aff09",
+            "video_sha256": "9b25794e5b6aff09c84d60b85d715221bf19d4e0651155886f9a6d364ff35568",
+            "capture_start_time": null,
+            "capture_time_kind": null,
+            "initial_inside": null,
+            "config": "configs/east.json"
+          },
+          "status": "failed",
+          "error": "ValueError: 구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요."
+        }
+      ],
+      "shared_csv": [
+        {
+          "path": "outputs/batch_demo_20261014_184158_d218fec0/shared/north_2026-10-14.csv",
+          "rows": 10
+        }
+      ]
+    }
+  ],
+  "existing_configs_preserved": {
+    "configs\\east.json": true,
+    "configs\\environment_c.json": true,
+    "configs\\north.json": true,
+    "configs\\north.preview.jpg": true,
+    "configs\\south.json": true
+  },
+  "reference_header_exact_match": true,
+  "accuracy_evaluation": "not_performed_no_manual_truth"
+}

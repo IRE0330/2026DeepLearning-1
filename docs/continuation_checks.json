@@ -1,0 +1,224 @@
+{
+  "date": "2026-10-14",
+  "preserved_inputs": {
+    "configs\\environment_c.json": true,
+    "configs\\north.json": true,
+    "configs\\south.json": true,
+    "ground_truth\\environment_c\\events.csv": true,
+    "ground_truth\\environment_c\\inside.csv": true,
+    "ground_truth\\environment_c\\metadata.json": true,
+    "ground_truth\\environment_c\\waiting.csv": true,
+    "ground_truth\\example_only\\events.csv": true,
+    "ground_truth\\example_only\\inside.csv": true,
+    "ground_truth\\example_only\\metadata.json": true,
+    "ground_truth\\example_only\\waiting.csv": true,
+    "ground_truth\\north\\events.csv": true,
+    "ground_truth\\north\\inside.csv": true,
+    "ground_truth\\north\\metadata.json": true,
+    "ground_truth\\north\\waiting.csv": true,
+    "ground_truth\\south\\events.csv": true,
+    "ground_truth\\south\\inside.csv": true,
+    "ground_truth\\south\\metadata.json": true,
+    "ground_truth\\south\\waiting.csv": true
+  },
+  "all_original_inputs_unchanged": true,
+  "config_and_truth_status": {
+    "north": {
+      "video": "북쪽_최종.mp4",
+      "video_exists": true,
+      "configured": false,
+      "analysis_validation_error": "구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요.",
+      "truth_rows": {
+        "events.csv": 0,
+        "inside.csv": 0,
+        "waiting.csv": 0
+      }
+    },
+    "south": {
+      "video": "남쪽 화장실_CCTV.mov",
+      "video_exists": true,
+      "configured": false,
+      "analysis_validation_error": "구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요.",
+      "truth_rows": {
+        "events.csv": 0,
+        "inside.csv": 0,
+        "waiting.csv": 0
+      }
+    },
+    "east": {
+      "video": "동쪽_화장실_cctv.mov",
+      "video_exists": true,
+      "configured": false,
+      "analysis_validation_error": "구역이 미설정입니다. configure에서 사용자 확인 후 저장하세요.",
+      "truth_rows": {
+        "events.csv": 0,
+        "inside.csv": 0,
+        "waiting.csv": 0
+      }
+    }
+  },
+  "existing_baseline_artifacts": [
+    {
+      "run_dir": "outputs/east_baseline_20261014_113957_370b4f63",
+      "status": "completed",
+      "mode": "baseline",
+      "processed_frames": 300,
+      "elapsed_s": 39.88924839999527,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "artifacts_exist": {
+        "annotated.mp4": true,
+        "events.csv": true,
+        "timeseries.csv": true,
+        "diagnostics.jsonl": true,
+        "final_state.json": true,
+        "config_used.json": true
+      },
+      "count_csv_rows": {
+        "events.csv": 0,
+        "timeseries.csv": 0
+      }
+    },
+    {
+      "run_dir": "outputs/north_baseline_20261014_014618_ee30c68a",
+      "status": "completed",
+      "mode": "baseline",
+      "processed_frames": 240,
+      "elapsed_s": 19.684111800044775,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "artifacts_exist": {
+        "annotated.mp4": true,
+        "events.csv": true,
+        "timeseries.csv": true,
+        "diagnostics.jsonl": true,
+        "final_state.json": true,
+        "config_used.json": true
+      },
+      "count_csv_rows": {
+        "events.csv": 0,
+        "timeseries.csv": 0
+      }
+    },
+    {
+      "run_dir": "outputs/north_baseline_20261014_014723_ed593c99",
+      "status": "completed",
+      "mode": "baseline",
+      "processed_frames": 2257,
+      "elapsed_s": 87.60731800005306,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "artifacts_exist": {
+        "annotated.mp4": true,
+        "events.csv": true,
+        "timeseries.csv": true,
+        "diagnostics.jsonl": true,
+        "final_state.json": true,
+        "config_used.json": true
+      },
+      "count_csv_rows": {
+        "events.csv": 0,
+        "timeseries.csv": 0
+      }
+    },
+    {
+      "run_dir": "outputs/south_baseline_20261014_015148_dc5cba31",
+      "status": "completed",
+      "mode": "baseline",
+      "processed_frames": 300,
+      "elapsed_s": 34.3186872000806,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "artifacts_exist": {
+        "annotated.mp4": true,
+        "events.csv": true,
+        "timeseries.csv": true,
+        "diagnostics.jsonl": true,
+        "final_state.json": true,
+        "config_used.json": true
+      },
+      "count_csv_rows": {
+        "events.csv": 0,
+        "timeseries.csv": 0
+      }
+    },
+    {
+      "run_dir": "outputs/south_baseline_20261014_015341_6b1fa246",
+      "status": "completed",
+      "mode": "baseline",
+      "processed_frames": 2827,
+      "elapsed_s": 134.71447130001616,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "artifacts_exist": {
+        "annotated.mp4": true,
+        "events.csv": true,
+        "timeseries.csv": true,
+        "diagnostics.jsonl": true,
+        "final_state.json": true,
+        "config_used.json": true
+      },
+      "count_csv_rows": {
+        "events.csv": 0,
+        "timeseries.csv": 0
+      }
+    }
+  ],
+  "micc_sequence_artifacts": [
+    {
+      "run_dir": "outputs/micc_flow_sequence_20261014_113003_3f16e7af",
+      "status": "completed",
+      "mode": "rgb_sequence_tracking",
+      "processed_frames": 60,
+      "elapsed_s": 7.542209599982016,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "first_frame_number": 80,
+      "last_frame_number": 139
+    },
+    {
+      "run_dir": "outputs/micc_flow_sequence_20261014_113049_0ffa1ab3",
+      "status": "completed",
+      "mode": "rgb_sequence_tracking",
+      "processed_frames": 180,
+      "elapsed_s": 11.262232800014317,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "first_frame_number": 180,
+      "last_frame_number": 359
+    },
+    {
+      "run_dir": "outputs/micc_groups_sequence_20261014_113110_a4a811d4",
+      "status": "completed",
+      "mode": "rgb_sequence_tracking",
+      "processed_frames": 180,
+      "elapsed_s": 11.716361699975096,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "first_frame_number": 360,
+      "last_frame_number": 539
+    },
+    {
+      "run_dir": "outputs/micc_queue_sequence_20261014_113059_5f183758",
+      "status": "completed",
+      "mode": "rgb_sequence_tracking",
+      "processed_frames": 180,
+      "elapsed_s": 11.634646500111558,
+      "device": "cpu",
+      "all_output_frames_decoded": true,
+      "first_frame_number": 140,
+      "last_frame_number": 319
+    }
+  ],
+  "micc_archive": {
+    "central_directory_readable": true,
+    "entries": 16848,
+    "full_crc_test_performed": false,
+    "download_restarted": false
+  },
+  "tests": {
+    "command": "python -X utf8 -m unittest discover -s tests -v",
+    "passed": 23,
+    "basis": "actual test process exit 0; synthetic rules and export, not video accuracy"
+  }
+}

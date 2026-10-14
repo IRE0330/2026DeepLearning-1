@@ -1,0 +1,176 @@
+{
+  "scope": "index_blobs",
+  "branch": "mvp/busan-cctv-20261014",
+  "remote_main_base": "18beb28f02d5d6ea61bcd9707e4708fa7a9c20a1",
+  "file_count": 88,
+  "total_bytes": 418629,
+  "largest_files": [
+    {
+      "path": "README.md",
+      "bytes": 50523
+    },
+    {
+      "path": "docs/VALIDATION.md",
+      "bytes": 43093
+    },
+    {
+      "path": "cctv/core.py",
+      "bytes": 14020
+    },
+    {
+      "path": "cctv/pipeline.py",
+      "bytes": 13444
+    },
+    {
+      "path": "scripts/review_track.py",
+      "bytes": 11574
+    },
+    {
+      "path": "tests/test_batch.py",
+      "bytes": 11397
+    },
+    {
+      "path": "docs/HANDOFF.md",
+      "bytes": 10794
+    },
+    {
+      "path": "tests/test_usage.py",
+      "bytes": 10674
+    }
+  ],
+  "ignore_checks": [
+    {
+      "path": "북쪽_화장실_cctv.mp4",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/sample.MOV",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/data/micc/RGB/0001.png",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/models/yolo11n.pt",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/.venv/Lib/site-packages/x.py",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/__pycache__/x.pyc",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "outputs/nested/report.csv",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "inspections/nested/report.json",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/.env.production",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/private.pem",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/.ssh/id_ed25519",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/credentials.json",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "nested/micc.zip",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "configs/north.preview.jpg",
+      "should_ignore": true,
+      "passed": true
+    },
+    {
+      "path": "configs/north.json",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "configs/south.json",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "configs/east.json",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "configs/profiles/demo.json",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "configs/video_registry.json",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "ground_truth/north/events.csv",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "ground_truth/example_only/events.csv",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "docs/HANDOFF.md",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "cctv/core.py",
+      "should_ignore": false,
+      "passed": true
+    },
+    {
+      "path": "tests/test_record_intervals.py",
+      "should_ignore": false,
+      "passed": true
+    }
+  ],
+  "remote_history_blobs": {
+    "94c8c04a5cd375be561bb4113b20330f4e2ba59b": {
+      "path": "README.md",
+      "secret_pattern_matches": []
+    },
+    "ba2f460586cd7e21eae35162be841172ecab03dc": {
+      "path": "README.md",
+      "secret_pattern_matches": []
+    }
+  },
+  "issues": [],
+  "passed": true,
+  "limitation": "Pattern scan and explicit review; not a guarantee of every possible secret format."
+}

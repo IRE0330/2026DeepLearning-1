@@ -1,0 +1,29 @@
+{
+  "waiting_count_policy": "candidate_confirmed_observed_plus_confirmed_grace_v2",
+  "run_dir": "outputs/north_20261014_165231_7f929689",
+  "test_count": 38,
+  "tests_passed": true,
+  "test_log": "docs/usage_policy_tests.txt",
+  "csv_exact_14_header_order": true,
+  "csv_bom": true,
+  "interval_rows": 1,
+  "actual_last_frame_external_waiting": 6,
+  "capture_times_blank_without_user_base": true,
+  "unknown_inside_q_wait_seconds_blank": true,
+  "available_stalls": 27,
+  "mean_stall_use_seconds": 105,
+  "actual_device": "cpu",
+  "processed_frames": 240,
+  "all_output_frames_decoded": true,
+  "video_id": "north_b4126dab3c98ce77",
+  "video_sha256": "b4126dab3c98ce7713abbb826580048e7144601f8dbd0ac15c4e7b53ed746a04",
+  "user_zone_rule_initial_fields_preserved": true,
+  "preview_hash_preserved": true,
+  "metrics_generated": false,
+  "known_limitations": [
+    "candidate counting increases short-transit false positives",
+    "no real manual truth",
+    "time formula is a user assumption",
+    "new source cannot be compared as same video with earlier ID 6 records"
+  ]
+}

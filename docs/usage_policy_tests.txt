@@ -1,0 +1,68 @@
+프레임 0 처리 중: <TEMP>/tmpccev8r8m\result
+결과 폴더: <TEMP>/tmpccev8r8m\result
+결과 폴더: <TEMP>/tmpp9d2cn76\outputs\test_20261014_170207_c3472eab
+결과 폴더: <TEMP>/tmpp9d2cn76\outputs\test_20261014_170207_60deb856
+{
+  "scope": "development_video_only",
+  "event_time": "prediction_confirmation_time",
+  "run": "<TEMP>/tmpp9d2cn76\\outputs\\test_20261014_170207_c3472eab",
+  "truth_dir": "<TEMP>/tmpp9d2cn76\\truth",
+  "undefined_metric": "null means undefined/no ground truth",
+  "event_metrics": null,
+  "waiting": null,
+  "inside": null,
+  "notes": [
+    "출입 정답이 없거나 해당 구간 전체 라벨링 확인이 없어 성능 수치를 생성하지 않았습니다.",
+    "대기 정답이 비어 있어 MAE를 계산하지 않았습니다.",
+    "내부 정답 또는 일치하는 초기 인원·기준 시각이 없어 내부 인원 평가를 생략했습니다."
+  ],
+  "outside_run_truth_rows": {
+    "events": 0,
+    "waiting": 0,
+    "inside": 0
+  }
+}
+평가 파일: <TEMP>/tmpp9d2cn76\outputs\test_20261014_170207_c3472eab\evaluations\evaluation_20261014_170207_49a3bd91\metrics.json
+test_boundary_jitter_and_return_no_count (test_core.Rules.test_boundary_jitter_and_return_no_count) ... ok
+test_candidate_does_not_confirm_during_occlusion (test_core.Rules.test_candidate_does_not_confirm_during_occlusion) ... ok
+test_confirmed_wait_sticky_during_advance (test_core.Rules.test_confirmed_wait_sticky_during_advance) ... ok
+test_duplicate_grace_suppressed_without_identity_merge (test_core.Rules.test_duplicate_grace_suppressed_without_identity_merge) ... ok
+test_entry_exit_reentry (test_core.Rules.test_entry_exit_reentry) ... ok
+test_even_short_missing_time_is_not_waiting_evidence (test_core.Rules.test_even_short_missing_time_is_not_waiting_evidence) ... ok
+test_fast_transit_not_waiting (test_core.Rules.test_fast_transit_not_waiting) ... ok
+test_finite_segment_only (test_core.Rules.test_finite_segment_only) ... ok
+test_first_inside_and_disappearance_do_not_count (test_core.Rules.test_first_inside_and_disappearance_do_not_count) ... ok
+test_gap_does_not_interpolate_crossing (test_core.Rules.test_gap_does_not_interpolate_crossing) ... ok
+test_grace_expiry_and_short_reobservation (test_core.Rules.test_grace_expiry_and_short_reobservation) ... ok
+test_sampler_never_uses_future (test_core.Rules.test_sampler_never_uses_future) ... ok
+test_short_gap_invalidates_pending_crossing (test_core.Rules.test_short_gap_invalidates_pending_crossing) ... ok
+test_short_gap_resets_candidate_slow_evidence (test_core.Rules.test_short_gap_resets_candidate_slow_evidence) ... ok
+test_short_missing_frame_invalidates_crossing_order (test_core.Rules.test_short_missing_frame_invalidates_crossing_order) ... ok
+test_unset_zero_and_negative_inside (test_core.Rules.test_unset_zero_and_negative_inside) ... ok
+test_configuration_guard_and_geometry (test_core.ValidationAndEvaluation.test_configuration_guard_and_geometry) ... ok
+test_matching_cardinality_against_exhaustive_search (test_core.ValidationAndEvaluation.test_matching_cardinality_against_exhaustive_search) ... ok
+test_maximum_one_to_one_matching (test_core.ValidationAndEvaluation.test_maximum_one_to_one_matching) ... ok
+test_missing_truth_not_zero_and_missing_prediction_reported (test_core.ValidationAndEvaluation.test_missing_truth_not_zero_and_missing_prediction_reported) ... ok
+test_frame_only_export_and_directory_evidence (test_micc.SequenceReview.test_frame_only_export_and_directory_evidence) ... ok
+test_numeric_order_and_metadata_exclusion (test_micc.SequenceReview.test_numeric_order_and_metadata_exclusion) ... ok
+test_video_csv_final_state_and_empty_truth (test_pipeline.ExportSmoke.test_video_csv_final_state_and_empty_truth) ... ok
+test_candidate_missing_has_no_grace (test_usage.CandidatePolicy.test_candidate_missing_has_no_grace) ... ok
+test_candidate_to_confirmed_does_not_double_count (test_usage.CandidatePolicy.test_candidate_to_confirmed_does_not_double_count) ... ok
+test_confirmed_grace_adds_six_and_candidates_reach_q_and_seconds (test_usage.CandidatePolicy.test_confirmed_grace_adds_six_and_candidates_reach_q_and_seconds) ... ok
+test_entry_confirmation_excludes_id_on_same_frame (test_usage.CandidatePolicy.test_entry_confirmation_excludes_id_on_same_frame) ... ok
+test_observed_candidate_suppresses_nearby_confirmed_grace (test_usage.CandidatePolicy.test_observed_candidate_suppresses_nearby_confirmed_grace) ... ok
+test_two_candidates_three_confirmed_equal_five (test_usage.CandidatePolicy.test_two_candidates_three_confirmed_equal_five) ... ok
+test_baseline_does_not_export_fake_zero_counts (test_usage.UsageSummary.test_baseline_does_not_export_fake_zero_counts) ... ok
+test_capture_base_uses_actual_interval_offsets_and_virtual_label (test_usage.UsageSummary.test_capture_base_uses_actual_interval_offsets_and_virtual_label) ... ok
+test_exact_fourteen_headers_bom_and_one_interval_row (test_usage.UsageSummary.test_exact_fourteen_headers_bom_and_one_interval_row) ... ok
+test_invalid_capacity_and_missing_assumptions (test_usage.UsageSummary.test_invalid_capacity_and_missing_assumptions) ... ok
+test_no_internal_wait_when_inside_under_capacity_keeps_plus_one (test_usage.UsageSummary.test_no_internal_wait_when_inside_under_capacity_keeps_plus_one) ... ok
+test_time_reversal_bad_capture_and_overflow_are_rejected (test_usage.UsageSummary.test_time_reversal_bad_capture_and_overflow_are_rejected) ... ok
+test_unbound_video_identity_rejected_before_analysis (test_usage.UsageSummary.test_unbound_video_identity_rejected_before_analysis) ... ok
+test_unknown_initial_blank_and_negative_inside_raw_preserved (test_usage.UsageSummary.test_unknown_initial_blank_and_negative_inside_raw_preserved) ... ok
+test_video_id_stable_and_new_content_requires_different_id (test_usage.UsageSummary.test_video_id_stable_and_new_content_requires_different_id) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 0.316s
+
+OK
