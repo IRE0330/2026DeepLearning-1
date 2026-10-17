@@ -1,0 +1,1219 @@
+{
+  "status": "completed",
+  "north": {
+    "status": "completed",
+    "scope": "saved_full_north_gpu_AB_not_live_latency",
+    "root": "outputs/north_latency_ab_20261017_211718_82b9d4ed",
+    "runs": {
+      "A_video": {
+        "run": "outputs/north_latency_ab_20261017_211718_82b9d4ed/A_video/north_20261017_211719_783c2efb",
+        "config": {
+          "schema_version": 1,
+          "restroom_id": "north",
+          "video": "북쪽_화장실_cctv.mp4",
+          "configured": true,
+          "reference_size": [
+            1280,
+            720
+          ],
+          "camera_note": "구도 변경 시 다시 설정하세요.",
+          "boundary": [
+            [
+              0.16146993318485522,
+              0.3227722772277228
+            ],
+            [
+              0.2661469933184855,
+              0.3782178217821782
+            ]
+          ],
+          "entry_direction": [
+            [
+              0.27060133630289535,
+              0.42178217821782177
+            ],
+            [
+              0.23608017817371937,
+              0.2811881188118812
+            ]
+          ],
+          "outside_zone": [
+            [
+              0.13140311804008908,
+              0.32475247524752476
+            ],
+            [
+              0.24610244988864144,
+              0.38415841584158417
+            ],
+            [
+              0.24944320712694878,
+              0.4633663366336634
+            ],
+            [
+              0.10579064587973273,
+              0.3801980198019802
+            ]
+          ],
+          "inside_zone": [
+            [
+              0.2561247216035635,
+              0.2198019801980198
+            ],
+            [
+              0.27839643652561247,
+              0.3722772277227723
+            ],
+            [
+              0.16146993318485522,
+              0.30297029702970296
+            ]
+          ],
+          "waiting_zone": [
+            [
+              0.24164810690423164,
+              0.3940594059405941
+            ],
+            [
+              0.311804008908686,
+              0.3920792079207921
+            ],
+            [
+              0.7383073496659243,
+              0.6039603960396039
+            ],
+            [
+              0.6792873051224945,
+              0.7405940594059406
+            ],
+            [
+              0.22717149220489977,
+              0.4752475247524752
+            ]
+          ],
+          "transit_zone": [
+            [
+              0.004454342984409799,
+              0.06534653465346535
+            ],
+            [
+              0.11024498886414254,
+              0.2079207920792079
+            ],
+            [
+              0.12583518930957685,
+              0.31287128712871287
+            ],
+            [
+              0.08908685968819599,
+              0.41188118811881186
+            ],
+            [
+              0.23719376391982183,
+              0.4871287128712871
+            ],
+            [
+              0.9922048997772829,
+              0.906930693069307
+            ],
+            [
+              0.9922048997772829,
+              0.996039603960396
+            ],
+            [
+              0.0022271714922048997,
+              0.9920792079207921
+            ]
+          ],
+          "excluded_zones": [
+            [
+              [
+                0.26057906458797325,
+                0.18811881188118812
+              ],
+              [
+                0.30846325167037864,
+                0.19603960396039605
+              ],
+              [
+                0.311804008908686,
+                0.3564356435643564
+              ],
+              [
+                0.2717149220489978,
+                0.3465346534653465
+              ]
+            ]
+          ],
+          "model": "models/yolo11n.pt",
+          "device": "cuda:0",
+          "imgsz": 640,
+          "confidence": 0.1,
+          "iou": 0.7,
+          "tracker": {
+            "tracker_type": "bytetrack",
+            "track_high_thresh": 0.25,
+            "track_low_thresh": 0.1,
+            "new_track_thresh": 0.25,
+            "track_buffer": 30,
+            "match_thresh": 0.8,
+            "fuse_score": true
+          },
+          "rules": {
+            "side_confirm_s": 0.2,
+            "boundary_margin": 0.005,
+            "max_observation_gap_s": 0.25,
+            "waiting_confirm_s": 3.0,
+            "occlusion_grace_s": 1.5,
+            "zone_exit_s": 0.8,
+            "motion_window_s": 1.0,
+            "motion_min_span_s": 0.3,
+            "slow_speed_body_heights_s": 0.35,
+            "duplicate_radius_body_heights": 0.7,
+            "forget_track_s": 60.0
+          },
+          "initial_inside": 29,
+          "output_dir": "outputs",
+          "configuration_frame_time_s": 0.0,
+          "confirmed_by_user": true,
+          "capture_start_time": "2026-10-14T00:00:00+09:00",
+          "capture_time_kind": "virtual",
+          "total_stalls": 27,
+          "available_stalls": 27,
+          "average_stall_use_s": 105.0,
+          "video_id": "north_b4126dab3c98ce77",
+          "video_sha256": "b4126dab3c98ce7713abbb826580048e7144601f8dbd0ac15c4e7b53ed746a04",
+          "record_interval_s": 1,
+          "measurement_status_tags": [
+            "demo_assumptions",
+            "synthetic_material",
+            "mean_use_user_assumption",
+            "all_stalls_operating_assumed",
+            "initial_inside_assumed_29"
+          ],
+          "profile_name": "demo",
+          "prediction_mode": "disabled",
+          "csv_split_interval_s": 3600,
+          "delivery": {
+            "queue_capacity": 32,
+            "max_attempts": 3,
+            "retry_delay_s": 0.05,
+            "shutdown_timeout_s": 2.0,
+            "mock_delay_s": 0.0
+          }
+        },
+        "timing": {
+          "clock": "time.perf_counter_ns_monotonic",
+          "origin": "cli_main_entry_excludes_interpreter_and_initial_module_imports",
+          "status": "completed",
+          "events": {
+            "execution_start": {
+              "monotonic_ns": 189098675818500,
+              "run_elapsed_s": 0.0
+            },
+            "video_inspection_complete": {
+              "monotonic_ns": 189108520232400,
+              "run_elapsed_s": 9.8444139
+            },
+            "model_ready": {
+              "monotonic_ns": 189113545121100,
+              "run_elapsed_s": 14.8693026
+            },
+            "first_frame_start": {
+              "monotonic_ns": 189113604332400,
+              "run_elapsed_s": 14.9285139
+            },
+            "backend_ready_after_first_observe": {
+              "monotonic_ns": 189117063977000,
+              "run_elapsed_s": 18.3881585
+            },
+            "frame_iteration_end": {
+              "monotonic_ns": 189196837254100,
+              "run_elapsed_s": 98.1614356
+            },
+            "processing_loop_end": {
+              "monotonic_ns": 189196839238000,
+              "run_elapsed_s": 98.1634195
+            },
+            "analysis_end": {
+              "monotonic_ns": 189198384944100,
+              "run_elapsed_s": 99.7091256
+            }
+          },
+          "records": 105,
+          "first_csv_run_elapsed_s": 19.0288682,
+          "first_csv_processing_elapsed_s": 4.1003543,
+          "processing_loop_elapsed_s": 83.2349056,
+          "processing_loop_fps": 30.323816454235274,
+          "run_elapsed_s": 99.7091256,
+          "run_fps": 25.313630871916907,
+          "flush_intervals_excluding_first": {
+            "count": 104,
+            "median_s": 0.7642614,
+            "p95_s": 0.815832785,
+            "max_s": 0.8826898
+          },
+          "run_difference": {
+            "first_s": 18.0288682,
+            "final_s": -6.935832700000006,
+            "max_s": 18.0288682,
+            "min_s": -6.935832700000006,
+            "final_minus_first_s": -24.964700900000008,
+            "slope_s_per_video_s": -0.23547431692722368,
+            "positive_records": 76,
+            "upward_steps": 0
+          },
+          "processing_difference": {
+            "first_s": 3.1003543000000002,
+            "final_s": -21.864346600000005,
+            "max_s": 3.1003543000000002,
+            "min_s": -21.864346600000005,
+            "final_minus_first_s": -24.964700900000004,
+            "slope_s_per_video_s": -0.23547431692722373,
+            "positive_records": 12,
+            "upward_steps": 0
+          },
+          "latency_csv": "outputs/north_latency_ab_20261017_211718_82b9d4ed/A_video/north_20261017_211719_783c2efb/csv_latency.csv",
+          "flush_definition": "immediately after shared CSV writer append/flush returns; before index/outbox; not fsync or physical-disk durability",
+          "model_preparation": "model_ready=constructor/weights metadata; lazy CUDA backend and warmup occur during first observe and are included in loop/first CSV time",
+          "limitations": "saved-video throughput, not live capture latency; negative signed differences preserved; no concurrent CCTV claim"
+        },
+        "runtime": {
+          "parameter_device": "cuda:0",
+          "parameter_dtype": "torch.float32",
+          "result_device": "cuda:0",
+          "backend_device": "cuda:0",
+          "fp16": false,
+          "cuda_allocated_bytes": 53556224,
+          "scope": "actual inference backend after first prediction, not source checkpoint object"
+        },
+        "final_state": {
+          "restroom_id": "north",
+          "source_time_s": 105.125,
+          "frame_index": 2523,
+          "entries": 5,
+          "exits": 9,
+          "waiting_observed": 0,
+          "waiting_grace": 0,
+          "waiting_candidate_observed": 0,
+          "waiting_confirmed_observed": 0,
+          "waiting_total": 0,
+          "grace_suppressed": 0,
+          "net_inflow": -4,
+          "inside_estimate": 25,
+          "measurement_status": "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+          "internal_waiting_estimate": 0,
+          "current_waiting_estimate": 0,
+          "total_queue_estimate": 0,
+          "available_stalls_estimate": 2,
+          "expected_wait_s": 3.888888888888889
+        },
+        "anomalies": {
+          "negative_inside_transitions": 0,
+          "observation_gap_resets": 46,
+          "grace_suppression_frames": 223,
+          "unconfirmed_crossings": 2
+        },
+        "remainder": {
+          "interval_start_s": 105.0,
+          "coverage_end_s": 105.16666666666667,
+          "record_interval_s": 1,
+          "duration_s": 0.1666666666666714,
+          "last_frame_time_s": 105.125,
+          "entries": 0,
+          "exits": 0,
+          "last_state": {
+            "restroom_id": "north",
+            "source_time_s": 105.125,
+            "frame_index": 2523,
+            "entries": 5,
+            "exits": 9,
+            "waiting_observed": 0,
+            "waiting_grace": 0,
+            "waiting_candidate_observed": 0,
+            "waiting_confirmed_observed": 0,
+            "waiting_total": 0,
+            "grace_suppressed": 0,
+            "net_inflow": -4,
+            "inside_estimate": 25,
+            "measurement_status": "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+            "internal_waiting_estimate": 0,
+            "current_waiting_estimate": 0,
+            "total_queue_estimate": 0,
+            "available_stalls_estimate": 2,
+            "expected_wait_s": 3.888888888888889
+          },
+          "excluded_from_regular_csv": true
+        },
+        "model": {
+          "name": "yolo11n.pt",
+          "weights_path": "models/yolo11n.pt",
+          "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+          "device": "cuda:0",
+          "cuda_available": true,
+          "device_name": "NVIDIA GeForce RTX 4060",
+          "selection_reason": "YOLO11 nano: small pretrained person detector; no additional training",
+          "confidence": 0.1,
+          "tracker": {
+            "tracker_type": "bytetrack",
+            "track_high_thresh": 0.25,
+            "track_low_thresh": 0.1,
+            "new_track_thresh": 0.25,
+            "track_buffer": 30,
+            "match_thresh": 0.8,
+            "fuse_score": true
+          }
+        },
+        "diagnostic_level": "unchanged_full_frame_detections_observations_events",
+        "summary_elapsed_s": 97.61507139998139,
+        "summary_fps": 25.856662949697757,
+        "process_wall_elapsed_s": 100.9469904,
+        "command": [
+          ".venv-gpu/Scripts/python.exe",
+          "-B",
+          "-u",
+          "-m",
+          "cctv",
+          "analyze",
+          "--config",
+          "configs/north.json",
+          "--profile",
+          "demo",
+          "--device",
+          "cuda:0",
+          "--prediction",
+          "disabled",
+          "--csv-split-seconds",
+          "3600",
+          "--measure-csv-latency",
+          "--output-dir",
+          "outputs/north_latency_ab_20261017_211718_82b9d4ed/A_video"
+        ]
+      },
+      "B_data": {
+        "run": "outputs/north_latency_ab_20261017_211718_82b9d4ed/B_data/north_20261017_211900_1bda2e30",
+        "config": {
+          "schema_version": 1,
+          "restroom_id": "north",
+          "video": "북쪽_화장실_cctv.mp4",
+          "configured": true,
+          "reference_size": [
+            1280,
+            720
+          ],
+          "camera_note": "구도 변경 시 다시 설정하세요.",
+          "boundary": [
+            [
+              0.16146993318485522,
+              0.3227722772277228
+            ],
+            [
+              0.2661469933184855,
+              0.3782178217821782
+            ]
+          ],
+          "entry_direction": [
+            [
+              0.27060133630289535,
+              0.42178217821782177
+            ],
+            [
+              0.23608017817371937,
+              0.2811881188118812
+            ]
+          ],
+          "outside_zone": [
+            [
+              0.13140311804008908,
+              0.32475247524752476
+            ],
+            [
+              0.24610244988864144,
+              0.38415841584158417
+            ],
+            [
+              0.24944320712694878,
+              0.4633663366336634
+            ],
+            [
+              0.10579064587973273,
+              0.3801980198019802
+            ]
+          ],
+          "inside_zone": [
+            [
+              0.2561247216035635,
+              0.2198019801980198
+            ],
+            [
+              0.27839643652561247,
+              0.3722772277227723
+            ],
+            [
+              0.16146993318485522,
+              0.30297029702970296
+            ]
+          ],
+          "waiting_zone": [
+            [
+              0.24164810690423164,
+              0.3940594059405941
+            ],
+            [
+              0.311804008908686,
+              0.3920792079207921
+            ],
+            [
+              0.7383073496659243,
+              0.6039603960396039
+            ],
+            [
+              0.6792873051224945,
+              0.7405940594059406
+            ],
+            [
+              0.22717149220489977,
+              0.4752475247524752
+            ]
+          ],
+          "transit_zone": [
+            [
+              0.004454342984409799,
+              0.06534653465346535
+            ],
+            [
+              0.11024498886414254,
+              0.2079207920792079
+            ],
+            [
+              0.12583518930957685,
+              0.31287128712871287
+            ],
+            [
+              0.08908685968819599,
+              0.41188118811881186
+            ],
+            [
+              0.23719376391982183,
+              0.4871287128712871
+            ],
+            [
+              0.9922048997772829,
+              0.906930693069307
+            ],
+            [
+              0.9922048997772829,
+              0.996039603960396
+            ],
+            [
+              0.0022271714922048997,
+              0.9920792079207921
+            ]
+          ],
+          "excluded_zones": [
+            [
+              [
+                0.26057906458797325,
+                0.18811881188118812
+              ],
+              [
+                0.30846325167037864,
+                0.19603960396039605
+              ],
+              [
+                0.311804008908686,
+                0.3564356435643564
+              ],
+              [
+                0.2717149220489978,
+                0.3465346534653465
+              ]
+            ]
+          ],
+          "model": "models/yolo11n.pt",
+          "device": "cuda:0",
+          "imgsz": 640,
+          "confidence": 0.1,
+          "iou": 0.7,
+          "tracker": {
+            "tracker_type": "bytetrack",
+            "track_high_thresh": 0.25,
+            "track_low_thresh": 0.1,
+            "new_track_thresh": 0.25,
+            "track_buffer": 30,
+            "match_thresh": 0.8,
+            "fuse_score": true
+          },
+          "rules": {
+            "side_confirm_s": 0.2,
+            "boundary_margin": 0.005,
+            "max_observation_gap_s": 0.25,
+            "waiting_confirm_s": 3.0,
+            "occlusion_grace_s": 1.5,
+            "zone_exit_s": 0.8,
+            "motion_window_s": 1.0,
+            "motion_min_span_s": 0.3,
+            "slow_speed_body_heights_s": 0.35,
+            "duplicate_radius_body_heights": 0.7,
+            "forget_track_s": 60.0
+          },
+          "initial_inside": 29,
+          "output_dir": "outputs",
+          "configuration_frame_time_s": 0.0,
+          "confirmed_by_user": true,
+          "capture_start_time": "2026-10-14T00:00:00+09:00",
+          "capture_time_kind": "virtual",
+          "total_stalls": 27,
+          "available_stalls": 27,
+          "average_stall_use_s": 105.0,
+          "video_id": "north_b4126dab3c98ce77",
+          "video_sha256": "b4126dab3c98ce7713abbb826580048e7144601f8dbd0ac15c4e7b53ed746a04",
+          "record_interval_s": 1,
+          "measurement_status_tags": [
+            "demo_assumptions",
+            "synthetic_material",
+            "mean_use_user_assumption",
+            "all_stalls_operating_assumed",
+            "initial_inside_assumed_29"
+          ],
+          "profile_name": "demo",
+          "prediction_mode": "disabled",
+          "csv_split_interval_s": 3600,
+          "delivery": {
+            "queue_capacity": 32,
+            "max_attempts": 3,
+            "retry_delay_s": 0.05,
+            "shutdown_timeout_s": 2.0,
+            "mock_delay_s": 0.0
+          }
+        },
+        "timing": {
+          "clock": "time.perf_counter_ns_monotonic",
+          "origin": "cli_main_entry_excludes_interpreter_and_initial_module_imports",
+          "status": "completed",
+          "events": {
+            "execution_start": {
+              "monotonic_ns": 189199622527000,
+              "run_elapsed_s": 0.0
+            },
+            "video_inspection_complete": {
+              "monotonic_ns": 189209434994000,
+              "run_elapsed_s": 9.812467
+            },
+            "model_ready": {
+              "monotonic_ns": 189211668763600,
+              "run_elapsed_s": 12.0462366
+            },
+            "first_frame_start": {
+              "monotonic_ns": 189211722185000,
+              "run_elapsed_s": 12.099658
+            },
+            "backend_ready_after_first_observe": {
+              "monotonic_ns": 189214213805800,
+              "run_elapsed_s": 14.5912788
+            },
+            "frame_iteration_end": {
+              "monotonic_ns": 189279915642700,
+              "run_elapsed_s": 80.2931157
+            },
+            "processing_loop_end": {
+              "monotonic_ns": 189279916422400,
+              "run_elapsed_s": 80.2938954
+            },
+            "analysis_end": {
+              "monotonic_ns": 189279918989300,
+              "run_elapsed_s": 80.2964623
+            }
+          },
+          "records": 105,
+          "first_csv_run_elapsed_s": 15.1010394,
+          "first_csv_processing_elapsed_s": 3.0013814,
+          "processing_loop_elapsed_s": 68.1942374,
+          "processing_loop_fps": 37.01192499881228,
+          "run_elapsed_s": 80.2964623,
+          "run_fps": 31.433514350482163,
+          "flush_intervals_excluding_first": {
+            "count": 104,
+            "median_s": 0.6324330499999999,
+            "p95_s": 0.699911965,
+            "max_s": 0.7526969
+          },
+          "run_difference": {
+            "first_s": 14.1010394,
+            "final_s": -24.7935727,
+            "max_s": 14.1010394,
+            "min_s": -24.7935727,
+            "final_minus_first_s": -38.894612099999996,
+            "slope_s_per_video_s": -0.36585524291623467,
+            "positive_records": 37,
+            "upward_steps": 0
+          },
+          "processing_difference": {
+            "first_s": 2.0013814,
+            "final_s": -36.893230700000004,
+            "max_s": 2.0013814,
+            "min_s": -36.893230700000004,
+            "final_minus_first_s": -38.8946121,
+            "slope_s_per_video_s": -0.36585524291623467,
+            "positive_records": 5,
+            "upward_steps": 0
+          },
+          "latency_csv": "outputs/north_latency_ab_20261017_211718_82b9d4ed/B_data/north_20261017_211900_1bda2e30/csv_latency.csv",
+          "flush_definition": "immediately after shared CSV writer append/flush returns; before index/outbox; not fsync or physical-disk durability",
+          "model_preparation": "model_ready=constructor/weights metadata; lazy CUDA backend and warmup occur during first observe and are included in loop/first CSV time",
+          "limitations": "saved-video throughput, not live capture latency; negative signed differences preserved; no concurrent CCTV claim"
+        },
+        "runtime": {
+          "parameter_device": "cuda:0",
+          "parameter_dtype": "torch.float32",
+          "result_device": "cuda:0",
+          "backend_device": "cuda:0",
+          "fp16": false,
+          "cuda_allocated_bytes": 53556224,
+          "scope": "actual inference backend after first prediction, not source checkpoint object"
+        },
+        "final_state": {
+          "restroom_id": "north",
+          "source_time_s": 105.125,
+          "frame_index": 2523,
+          "entries": 5,
+          "exits": 9,
+          "waiting_observed": 0,
+          "waiting_grace": 0,
+          "waiting_candidate_observed": 0,
+          "waiting_confirmed_observed": 0,
+          "waiting_total": 0,
+          "grace_suppressed": 0,
+          "net_inflow": -4,
+          "inside_estimate": 25,
+          "measurement_status": "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+          "internal_waiting_estimate": 0,
+          "current_waiting_estimate": 0,
+          "total_queue_estimate": 0,
+          "available_stalls_estimate": 2,
+          "expected_wait_s": 3.888888888888889
+        },
+        "anomalies": {
+          "negative_inside_transitions": 0,
+          "observation_gap_resets": 46,
+          "grace_suppression_frames": 223,
+          "unconfirmed_crossings": 2
+        },
+        "remainder": {
+          "interval_start_s": 105.0,
+          "coverage_end_s": 105.16666666666667,
+          "record_interval_s": 1,
+          "duration_s": 0.1666666666666714,
+          "last_frame_time_s": 105.125,
+          "entries": 0,
+          "exits": 0,
+          "last_state": {
+            "restroom_id": "north",
+            "source_time_s": 105.125,
+            "frame_index": 2523,
+            "entries": 5,
+            "exits": 9,
+            "waiting_observed": 0,
+            "waiting_grace": 0,
+            "waiting_candidate_observed": 0,
+            "waiting_confirmed_observed": 0,
+            "waiting_total": 0,
+            "grace_suppressed": 0,
+            "net_inflow": -4,
+            "inside_estimate": 25,
+            "measurement_status": "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+            "internal_waiting_estimate": 0,
+            "current_waiting_estimate": 0,
+            "total_queue_estimate": 0,
+            "available_stalls_estimate": 2,
+            "expected_wait_s": 3.888888888888889
+          },
+          "excluded_from_regular_csv": true
+        },
+        "model": {
+          "name": "yolo11n.pt",
+          "weights_path": "models/yolo11n.pt",
+          "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+          "device": "cuda:0",
+          "cuda_available": true,
+          "device_name": "NVIDIA GeForce RTX 4060",
+          "selection_reason": "YOLO11 nano: small pretrained person detector; no additional training",
+          "confidence": 0.1,
+          "tracker": {
+            "tracker_type": "bytetrack",
+            "track_high_thresh": 0.25,
+            "track_low_thresh": 0.1,
+            "new_track_thresh": 0.25,
+            "track_buffer": 30,
+            "match_thresh": 0.8,
+            "fuse_score": true
+          }
+        },
+        "diagnostic_level": "unchanged_full_frame_detections_observations_events",
+        "summary_elapsed_s": 79.76090419999673,
+        "summary_fps": 31.644576065376445,
+        "process_wall_elapsed_s": 81.3261806,
+        "command": [
+          ".venv-gpu/Scripts/python.exe",
+          "-B",
+          "-u",
+          "-m",
+          "cctv",
+          "analyze",
+          "--config",
+          "configs/north.json",
+          "--profile",
+          "demo",
+          "--device",
+          "cuda:0",
+          "--prediction",
+          "disabled",
+          "--csv-split-seconds",
+          "3600",
+          "--measure-csv-latency",
+          "--output-dir",
+          "outputs/north_latency_ab_20261017_211718_82b9d4ed/B_data",
+          "--no-video"
+        ]
+      }
+    },
+    "rows_each": 105,
+    "frames_each": 2524,
+    "identical_config_and_diagnostic_level": true,
+    "comparison": {
+      "usage_summary.csv_byte_identical": true,
+      "events.csv_byte_identical": true,
+      "timeseries.csv_byte_identical": true,
+      "diagnostics.jsonl_byte_identical": true,
+      "interval_details.jsonl_byte_identical": true,
+      "final_state.json_byte_identical": true,
+      "remainder.json_byte_identical": true
+    },
+    "csv_different_rows": [],
+    "prior_full_north_csv_byte_identical": false,
+    "first_row_delay_includes_initialization_and_first_prediction_warmup": true,
+    "loop_speedup": 1.2205562929280591,
+    "process_speedup": 1.2412606820490473,
+    "limits": [
+      "one cold-process measurement per mode; desktop background workload uncontrolled",
+      "not a live input or three-CCTV simultaneous test",
+      "flush return is not fsync/disk durability",
+      "signed differences can be negative for faster-than-playback saved-video processing"
+    ]
+  },
+  "south_east": {
+    "status": "passed",
+    "root": "outputs/batch_demo_recalc_20261017_212102_c5dd7a25",
+    "results": {
+      "south": {
+        "run": "outputs/batch_demo_recalc_20261017_212102_c5dd7a25/south",
+        "shared_csv": "outputs/batch_demo_recalc_20261017_212102_c5dd7a25/shared/south_2026-10-14_0000.csv",
+        "rows": 94,
+        "frames": 2827,
+        "initial_inside": 3,
+        "inside_min": 2,
+        "inside_max": 4,
+        "negative_inside_frames": 0,
+        "final_state": {
+          "restroom_id": "south",
+          "source_time_s": 94.2,
+          "frame_index": 2826,
+          "entries": 2,
+          "exits": 2,
+          "waiting_observed": 0,
+          "waiting_grace": 0,
+          "waiting_candidate_observed": 0,
+          "waiting_confirmed_observed": 0,
+          "waiting_total": 0,
+          "grace_suppressed": 0,
+          "net_inflow": 0,
+          "inside_estimate": 3,
+          "measurement_status": "measuring;crossing_candidate_pending;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+          "internal_waiting_estimate": 0,
+          "current_waiting_estimate": 0,
+          "total_queue_estimate": 0,
+          "available_stalls_estimate": 16,
+          "expected_wait_s": 5.526315789473684
+        },
+        "events_and_original_diagnostics_byte_identical": true,
+        "all_csv_formulas_checked": true,
+        "all_csv_states_match_render_replay": true,
+        "decoded_panel_checks": [
+          {
+            "frame_index": 30,
+            "source_time_s": 1.0,
+            "csv_record_index": 1,
+            "panel_pixel_mae_after_video_compression": 2.3336021908763507,
+            "panel_text": [
+              "남쪽 · 00:01 · 시연·미검증",
+              [
+                [
+                  "입장 0명",
+                  "퇴장 0명"
+                ],
+                [
+                  "내부 3명",
+                  "빈 칸 16칸"
+                ],
+                [
+                  "외부 대기 0명",
+                  "내부 대기 0명"
+                ],
+                [
+                  "전체 대기 0명",
+                  "예상 5.5초"
+                ]
+              ],
+              "인원·빈 칸·시간은 추정"
+            ]
+          },
+          {
+            "frame_index": 1440,
+            "source_time_s": 48.0,
+            "csv_record_index": 48,
+            "panel_pixel_mae_after_video_compression": 2.293684140322796,
+            "panel_text": [
+              "남쪽 · 00:48 · 시연·미검증",
+              [
+                [
+                  "입장 1명",
+                  "퇴장 1명"
+                ],
+                [
+                  "내부 3명",
+                  "빈 칸 16칸"
+                ],
+                [
+                  "외부 대기 1명",
+                  "내부 대기 0명"
+                ],
+                [
+                  "전체 대기 1명",
+                  "예상 11.1초"
+                ]
+              ],
+              "인원·빈 칸·시간은 추정"
+            ]
+          },
+          {
+            "frame_index": 2820,
+            "source_time_s": 94.0,
+            "csv_record_index": 94,
+            "panel_pixel_mae_after_video_compression": 2.14453072895825,
+            "panel_text": [
+              "남쪽 · 01:34 · 시연·미검증",
+              [
+                [
+                  "입장 2명",
+                  "퇴장 2명"
+                ],
+                [
+                  "내부 3명",
+                  "빈 칸 16칸"
+                ],
+                [
+                  "외부 대기 0명",
+                  "내부 대기 0명"
+                ],
+                [
+                  "전체 대기 0명",
+                  "예상 5.5초"
+                ]
+              ],
+              "인원·빈 칸·시간은 추정 · 출입 미확정"
+            ]
+          }
+        ],
+        "remainder": {
+          "interval_start_s": 94,
+          "coverage_end_s": 94.23333333333333,
+          "record_interval_s": 1,
+          "duration_s": 0.23333333333333428,
+          "last_frame_time_s": 94.2,
+          "entries": 0,
+          "exits": 0,
+          "last_state": {
+            "restroom_id": "south",
+            "source_time_s": 94.2,
+            "frame_index": 2826,
+            "entries": 2,
+            "exits": 2,
+            "waiting_observed": 0,
+            "waiting_grace": 0,
+            "waiting_candidate_observed": 0,
+            "waiting_confirmed_observed": 0,
+            "waiting_total": 0,
+            "grace_suppressed": 0,
+            "net_inflow": 0,
+            "inside_estimate": 3,
+            "measurement_status": "measuring;crossing_candidate_pending;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+            "internal_waiting_estimate": 0,
+            "current_waiting_estimate": 0,
+            "total_queue_estimate": 0,
+            "available_stalls_estimate": 16,
+            "expected_wait_s": 5.526315789473684
+          },
+          "excluded_from_regular_csv": true
+        },
+        "render_elapsed_s": 54.283064999995986
+      },
+      "east": {
+        "run": "outputs/batch_demo_recalc_20261017_212102_c5dd7a25/east",
+        "shared_csv": "outputs/batch_demo_recalc_20261017_212102_c5dd7a25/shared/east_2026-10-14_0000.csv",
+        "rows": 90,
+        "frames": 2700,
+        "initial_inside": 3,
+        "inside_min": 3,
+        "inside_max": 8,
+        "negative_inside_frames": 0,
+        "final_state": {
+          "restroom_id": "east",
+          "source_time_s": 89.96666666666667,
+          "frame_index": 2699,
+          "entries": 5,
+          "exits": 3,
+          "waiting_observed": 0,
+          "waiting_grace": 0,
+          "waiting_candidate_observed": 0,
+          "waiting_confirmed_observed": 0,
+          "waiting_total": 0,
+          "grace_suppressed": 0,
+          "net_inflow": 2,
+          "inside_estimate": 5,
+          "measurement_status": "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+          "internal_waiting_estimate": 0,
+          "current_waiting_estimate": 0,
+          "total_queue_estimate": 0,
+          "available_stalls_estimate": 18,
+          "expected_wait_s": 4.565217391304348
+        },
+        "events_and_original_diagnostics_byte_identical": true,
+        "all_csv_formulas_checked": true,
+        "all_csv_states_match_render_replay": true,
+        "decoded_panel_checks": [
+          {
+            "frame_index": 30,
+            "source_time_s": 1.0,
+            "csv_record_index": 1,
+            "panel_pixel_mae_after_video_compression": 2.5671039249032948,
+            "panel_text": [
+              "동쪽 · 00:01 · 시연·미검증",
+              [
+                [
+                  "입장 0명",
+                  "퇴장 0명"
+                ],
+                [
+                  "내부 3명",
+                  "빈 칸 20칸"
+                ],
+                [
+                  "외부 대기 0명",
+                  "내부 대기 0명"
+                ],
+                [
+                  "전체 대기 0명",
+                  "예상 4.6초"
+                ]
+              ],
+              "인원·빈 칸·시간은 추정"
+            ]
+          },
+          {
+            "frame_index": 1380,
+            "source_time_s": 46.0,
+            "csv_record_index": 46,
+            "panel_pixel_mae_after_video_compression": 2.6134412098172604,
+            "panel_text": [
+              "동쪽 · 00:46 · 시연·미검증",
+              [
+                [
+                  "입장 5명",
+                  "퇴장 0명"
+                ],
+                [
+                  "내부 8명",
+                  "빈 칸 15칸"
+                ],
+                [
+                  "외부 대기 1명",
+                  "내부 대기 0명"
+                ],
+                [
+                  "전체 대기 1명",
+                  "예상 9.1초"
+                ]
+              ],
+              "인원·빈 칸·시간은 추정 · 출입 미확정"
+            ]
+          },
+          {
+            "frame_index": 2699,
+            "source_time_s": 89.96666666666667,
+            "csv_record_index": 90,
+            "panel_pixel_mae_after_video_compression": 2.654622265572896,
+            "panel_text": [
+              "동쪽 · 01:29 · 시연·미검증",
+              [
+                [
+                  "입장 5명",
+                  "퇴장 3명"
+                ],
+                [
+                  "내부 5명",
+                  "빈 칸 18칸"
+                ],
+                [
+                  "외부 대기 0명",
+                  "내부 대기 0명"
+                ],
+                [
+                  "전체 대기 0명",
+                  "예상 4.6초"
+                ]
+              ],
+              "인원·빈 칸·시간은 추정"
+            ]
+          }
+        ],
+        "remainder": {
+          "interval_start_s": 90,
+          "coverage_end_s": 90.0,
+          "record_interval_s": 1,
+          "duration_s": 0,
+          "last_frame_time_s": 89.96666666666667,
+          "entries": 0,
+          "exits": 0,
+          "last_state": {
+            "restroom_id": "east",
+            "source_time_s": 89.96666666666667,
+            "frame_index": 2699,
+            "entries": 5,
+            "exits": 3,
+            "waiting_observed": 0,
+            "waiting_grace": 0,
+            "waiting_candidate_observed": 0,
+            "waiting_confirmed_observed": 0,
+            "waiting_total": 0,
+            "grace_suppressed": 0,
+            "net_inflow": 2,
+            "inside_estimate": 5,
+            "measurement_status": "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded",
+            "internal_waiting_estimate": 0,
+            "current_waiting_estimate": 0,
+            "total_queue_estimate": 0,
+            "available_stalls_estimate": 18,
+            "expected_wait_s": 4.565217391304348
+          },
+          "excluded_from_regular_csv": true
+        },
+        "render_elapsed_s": 55.37890620002872
+      }
+    },
+    "scope": "tracker logs reused; derived values recalculated; original videos rerendered; no inference or tracker rerun",
+    "daily_duplicate_csv_created": false,
+    "prediction_mode": "disabled"
+  },
+  "prior_cpu_gpu_status_review": {
+    "compared_sources": [
+      "outputs/batch_demo_recalc_20261017_144846_e9dd5976/north",
+      "outputs/north_latency_ab_20261017_211718_82b9d4ed/A_video/north_20261017_211719_783c2efb"
+    ],
+    "current_counter_reproduces_both_saved_interval_states": true,
+    "csv_differences": [
+      {
+        "row": 31,
+        "differences": {
+          "측정상태": [
+            "measuring;candidate_included;crossing_unconfirmed_recorded;observation_gap_reset_recorded;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption",
+            "measuring;candidate_included;crossing_unconfirmed_recorded;observation_gap_reset_recorded;uncertain_grace_suppressed;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption"
+          ]
+        }
+      },
+      {
+        "row": 33,
+        "differences": {
+          "측정상태": [
+            "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption",
+            "measuring;candidate_included;crossing_unconfirmed_recorded;observation_gap_reset_recorded;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption"
+          ]
+        }
+      },
+      {
+        "row": 34,
+        "differences": {
+          "측정상태": [
+            "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded;uncertain_grace_suppressed;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption",
+            "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption"
+          ]
+        }
+      },
+      {
+        "row": 35,
+        "differences": {
+          "측정상태": [
+            "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded;uncertain_grace_suppressed;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption",
+            "measuring;crossing_unconfirmed_recorded;observation_gap_reset_recorded;accuracy_not_validated;demo_assumptions;synthetic_material;mean_use_user_assumption;all_stalls_operating_assumed;initial_inside_assumed_29;virtual_scenario_time;wait_time_user_assumption"
+          ]
+        }
+      }
+    ],
+    "raw_detection_count_different_frames": [
+      455,
+      471,
+      831,
+      864,
+      899,
+      917,
+      987,
+      1014
+    ],
+    "observation_id_set_different_frame_count": 1354,
+    "first_observation_id_set_different_frame": 376,
+    "per_frame_state_different_count": 127,
+    "first_per_frame_state_difference": 744,
+    "interpretation": "Current unchanged Counter reproduces each input log. Old CPU and new CUDA detection/tracking inputs differ; candidate/confirmed and grace suppression state paths differ. The 4 CSV differences are measurement-status only; numeric columns and final entry/exit totals agree. Exact kernel/association threshold cause not isolated."
+  },
+  "preservation": {
+    "protected_files_unchanged": 460,
+    "snapshot_files": 471,
+    "allowed_edits": [
+      "README.md",
+      "cctv/__main__.py",
+      "cctv/detector.py",
+      "cctv/pipeline.py",
+      "cctv/profiles.py",
+      "cctv/recalculate.py",
+      "cctv/stream_output.py",
+      "configs/profiles/demo.json",
+      "docs/HANDOFF.md",
+      "tests/test_batch.py",
+      "tests/test_recalculate.py"
+    ],
+    "mismatches": [],
+    "both_package_environments_unchanged": true,
+    "operating_and_environment_configs_masks_registry_unchanged": true,
+    "tests_passed": 32,
+    "tests_elapsed_s": 2.787
+  },
+  "regression": {
+    "passed": 32,
+    "failed": 0,
+    "elapsed_s": 2.787,
+    "command": ".venv-gpu/Scripts/python.exe -B -m unittest test_latency_modes test_record_intervals test_pipeline test_batch test_recalculate test_stream_output test_overlay -v",
+    "PYTHONPATH": "tests"
+  },
+  "operating_settings_changed": false,
+  "real_prediction_called": false,
+  "git_push": false,
+  "source_policy": "one-second complete intervals, interval-start KST hourly CSV, subsecond tail separate",
+  "audit": "inspections/latency_initial3_20261017_211325_2e7fd1ea",
+  "in_progress_csv_observation": {
+    "run": "outputs/north_latency_ab_20261017_211718_82b9d4ed/A_video/north_20261017_211719_783c2efb",
+    "csv": "outputs/north_latency_ab_20261017_211718_82b9d4ed/A_video/north_20261017_211719_783c2efb/shared/north_2026-10-14_0000.csv",
+    "readable_rows_while_running": 73,
+    "last_interval_end": "2026-10-14T00:01:13+09:00",
+    "summary_status_at_read": "starting",
+    "observation_monotonic_ns": 189172802852500
+  }
+}

@@ -169,6 +169,7 @@
   "confirmed_by_user": true,
   "capture_start_time": null,
   "capture_time_kind": null,
+  "total_stalls": 27,
   "available_stalls": 27,
   "average_stall_use_s": 105.0,
   "video_id": "north_b4126dab3c98ce77",

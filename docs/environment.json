@@ -3,17 +3,19 @@
   "os": "Windows-11-10.0.26100-SP0",
   "packages": {
     "ultralytics": "8.4.177",
-    "torch": "2.14.1",
-    "torchvision": "0.29.1",
+    "torch": "2.14.1+cu132",
+    "torchvision": "0.29.1+cu132",
     "opencv-python": "5.0.0.93",
     "numpy": "2.5.4",
     "lap": "0.5.13",
     "av": "19.0.1"
   },
-  "python_executable": ".venv/Scripts/python.exe",
+  "python_executable": ".venv-gpu/Scripts/python.exe",
   "cpu_supported": true,
-  "cuda_available": false,
+  "cuda_available": true,
   "mps_available": false,
-  "auto_device": "cpu",
-  "gpu_names": []
+  "auto_device": "cuda:0",
+  "gpu_names": [
+    "NVIDIA GeForce RTX 4060"
+  ]
 }

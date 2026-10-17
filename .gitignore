@@ -1,5 +1,11 @@
 .venv/
+.venv-gpu/
+.venv*/
 venv/
+dist/
+build/
+*.egg-info/
+*.whl
 __pycache__/
 *.py[cod]
 .pytest_cache/

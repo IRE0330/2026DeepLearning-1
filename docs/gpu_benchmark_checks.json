@@ -1,0 +1,460 @@
+{
+  "status": "passed",
+  "benchmark_root": "outputs/device_benchmark_20261017_191234_711f6f90",
+  "range_s": [
+    0,
+    30
+  ],
+  "frames_each": 720,
+  "csv_rows_each": 30,
+  "profile": "demo",
+  "prediction_mode": "disabled",
+  "same_config_except_device": true,
+  "same_video_sha256": true,
+  "same_model_sha256": true,
+  "same_fp32_precision": true,
+  "detector_called_every_selected_frame": true,
+  "cuda_check": {
+    "python": "3.13.9",
+    "executable": ".venv-gpu/Scripts/python.exe",
+    "base_python": "C:\\Program Files\\Blender Foundation\\Blender 5.1\\5.1\\python\\bin\\python.exe",
+    "torch": "2.14.1+cu132",
+    "torchvision": "0.29.1+cu132",
+    "cuda_build": "13.2",
+    "cuda_available": true,
+    "device": "cuda:0",
+    "device_name": "NVIDIA GeForce RTX 4060",
+    "compute_capability": [
+      8,
+      9
+    ],
+    "vram_bytes": 8585216000,
+    "torch_arch_list": [
+      "sm_75",
+      "sm_80",
+      "sm_86",
+      "sm_90",
+      "sm_100",
+      "sm_120"
+    ],
+    "cudnn_available": true,
+    "cudnn_version": 92400,
+    "matrix_device": "cuda:0",
+    "matrix_max_error": 0.0,
+    "nms_device": "cuda:0",
+    "nms_keep": [
+      0,
+      2
+    ],
+    "allocated_bytes": 8533504,
+    "elapsed_s": 0.37305969998124056,
+    "packages": {
+      "ultralytics": "8.4.177",
+      "torch": "2.14.1+cu132",
+      "torchvision": "0.29.1+cu132",
+      "opencv-python": "5.0.0.93",
+      "numpy": "2.5.4",
+      "lap": "0.5.13",
+      "av": "19.0.1"
+    }
+  },
+  "package_comparison": {
+    "cpu_unchanged": true,
+    "package_differences": {
+      "torch": [
+        "2.14.1",
+        "2.14.1+cu132"
+      ],
+      "torchvision": [
+        "0.29.1",
+        "0.29.1+cu132"
+      ]
+    },
+    "non_torch_packages_identical": true,
+    "isolated_environment": true
+  },
+  "preservation": {
+    "files_checked": 395,
+    "mismatches": [],
+    "cpu_packages_unchanged": true
+  },
+  "profiles": {
+    "cpu": {
+      "requested_device": "cpu",
+      "actual_tensor_input_devices": {
+        "cpu": 720
+      },
+      "actual_parameter_devices_after_prediction": {
+        "cpu": 720
+      },
+      "actual_result_devices": {
+        "cpu": 720
+      },
+      "actual_tensor_dtypes": {
+        "torch.float32": 720
+      },
+      "actual_parameter_dtypes": {
+        "torch.float32": 720
+      },
+      "python": "3.13.9",
+      "python_executable": ".venv/Scripts/python.exe",
+      "torch": "2.14.1+cpu",
+      "torch_cuda_build": null,
+      "cuda_available": false,
+      "cuda_device_name": null,
+      "cuda_peak_allocated_mb": 0,
+      "cuda_peak_reserved_mb": 0,
+      "end_to_end_wall_s": 38.949755600013305,
+      "end_to_end_wall_fps": 18.485353474201364,
+      "summary_elapsed_s": 38.44071719999192,
+      "summary_processing_fps": 18.73013961352811,
+      "stage_seconds": {
+        "input_full_pts_probe": 7.47713520002435,
+        "source_hash": 0.6778735999832861,
+        "detector_init": 0.10594869998749346,
+        "video_writer_init": 0.004252500017173588,
+        "decode_frames": 3.0141008999489713,
+        "detect_and_track": 21.193804800597718,
+        "counting": 0.18563710057060234,
+        "overlay": 2.134006300038891,
+        "encode_video": 3.3549277997226454,
+        "video_csv_detail_flush": 0.006789500010199845,
+        "shared_csv_index_flush": 0.01808589999563992,
+        "encode_release": 0.0014048999873921275,
+        "output_full_decode_verification": 0.487656799989054
+      },
+      "stage_calls": {
+        "input_full_pts_probe": 1,
+        "source_hash": 1,
+        "detector_init": 1,
+        "video_writer_init": 1,
+        "decode_frames": 721,
+        "detect_and_track": 720,
+        "counting": 720,
+        "overlay": 720,
+        "encode_video": 720,
+        "video_csv_detail_flush": 30,
+        "shared_csv_index_flush": 30,
+        "encode_release": 1,
+        "output_full_decode_verification": 1
+      },
+      "unattributed_seconds": 0.28813159913988784,
+      "detect_track_first_frame_s": 1.5640688000130467,
+      "detect_track_subsequent_median_s": 0.026448399992659688,
+      "detect_track_subsequent_mean_s": 0.027301440890938347,
+      "ultralytics_speed_sum_ms": {
+        "preprocess": 761.6710006259382,
+        "inference": 17102.33770046034,
+        "postprocess": 756.2203996058088
+      },
+      "profile_instrumentation": "timing wrappers and actual AutoBackend forward device checks; no model/count/CSV changes; small timing overhead",
+      "prediction_mode": "disabled",
+      "run": "outputs/device_benchmark_20261017_191234_711f6f90/cpu/north_20261017_191236_689be39c"
+    },
+    "gpu": {
+      "requested_device": "cuda:0",
+      "actual_tensor_input_devices": {
+        "cuda:0": 721
+      },
+      "actual_parameter_devices_after_prediction": {
+        "cuda:0": 721
+      },
+      "actual_result_devices": {
+        "cuda:0": 720
+      },
+      "actual_tensor_dtypes": {
+        "torch.float32": 721
+      },
+      "actual_parameter_dtypes": {
+        "torch.float32": 721
+      },
+      "python": "3.13.9",
+      "python_executable": ".venv-gpu/Scripts/python.exe",
+      "torch": "2.14.1+cu132",
+      "torch_cuda_build": "13.2",
+      "cuda_available": true,
+      "cuda_device_name": "NVIDIA GeForce RTX 4060",
+      "cuda_peak_allocated_mb": 59.7470703125,
+      "cuda_peak_reserved_mb": 68.0,
+      "end_to_end_wall_s": 29.11515349999536,
+      "end_to_end_wall_fps": 24.72939048733213,
+      "summary_elapsed_s": 28.585992299980717,
+      "summary_processing_fps": 25.187161335675786,
+      "stage_seconds": {
+        "input_full_pts_probe": 8.282063100021333,
+        "source_hash": 0.6780576999881305,
+        "detector_init": 0.11578910000389442,
+        "video_writer_init": 0.004801499977475032,
+        "decode_frames": 2.7824125004408415,
+        "detect_and_track": 11.917025699920487,
+        "counting": 0.14795580008649267,
+        "overlay": 1.7598088007071055,
+        "encode_video": 2.6409651996800676,
+        "video_csv_detail_flush": 0.002729200088651851,
+        "shared_csv_index_flush": 0.015768099867273122,
+        "encode_release": 0.0013612000038847327,
+        "output_full_decode_verification": 0.5067119999730494
+      },
+      "stage_calls": {
+        "input_full_pts_probe": 1,
+        "source_hash": 1,
+        "detector_init": 1,
+        "video_writer_init": 1,
+        "decode_frames": 721,
+        "detect_and_track": 720,
+        "counting": 720,
+        "overlay": 720,
+        "encode_video": 720,
+        "video_csv_detail_flush": 30,
+        "shared_csv_index_flush": 30,
+        "encode_release": 1,
+        "output_full_decode_verification": 1
+      },
+      "unattributed_seconds": 0.25970359923667274,
+      "detect_track_first_frame_s": 2.266162699990673,
+      "detect_track_subsequent_median_s": 0.012115699995774776,
+      "detect_track_subsequent_mean_s": 0.013422618915062327,
+      "ultralytics_speed_sum_ms": {
+        "preprocess": 993.872200284386,
+        "inference": 6422.770300094271,
+        "postprocess": 1355.498799792258
+      },
+      "profile_instrumentation": "timing wrappers and actual AutoBackend forward device checks; no model/count/CSV changes; small timing overhead",
+      "prediction_mode": "disabled",
+      "run": "outputs/device_benchmark_20261017_191234_711f6f90/gpu/north_20261017_191318_866024e8"
+    }
+  },
+  "runs": {
+    "cpu": "outputs/device_benchmark_20261017_191234_711f6f90/cpu/north_20261017_191236_689be39c",
+    "gpu": "outputs/device_benchmark_20261017_191234_711f6f90/gpu/north_20261017_191318_866024e8"
+  },
+  "commands_and_process_wall": [
+    {
+      "label": "cpu",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "scripts/benchmark_device.py",
+        "--device",
+        "cpu",
+        "--config",
+        "configs/north.json",
+        "--start",
+        "0",
+        "--end",
+        "30",
+        "--output-base",
+        "outputs/device_benchmark_20261017_191234_711f6f90/cpu"
+      ],
+      "exit_code": 0,
+      "process_wall_s": 41.64598209998803,
+      "log": "outputs/device_benchmark_20261017_191234_711f6f90/cpu_benchmark.txt",
+      "run": "outputs/device_benchmark_20261017_191234_711f6f90/cpu/north_20261017_191236_689be39c"
+    },
+    {
+      "label": "gpu",
+      "command": [
+        ".venv-gpu/Scripts/python.exe",
+        "-B",
+        "-u",
+        "scripts/benchmark_device.py",
+        "--device",
+        "cuda:0",
+        "--config",
+        "configs/north.json",
+        "--start",
+        "0",
+        "--end",
+        "30",
+        "--output-base",
+        "outputs/device_benchmark_20261017_191234_711f6f90/gpu"
+      ],
+      "exit_code": 0,
+      "process_wall_s": 32.39354489999823,
+      "log": "outputs/device_benchmark_20261017_191234_711f6f90/gpu_benchmark.txt",
+      "run": "outputs/device_benchmark_20261017_191234_711f6f90/gpu/north_20261017_191318_866024e8"
+    }
+  ],
+  "summary_speedup": 1.3447396471878938,
+  "end_to_end_speedup": 1.337782938359556,
+  "process_speedup": 1.2856259550645939,
+  "detect_track_speedup": 1.7784475198991245,
+  "csv_different_rows": 0,
+  "csv_differences": [],
+  "interval_state_different_rows": 0,
+  "interval_state_differences": [],
+  "event_counts": {
+    "cpu": {
+      "entry": 2,
+      "exit": 1
+    },
+    "gpu": {
+      "entry": 2,
+      "exit": 1
+    }
+  },
+  "same_event_direction_confirmation_frame": true,
+  "event_signatures": {
+    "cpu": [
+      [
+        "entry",
+        15.333333333333334,
+        368
+      ],
+      [
+        "exit",
+        21.25,
+        510
+      ],
+      [
+        "entry",
+        28.875,
+        693
+      ]
+    ],
+    "gpu": [
+      [
+        "entry",
+        15.333333333333334,
+        368
+      ],
+      [
+        "exit",
+        21.25,
+        510
+      ],
+      [
+        "entry",
+        28.875,
+        693
+      ]
+    ]
+  },
+  "final_states": {
+    "cpu": {
+      "restroom_id": "north",
+      "source_time_s": 29.958333333333332,
+      "frame_index": 719,
+      "entries": 2,
+      "exits": 1,
+      "waiting_observed": 4,
+      "waiting_grace": 0,
+      "waiting_candidate_observed": 2,
+      "waiting_confirmed_observed": 2,
+      "waiting_total": 4,
+      "grace_suppressed": 1,
+      "net_inflow": 1,
+      "inside_estimate": 30,
+      "measurement_status": "measuring;candidate_included;crossing_unconfirmed_recorded;observation_gap_reset_recorded;uncertain_grace_suppressed",
+      "internal_waiting_estimate": 3,
+      "current_waiting_estimate": 7,
+      "total_queue_estimate": 7,
+      "available_stalls_estimate": 0,
+      "expected_wait_s": 31.11111111111111
+    },
+    "gpu": {
+      "restroom_id": "north",
+      "source_time_s": 29.958333333333332,
+      "frame_index": 719,
+      "entries": 2,
+      "exits": 1,
+      "waiting_observed": 4,
+      "waiting_grace": 0,
+      "waiting_candidate_observed": 2,
+      "waiting_confirmed_observed": 2,
+      "waiting_total": 4,
+      "grace_suppressed": 1,
+      "net_inflow": 1,
+      "inside_estimate": 30,
+      "measurement_status": "measuring;candidate_included;crossing_unconfirmed_recorded;observation_gap_reset_recorded;uncertain_grace_suppressed",
+      "internal_waiting_estimate": 3,
+      "current_waiting_estimate": 7,
+      "total_queue_estimate": 7,
+      "available_stalls_estimate": 0,
+      "expected_wait_s": 31.11111111111111
+    }
+  },
+  "anomalies": {
+    "cpu": {
+      "negative_inside_transitions": 0,
+      "observation_gap_resets": 15,
+      "grace_suppression_frames": 73,
+      "unconfirmed_crossings": 1
+    },
+    "gpu": {
+      "negative_inside_transitions": 0,
+      "observation_gap_resets": 15,
+      "grace_suppression_frames": 73,
+      "unconfirmed_crossings": 1
+    }
+  },
+  "output_verification": {
+    "cpu": {
+      "decodable": true,
+      "all_frames_decoded": true,
+      "path": "outputs/device_benchmark_20261017_191234_711f6f90/cpu/north_20261017_191236_689be39c/annotated.mp4",
+      "width": 1280,
+      "height": 720,
+      "fps": 24.0,
+      "frame_count": 720,
+      "duration_s": 30.0,
+      "last_frame_time_s": 29.958333333333332,
+      "first_pts_s": 0.0,
+      "cfr_verified": true,
+      "timestamp_scan": "all_decoded_frames",
+      "timestamp_tolerance_s": 0.00020833333333333332,
+      "min_frame_delta_s": 0.0416666666666643,
+      "max_frame_delta_s": 0.04166666666666785,
+      "median_frame_delta_s": 0.04166666666666696,
+      "representative_frames": {}
+    },
+    "gpu": {
+      "decodable": true,
+      "all_frames_decoded": true,
+      "path": "outputs/device_benchmark_20261017_191234_711f6f90/gpu/north_20261017_191318_866024e8/annotated.mp4",
+      "width": 1280,
+      "height": 720,
+      "fps": 24.0,
+      "frame_count": 720,
+      "duration_s": 30.0,
+      "last_frame_time_s": 29.958333333333332,
+      "first_pts_s": 0.0,
+      "cfr_verified": true,
+      "timestamp_scan": "all_decoded_frames",
+      "timestamp_tolerance_s": 0.00020833333333333332,
+      "min_frame_delta_s": 0.0416666666666643,
+      "max_frame_delta_s": 0.04166666666666785,
+      "median_frame_delta_s": 0.04166666666666696,
+      "representative_frames": {}
+    }
+  },
+  "reanalysis_scope": "north 0..30s only, CPU/GPU comparison; no south/east analysis",
+  "scope_limits": [
+    "not a counting accuracy evaluation",
+    "one final measured run per device; desktop background load not controlled",
+    "timing wrappers add overhead",
+    "full-source PTS scan included even for 30s segment",
+    "no prediction integration, TensorRT, FP16, batching or optimization changes"
+  ],
+  "git_push": false,
+  "events_coordinate_max_abs_difference_px": 0.007171630859375,
+  "crossing_estimate_max_abs_difference_s": 0.000835488078013924,
+  "cpu_gpu_shared_csv_byte_identical": true,
+  "regression": {
+    "environment": ".venv-gpu",
+    "passed": 28,
+    "failed": 0,
+    "elapsed_s": 2.452,
+    "modules": [
+      "test_stream_output",
+      "test_record_intervals",
+      "test_batch",
+      "test_pipeline",
+      "test_recalculate",
+      "test_overlay"
+    ],
+    "pythonpath": "tests",
+    "note": "Local synthetic regression tests can exercise mock; both real video benchmarks used disabled."
+  }
+}
