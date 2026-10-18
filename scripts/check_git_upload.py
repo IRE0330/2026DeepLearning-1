@@ -28,6 +28,9 @@ EXCLUDED_PROBES = [
     "cctv-analysis/src/cctv/data/ground_truth/north/token.json",
 ]
 INCLUDED_PROBES = ["configs/north.json", "configs/south.json", "configs/east.json",
+                   "cctv-analysis/examples/data/north_2026-10-14_0000.csv",
+                   "cctv-analysis/examples/data/south_2026-10-14_0000.csv",
+                   "cctv-analysis/examples/data/east_2026-10-14_0000.csv",
                    "configs/profiles/demo.json", "configs/video_registry.json",
                    "ground_truth/north/events.csv", "ground_truth/example_only/events.csv",
                    "docs/HANDOFF.md", "cctv/__init__.py", "tests/test_record_intervals.py",

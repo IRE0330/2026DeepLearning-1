@@ -1,0 +1,2 @@
+# Preserve the verified BOM/CRLF bytes of the three demonstration CSV artifacts.
+cctv-analysis/examples/data/*.csv -text whitespace=cr-at-eol

@@ -5,6 +5,9 @@ build/
 outputs/
 models/
 data/
+!examples/data/
+!examples/data/*.csv
+!examples/data/README.md
 !src/cctv/data/
 src/cctv/data/*
 !src/cctv/data/configs/

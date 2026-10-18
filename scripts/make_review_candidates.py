@@ -3,6 +3,8 @@ import argparse
 import csv
 import json
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from cctv.media import write_json
 
 
@@ -13,9 +15,9 @@ def main():
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     sources = {
-        'north': Path('outputs/north_latency_ab_20261017_211718_82b9d4ed/B_data/north_20261017_211900_1bda2e30'),
-        'south': Path('outputs/batch_demo_recalc_20261017_212102_c5dd7a25/south'),
-        'east': Path('outputs/batch_demo_recalc_20261017_212102_c5dd7a25/east')}
+        'north': Path('outputs/final/north'),
+        'south': Path('outputs/final/south'),
+        'east': Path('outputs/final/east')}
     candidates, provenance = [], {}
     for room, folder in sources.items():
         summary = json.loads((folder / 'summary.json').read_text(encoding='utf-8'))

@@ -22,7 +22,11 @@ from cctv.overlay import draw_zones
 
 def review(run, track_id=6, start=6, end=10):
     run = resolve(run)
-    c = load(run / 'config_used.json')
+    c = json.loads((run / 'config_used.json').read_text(encoding='utf-8'))
+    # Saved configs retain repository-relative material paths after final relocation.
+    for key in ('video', 'model'):
+        if c.get(key) and not Path(c[key]).is_absolute():
+            c[key] = str(Path(__file__).resolve().parents[1] / c[key])
     summary = load(run / 'summary.json')
     fps = summary['input_video']['fps']
     width, height = c['reference_size']

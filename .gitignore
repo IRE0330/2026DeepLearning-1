@@ -12,9 +12,13 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 data/
+!cctv-analysis/examples/data/
+!cctv-analysis/examples/data/*.csv
+!cctv-analysis/examples/data/README.md
 models/
 outputs/
 inspections/
+reviews/
 .cache/
 *.[mM][pP]4
 *.[mM][oO][vV]

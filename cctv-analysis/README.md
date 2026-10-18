@@ -1,5 +1,7 @@
 # 부산역 CCTV 분석 모듈
 
+**최종 인계:** [FINAL_HANDOFF.md](docs/FINAL_HANDOFF.md)에 팀원 설치 명령, AnalysisService 시작/상태/최신값/순차수신/중지, Streamlit 실행, 별도 영상·가중치·wheel, 최종 output 경로와 한계를 모았습니다. 공개 시연 CSV3개는 [examples/data](examples/data/)이며 로컬 `outputs/final/`의 대표 CSV와 바이트 일치합니다. 최신 자동 출입 north5/9·south2/2·east5/3과 사용자 수동 총합10/11·4/3·7/6은 분리 기록했고 시각별 정확도는 미평가입니다. 아래 설치/API와 기존 검증은 계속 유효하며 과거 출력 경로는 당시 기록입니다.
+
 단일 저장 영상에서 매 프레임 사람 탐지·추적·출입/외부 대기를 판정하고 정기 집계·CSV를 생성하는 인계용 Python 패키지입니다. 기존 분석을 복사해서 프론트에 붙이지 않고 `from cctv import AnalysisService`로 시작·조회·레코드 수신·중지할 수 있습니다. 최소 Streamlit 예시는 실제 파일 분석을 별도 Windows spawn 작업자로 호출합니다. 예측모델·HTTP 서버·실제 CCTV 수신 기능은 없습니다.
 
 담당 폴더는 **cctv-analysis/** 전체입니다. 모델/영상/실행 결과/가상환경은 별도이며 wheel에 넣지 않습니다. 루트 cctv는 기존 저장소 명령을 위한 작은 호환 경로이고, 실제 분석 소스는 여기의 src/cctv 한 곳에 있습니다. 다른 구성원의 프론트/예측 폴더는 만들거나 옮기지 않았습니다.
