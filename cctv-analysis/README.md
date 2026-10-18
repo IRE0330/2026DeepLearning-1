@@ -1,6 +1,8 @@
+**최종 0.3.1 (2026-10-18):** 세 환경 최신 결과는 `outputs/final/{north|south|east}/`에 통합했습니다. 북쪽·남쪽은 3.5초 확정 결과, 동쪽은 소화기 제외 결과입니다. 대기 규칙·기록 정책은 유지하며 재분석·수치 보정하지 않았습니다. [최종 인계](docs/FINAL_HANDOFF.md)를 따릅니다. 아래 중간 실행·검증 설명은 이력이며 과거 경로는 보존 근거로 이동했습니다. 이번 요청에 따라 작업 브랜치 commit·push를 진행합니다.
+
 # 부산역 CCTV 분석 모듈
 
-**최종 인계:** [FINAL_HANDOFF.md](docs/FINAL_HANDOFF.md)에 팀원 설치 명령, AnalysisService 시작/상태/최신값/순차수신/중지, Streamlit 실행, 별도 영상·가중치·wheel, 최종 output 경로와 한계를 모았습니다. 공개 시연 CSV3개는 [examples/data](examples/data/)이며 로컬 `outputs/final/`의 대표 CSV와 바이트 일치합니다. 최신 자동 출입 north5/9·south2/2·east5/3과 사용자 수동 총합10/11·4/3·7/6은 분리 기록했고 시각별 정확도는 미평가입니다. 아래 설치/API와 기존 검증은 계속 유효하며 과거 출력 경로는 당시 기록입니다.
+**최종 인계:** [FINAL_HANDOFF.md](docs/FINAL_HANDOFF.md)에 팀원 설치 명령, AnalysisService 시작/상태/최신값/순차수신/중지, Streamlit 실행, 별도 영상·가중치·wheel, 최종 output 경로와 한계를 모았습니다. 공개 시연 CSV3개는 [examples/data](examples/data/)이며 로컬 최신 `outputs/final/evidence/history/confirmed_waiting_20261018_v030/`의 대표 CSV와 바이트 일치합니다. 최신 자동 출입 north5/9·south2/2·east5/3과 사용자 수동 총합10/11·4/3·7/6은 분리 기록했고 시각별 정확도는 미평가입니다. 아래 설치/API와 기존 검증은 계속 유효하며 과거 출력 경로는 당시 기록입니다.
 
 단일 저장 영상에서 매 프레임 사람 탐지·추적·출입/외부 대기를 판정하고 정기 집계·CSV를 생성하는 인계용 Python 패키지입니다. 기존 분석을 복사해서 프론트에 붙이지 않고 `from cctv import AnalysisService`로 시작·조회·레코드 수신·중지할 수 있습니다. 최소 Streamlit 예시는 실제 파일 분석을 별도 Windows spawn 작업자로 호출합니다. 예측모델·HTTP 서버·실제 CCTV 수신 기능은 없습니다.
 
@@ -15,7 +17,7 @@
 ```powershell
 py -3.13 -m venv .venv-cctv
 & .\.venv-cctv\Scripts\python.exe -m pip install torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cpu
-& .\.venv-cctv\Scripts\python.exe -m pip install '.\dist\busan_cctv_analysis-0.1.0-py3-none-any.whl[analysis,streamlit]'
+& .\.venv-cctv\Scripts\python.exe -m pip install '.\dist\busan_cctv_analysis-0.3.1-py3-none-any.whl[analysis,streamlit]'
 & .\.venv-cctv\Scripts\python.exe -m pip check
 & .\.venv-cctv\Scripts\python.exe -m cctv --help
 $app = & .\.venv-cctv\Scripts\python.exe -m cctv example-path
@@ -30,7 +32,7 @@ wheel 없이 소스에서 설치할 때는 같은 PyTorch 준비 후 `python -m 
 
 운영 초기 인원/촬영시각 null·기본10초 기록은 유지합니다. demo는1초 기록·정시1시간 파일 분할, 초기 north29/south3/east3명, 운영 가능27/19/23칸, 평균105초, 가상 시작2026-10-14T00:00:00+09:00입니다. 초기값은 시작 가정이며 이후 누적 출입을 반영합니다. 예제의 prediction은 disabled입니다. 기존 CLI의 로컬 mock 기능은 남아 있고 실제 예측모델과 구분합니다.
 
-최종 마스킹·모델·FP32·모든 프레임 분석·candidate/confirmed/유효 가림 유예 외부 대기·내부 초과 대기 합산·빈칸/가정식 시간·간결한 결과 영상 수치표·공유 CSV13열을 유지합니다. API는 기본 영상 출력을 끄며 `save_video=True` 또는 기존 CLI로 원래 오버레이 영상을 생성할 수 있습니다. 원본/결과를 덮어쓰지 않습니다.
+0.2.0부터 candidate는 영상에 별도 표시하지만 대기 합계에서 제외합니다. 영상 시각으로 연속 관측된 3.5초의 정지·느린 이동 증거와 구간 속도 조건을 만족해야 confirmed가 됩니다. 외부 대기는 관측 confirmed + 중복 억제 후 유효 confirmed 가림 유예입니다. 최종 마스킹·모델·FP32·출입 판정·내부 초과 대기 합산·빈칸/가정식 시간·영상 수치표 디자인·공유 CSV13열은 유지합니다. API는 기본 영상 출력을 끄며 `save_video=True`로 영상을 생성합니다. 자세한 규칙·검증·최신 결과는 [대기 판정 갱신](docs/WAITING_35S.md)을 따릅니다.
 
 ## 현재 검증 상태와 한계
 

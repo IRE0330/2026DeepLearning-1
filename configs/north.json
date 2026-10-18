@@ -154,7 +154,7 @@
     "side_confirm_s": 0.2,
     "boundary_margin": 0.005,
     "max_observation_gap_s": 0.25,
-    "waiting_confirm_s": 3.0,
+    "waiting_confirm_s": 3.5,
     "occlusion_grace_s": 1.5,
     "zone_exit_s": 0.8,
     "motion_window_s": 1.0,

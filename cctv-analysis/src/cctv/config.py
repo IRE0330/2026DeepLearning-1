@@ -35,7 +35,7 @@ def template(restroom_id, video):
                     "track_low_thresh": 0.1, "new_track_thresh": 0.25,
                     "track_buffer": 30, "match_thresh": 0.8, "fuse_score": True},
         "rules": {"side_confirm_s": 0.2, "boundary_margin": 0.005,
-                  "max_observation_gap_s": 0.25, "waiting_confirm_s": 3.0,
+                  "max_observation_gap_s": 0.25, "waiting_confirm_s": 3.5,
                   "occlusion_grace_s": 1.5, "zone_exit_s": 0.8,
                   "motion_window_s": 1.0, "motion_min_span_s": 0.3,
                   "slow_speed_body_heights_s": 0.35,

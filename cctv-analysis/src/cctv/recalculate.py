@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 import sys
 import time
-from .config import load, clone, resolve, validate
+from .config import load, clone, resolve, validate, preset_path
 from .core import Counter, Observation, SecondSampler
 from .intervals import IntervalSampler, IntervalCSVWriter, DailyCSVWriter
 from .media import unique_dir, write_json, verify_output
@@ -15,7 +15,7 @@ from .panel import geometry
 from .pipeline import EVENT_FIELDS, TIME_FIELDS
 from .profiles import apply_profile, load_profile
 from .rerender import canonical, digest, log_frames, replay, source_runs
-from .usage import usage_row
+from .usage import usage_row, WAITING_POLICY
 from .stream_output import StreamOutput
 from .output_config import output_settings
 
@@ -23,10 +23,21 @@ DEPENDENT = {'inside_estimate', 'internal_waiting_estimate', 'current_waiting_es
              'total_queue_estimate', 'available_stalls_estimate', 'expected_wait_s', 'measurement_status'}
 
 
-def recalculate_run(source, target, daily, profile):
+def recalculate_run(source, target, daily, profile, *, confirmed_only=False, excluded_zones=None):
     begun = time.perf_counter()
     old, old_config = load(source / 'summary.json'), load(source / 'config_used.json')
     config = apply_profile(old_config, profile)
+    if excluded_zones is not None:
+        if excluded_zones[:len(config['excluded_zones'])] != config['excluded_zones']:
+            raise ValueError('Mask replay may append exclusions, never replace existing zones.')
+        config['excluded_zones'] = clone(excluded_zones)
+    if confirmed_only:
+        config['rules']['waiting_confirm_s'] = load(preset_path(config['restroom_id']))['rules']['waiting_confirm_s']
+        config['rules']['occlusion_grace_s'] = 1.5
+        # Archived handoff configs may store a basename relative to the repo.
+        # The renderer verifies the original source SHA-256 before using it.
+        if not Path(config['video']).is_file():
+            config['video'] = str(resolve(Path(config['video']).name))
     config.update(prediction_mode='disabled', csv_split_interval_s=3600)
     config.update(output_settings(config))
     validate(config)
@@ -67,15 +78,18 @@ def recalculate_run(source, target, daily, profile):
                             for r in records if r['kind'] != 'detector_boxes']
                 # This run changes only initial-inside-dependent values, never tracking/events/waiting.
                 independent = lambda values: [r for r in values if r['kind'] != 'negative_inside']
-                if canonical(independent(logs)) != canonical(independent(expected)):
+                if not confirmed_only and canonical(independent(logs)) != canonical(independent(expected)):
                     raise ValueError(f'{config["restroom_id"]} frame {index}: diagnostic/event mismatch.')
                 diagnostics_identical &= canonical(logs) == canonical(expected)
                 for record in [*markers, *logs]:
                     diagnostic_file.write(json.dumps({'restroom_id': config['restroom_id'],
                                           'frame_index': index, **record}, ensure_ascii=False) + '\n')
                 if index in checkpoints:
-                    before = {k: v for k, v in checkpoints[index].items() if k not in DEPENDENT}
-                    after = {k: v for k, v in state.items() if k not in DEPENDENT}
+                    kept = ('entries', 'exits', 'net_inflow', 'inside_estimate', 'source_time_s', 'frame_index')
+                    before = {k: v for k, v in checkpoints[index].items()
+                              if (k in kept if confirmed_only else k not in DEPENDENT)}
+                    after = {k: v for k, v in state.items()
+                             if (k in kept if confirmed_only else k not in DEPENDENT)}
                     if before != after:
                         raise ValueError('Entry/exit/external waiting/source timing changed.')
                 generated_events.extend(events)
@@ -86,7 +100,9 @@ def recalculate_run(source, target, daily, profile):
     finally:
         writer.close()
     independent_anomalies = lambda values: {k: v for k, v in values.items() if k != 'negative_inside_transitions'}
-    if count != old['processed_frames'] or independent_anomalies(counter.anomalies) != independent_anomalies(old['anomalies']):
+    compare_anomalies = lambda values: {k: v for k, v in independent_anomalies(values).items()
+                                        if not confirmed_only or k != 'grace_suppression_frames'}
+    if count != old['processed_frames'] or compare_anomalies(counter.anomalies) != compare_anomalies(old['anomalies']):
         raise ValueError('Log coverage or anomaly policy changed.')
     event_buffer = io.StringIO(newline='')
     event_writer = csv.DictWriter(event_buffer, EVENT_FIELDS, extrasaction='ignore')
@@ -110,6 +126,7 @@ def recalculate_run(source, target, daily, profile):
                 'total_elapsed_s', 'runtime_device', 'measure_csv_latency'):
         summary.pop(key, None)
     summary.update(status='csv_completed_video_pending', initial_inside=config['initial_inside'],
+                   waiting_count_policy=WAITING_POLICY,
                    capture_start_time=config['capture_start_time'], capture_time_kind=config['capture_time_kind'],
                    profile_name=config['profile_name'], periodic_interval_s=1, regular_csv_rows=sampler.rows,
                    final_state=state, final_usage_detail=final, remainder=remainder,
@@ -129,10 +146,11 @@ def recalculate_run(source, target, daily, profile):
               'initial_inside': config['initial_inside'], 'available_stalls': config['available_stalls'],
               'average_stall_use_s': config['average_stall_use_s'], 'events_identical': True,
               'all_frame_diagnostics_identical': diagnostics_identical,
-              'non_initial_dependent_diagnostics_identical': True,
-              'external_waiting_identical_at_all_checkpoints': True,
+              'non_initial_dependent_diagnostics_identical': not confirmed_only,
+              'external_waiting_identical_at_all_checkpoints': not confirmed_only,
+              'waiting_policy': WAITING_POLICY if confirmed_only else 'source_policy',
               'final_state': state, 'remainder': remainder}
-    if config['restroom_id'] == 'north':
+    if config['restroom_id'] == 'north' and not confirmed_only:
         if (source / 'usage_summary.csv').read_bytes() != (target / 'usage_summary.csv').read_bytes():
             raise ValueError('North CSV differs; cannot treat the old north result as reusable.')
         result['north_csv_identical_to_source'] = True

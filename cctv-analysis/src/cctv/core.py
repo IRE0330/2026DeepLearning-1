@@ -179,11 +179,20 @@ class Counter:
                     s.exit_elapsed = 0
                     if s.wait != "confirmed":
                         s.wait = "candidate"
-                        if speed is not None and speed <= self.r["slow_speed_body_heights_s"]:
+                        # Only adjacent, continuously observed candidate intervals
+                        # provide evidence. A rolling path speed additionally prevents
+                        # a single low-speed frame after fast motion confirming a wait.
+                        segment_speed = (math.dist(s.point, o.point) /
+                                         ((s.height + o.height) / 2) / wait_dt
+                                         if wait_dt > 0 and s.point is not None else None)
+                        if (previous_wait == "candidate" and segment_speed is not None
+                                and segment_speed <= self.r["slow_speed_body_heights_s"]):
                             s.slow_elapsed += wait_dt
                         else:
                             s.slow_elapsed = 0
-                        if s.slow_elapsed + 1e-9 >= self.r["waiting_confirm_s"]:
+                        if (s.slow_elapsed + 1e-9 >= self.r["waiting_confirm_s"]
+                                and speed is not None
+                                and speed <= self.r["slow_speed_body_heights_s"]):
                             s.wait = "confirmed"
                 else:
                     s.exit_elapsed += wait_dt
@@ -213,7 +222,7 @@ class Counter:
                 del self.tracks[tid]
         waiting_candidates = sum(self.tracks[tid].wait == "candidate" for tid in observed)
         waiting_confirmed = sum(self.tracks[tid].wait == "confirmed" for tid in observed)
-        waiting_observed = waiting_candidates + waiting_confirmed
+        waiting_observed = waiting_confirmed
         grace, suppressed = 0, []
         for tid, s in self.tracks.items():
             if tid in all_seen or s.wait != "confirmed" or t - s.last_t > self.r["occlusion_grace_s"] + 1e-9:
@@ -238,7 +247,7 @@ class Counter:
         if inside is None:
             status.append("initial_inside_unset")
         if waiting_candidates:
-            status.append("candidate_included")
+            status.append("candidate_excluded")
         if grace:
             status.append("confirmed_occlusion_grace")
         if any(s.pending for s in self.tracks.values()):

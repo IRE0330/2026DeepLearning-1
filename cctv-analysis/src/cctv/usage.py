@@ -5,7 +5,7 @@ import hashlib
 import math
 from .config import resolve
 
-WAITING_POLICY = "candidate_confirmed_observed_plus_confirmed_grace_v2"
+WAITING_POLICY = "confirmed_observed_plus_confirmed_grace_3p5s_v4"
 USAGE_FIELDS = ["촬영시작시각", "촬영종료시각", "화장실ID", "화장실_영상ID",
                 "구간_입장인원", "구간_퇴장인원", "내부잔류인원_추정", "현재대기인원_추정",
                 "측정상태", "추정내부대기인원", "전체대기인원_추정", "현재이용가능칸수_추정",

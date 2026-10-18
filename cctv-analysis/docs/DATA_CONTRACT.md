@@ -1,5 +1,7 @@
 # 공개 인터페이스와 데이터 규격 v1
 
+0.3.0은 영상 시각의 정지·느린 이동 증거 3.5초 후 confirmed를 집계합니다. candidate는 제외하며 가림 유예 1.5초·demo 기록 1초·13열은 유지합니다. 정책 식별자는 `confirmed_observed_plus_confirmed_grace_3p5s_v4`이며 상세 검증은 [WAITING_35S.md](WAITING_35S.md)를 따릅니다.
+
 `from cctv import AnalysisService`는 torch/Streamlit/가중치를 로드하지 않습니다. 기존 동기 분석 `cctv.pipeline.analyze`와 CLI도 유지합니다. 새 Service는 이 분석 함수에 생명주기·저장 레코드 조회를 연결한 로컬 래퍼입니다. HTTP 서버·예측 클라이언트는 없습니다.
 
 ## 시작·조회·중지
@@ -96,6 +98,6 @@ UTF-8 BOM, 파일당 헤더1회, 화장실별·한국시간 정시별 저장입�
 |10|추정내부대기인원|MAX(내부−운영 가능 칸 수,0), 명|
 |11|전체대기인원_추정|현재 대기와 동일한 Q, 명|
 |12|현재이용가능칸수_추정|MAX(운영 가능 칸 수−내부,0), 칸|
-|13|외부대기인원_추정|관측 candidate+confirmed+중복 억제 후 유효 confirmed 가림 유예, 명|
+|13|외부대기인원_추정|관측 confirmed+중복 억제 후 유효 confirmed 가림 유예, 명. candidate 제외|
 
 예상 대기시간은 `(Q+1)×평균 이용시간/운영 가능 칸 수` 초이며 detail.state.expected_wait_s에만 있습니다. 실제 예측값이 아닌 가정식입니다. 초기값 미설정 또는 음수 등 기존 계산 불가 정책에서 추정값은 CSV 빈 칸/API 상세 null로 유지합니다. 음수 내부 원시 값은 보존하고 0으로 덮지 않습니다. 정확한 정수 초 종료와1초 미만 잔여 구간 정책은 기존대로이며 remainder.json/final_state.json을 함께 봅니다.
