@@ -43,7 +43,7 @@ jobs:
             exit 1
           fi
           if output="$(gh release create "$RELEASE_TAG" \
-            --verify-tag --target "$(git rev-parse HEAD)" --latest=false \
+            --verify-tag --latest=false \
             --title 'CCTV analysis 0.3.2 - verified stable handoff' \
             --notes-file cctv-analysis/docs/RELEASE_NOTES_032.md \
             cctv-analysis/release-files/busan_cctv_analysis-0.3.2-py3-none-any.whl \
