@@ -39,10 +39,10 @@ jobs:
         run: |
           set -euo pipefail
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "Release already exists; refusing to overwrite it."
+            echo "::error title=CCTV Release publication::Release already exists; refusing to overwrite it."
             exit 1
           fi
-          gh release create "$RELEASE_TAG" \
+          if output="$(gh release create "$RELEASE_TAG" \
             --verify-tag --target "$(git rev-parse HEAD)" --latest=false \
             --title 'CCTV analysis 0.3.2 - verified stable handoff' \
             --notes-file cctv-analysis/docs/RELEASE_NOTES_032.md \
@@ -50,4 +50,9 @@ jobs:
             cctv-analysis/release-files/busan_cctv_analysis-0.3.2-handoff.zip \
             cctv-analysis/release-files/busan_cctv_analysis-0.3.2-deployment.zip \
             cctv-analysis/release-files/busan_cctv_analysis-0.3.2-example-results.zip \
-            cctv-analysis/release-files/SHA256SUMS-0.3.2.txt
+            cctv-analysis/release-files/SHA256SUMS-0.3.2.txt 2>&1)"; then
+            echo "$output"
+          else
+            printf '::error title=CCTV Release publication::%s\n' "${output//$'\n'/ }"
+            exit 1
+          fi
