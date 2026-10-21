@@ -64,7 +64,7 @@ class Detector:
         self.device = select_device(config["device"])
         self.path = resolve(config["model"])
         if not self.path.is_file():
-            raise FileNotFoundError(f"가중치가 없습니다: {self.path}. 먼저 python -m cctv download-model을 실행하세요.")
+            raise FileNotFoundError(f"가중치가 없습니다: {self.path}. --model, AnalysisService.start(model_path=...), 또는 CCTV_MODEL_PATH로 자신의 가중치 파일을 지정하세요.")
         self.model = YOLO(str(self.path))
         if self.model.names.get(0) != "person":
             raise ValueError("이 모델의 클래스 0은 person이 아닙니다. COCO person 사전학습 탐지 모델을 지정하세요.")

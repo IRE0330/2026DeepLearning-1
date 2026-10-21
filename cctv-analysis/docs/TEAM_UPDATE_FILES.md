@@ -1,6 +1,6 @@
-# 팀원 갱신 파일 — 최종0.3.1
+# 팀원 갱신 파일 — 최종0.3.2
 
-아래 소스·번들 설정·테스트·문서·예시 CSV를 작업 브랜치에서 갱신합니다. wheel/ZIP은 Git 제외이며 dist의 최신0.3.1 두 파일을 별도 전달합니다. 최종 영상·CSV·이벤트·상태·근거는 outputs/final/을 전달합니다.
+이번 수정은 commit·push하지 않았으므로 최신0.3.2 인계 ZIP과 wheel을 별도 전달합니다. 정확한 브랜치 링크·설치 명령·마스킹 연결·자료 목록·최신 CSV·검증 결과는 [FINAL_HANDOFF.md](FINAL_HANDOFF.md)에 통합했습니다. 아래는 이전 작업의 파일 목록이며 새 수정 전체의 원격 반영 목록이 아닙니다. 최종 영상·CSV·이벤트·상태·근거는 outputs/final/을 전달합니다.
 
 - `README.md`
 - `cctv-analysis/README.md`

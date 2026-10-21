@@ -1,14 +1,16 @@
-**최종 0.3.1 (2026-10-18):** 세 환경 최신 결과는 `outputs/final/{north|south|east}/`에 통합했습니다. 북쪽·남쪽은 3.5초 확정 결과, 동쪽은 소화기 제외 결과입니다. 대기 규칙·기록 정책은 유지하며 재분석·수치 보정하지 않았습니다. [최종 인계](docs/FINAL_HANDOFF.md)를 따릅니다. 아래 중간 실행·검증 설명은 이력이며 과거 경로는 보존 근거로 이동했습니다. 이번 요청에 따라 작업 브랜치 commit·push를 진행합니다.
+**최종 0.3.2 (2026-10-21):** 세 환경 최신 결과는 `outputs/final/{north|south|east}/`에 통합했습니다. 북쪽·남쪽은 3.5초 확정 결과, 동쪽은 소화기 제외 결과입니다. 대기 규칙·기록 정책은 유지하며 재분석·수치 보정하지 않았습니다. [최종 인계](docs/FINAL_HANDOFF.md)를 따릅니다. 아래 중간 실행·검증 설명은 이력이며 과거 경로는 보존 근거로 이동했습니다. 이번 인계에서는 추가 삭제·commit·push를 하지 않습니다.
 
 # 부산역 CCTV 분석 모듈
 
-**최종 인계:** [FINAL_HANDOFF.md](docs/FINAL_HANDOFF.md)에 팀원 설치 명령, AnalysisService 시작/상태/최신값/순차수신/중지, Streamlit 실행, 별도 영상·가중치·wheel, 최종 output 경로와 한계를 모았습니다. 공개 시연 CSV3개는 [examples/data](examples/data/)이며 로컬 최신 `outputs/final/evidence/history/confirmed_waiting_20261018_v030/`의 대표 CSV와 바이트 일치합니다. 최신 자동 출입 north5/9·south2/2·east5/3과 사용자 수동 총합10/11·4/3·7/6은 분리 기록했고 시각별 정확도는 미평가입니다. 아래 설치/API와 기존 검증은 계속 유효하며 과거 출력 경로는 당시 기록입니다.
+**최종 인계:** [FINAL_HANDOFF.md](docs/FINAL_HANDOFF.md)에 팀원 설치 명령, AnalysisService 시작/상태/최신값/순차수신/중지, Streamlit 실행, 별도 영상·가중치·wheel, 최종 output 경로와 한계를 모았습니다. 공개 시연 CSV3개는 [examples/data](examples/data/)이며 로컬 최신 `outputs/final/{north|south|east}/shared/`의 CSV와 바이트 일치합니다. 최신 자동 출입 north5/9·south2/2·east5/3과 사용자 수동 총합10/11·4/3·7/6은 분리 기록했고 시각별 정확도는 미평가입니다. 아래 설치/API와 기존 검증은 계속 유효하며 과거 출력 경로는 당시 기록입니다.
 
 단일 저장 영상에서 매 프레임 사람 탐지·추적·출입/외부 대기를 판정하고 정기 집계·CSV를 생성하는 인계용 Python 패키지입니다. 기존 분석을 복사해서 프론트에 붙이지 않고 `from cctv import AnalysisService`로 시작·조회·레코드 수신·중지할 수 있습니다. 최소 Streamlit 예시는 실제 파일 분석을 별도 Windows spawn 작업자로 호출합니다. 예측모델·HTTP 서버·실제 CCTV 수신 기능은 없습니다.
 
 담당 폴더는 **cctv-analysis/** 전체입니다. 모델/영상/실행 결과/가상환경은 별도이며 wheel에 넣지 않습니다. 루트 cctv는 기존 저장소 명령을 위한 작은 호환 경로이고, 실제 분석 소스는 여기의 src/cctv 한 곳에 있습니다. 다른 구성원의 프론트/예측 폴더는 만들거나 옮기지 않았습니다.
 
 ## 설치와 실행
+
+실행용·번들 설정의 `model` 기본값은 `${CCTV_MODEL_PATH}`입니다. 자신의 가중치를 `--model` 또는 `AnalysisService.start(model_path=...)`로 지정하거나 환경변수 `CCTV_MODEL_PATH`를 설정하세요. 개인 PC 절대 경로를 기본값으로 사용하지 않습니다. 과거 `config_used.json`은 수정하지 않습니다.
 
 실제 검증은 Windows·Python3.13.9·CPU torch2.14.1+cpu, 기존 RTX4060의 torch2.14.1+cu132, Streamlit1.66.0입니다. 패키지는 Python3.13으로 범위를 제한합니다. 다른 Python/운영체제/드라이버 조합은 검증하지 않았습니다. base 설치는 import/CLI 도움말용이며 분석과 Streamlit은 선택 extra입니다.
 
@@ -17,7 +19,7 @@
 ```powershell
 py -3.13 -m venv .venv-cctv
 & .\.venv-cctv\Scripts\python.exe -m pip install torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cpu
-& .\.venv-cctv\Scripts\python.exe -m pip install '.\dist\busan_cctv_analysis-0.3.1-py3-none-any.whl[analysis,streamlit]'
+& .\.venv-cctv\Scripts\python.exe -m pip install '.\dist\busan_cctv_analysis-0.3.2-py3-none-any.whl[analysis,streamlit]'
 & .\.venv-cctv\Scripts\python.exe -m pip check
 & .\.venv-cctv\Scripts\python.exe -m cctv --help
 $app = & .\.venv-cctv\Scripts\python.exe -m cctv example-path
@@ -62,4 +64,4 @@ wheel 없이 소스에서 설치할 때는 같은 PyTorch 준비 후 `python -m 
 8. 실제 CCTV·네트워크·장시간 운영 검증
 9. 향후 예측모델 및 전체 Streamlit 화면과의 통합 검증
 
-위 항목은 후속 과제입니다. 분석 패키지 구성 범위에 새 모델 학습·가림 대응 수정·동시 처리 개선·예측 연결·통합 재생·외부 배포는 포함하지 않았습니다. 소스 공유는 기존 작업 브랜치 mvp/busan-cctv-20261014의 새 커밋으로 진행하며 main 병합이나 이력 재작성은 하지 않습니다.
+위 항목은 후속 과제입니다. 분석 패키지 구성 범위에 새 모델 학습·가림 대응 수정·동시 처리 개선·예측 연결·통합 재생·외부 배포는 포함하지 않았습니다. 작업 브랜치는 mvp/busan-cctv-20261014이며 이번 인계 수정은 로컬 파일과 배포물에만 반영했습니다. 추가 삭제·commit·push는 하지 않습니다.

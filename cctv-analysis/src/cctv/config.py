@@ -1,6 +1,7 @@
 import copy
 import json
 import math
+import os
 import uuid
 from pathlib import Path
 from .geometry import validate_points, validate_polygon, line_distance, segments_intersect
@@ -29,7 +30,7 @@ def template(restroom_id, video):
         "boundary": [], "entry_direction": [],
         "outside_zone": [], "inside_zone": [], "waiting_zone": [],
         "transit_zone": [], "excluded_zones": [],
-        "model": "models/yolo11n.pt", "device": "auto", "imgsz": 640,
+        "model": "${CCTV_MODEL_PATH}", "device": "auto", "imgsz": 640,
         "confidence": 0.1, "iou": 0.7,
         "tracker": {"tracker_type": "bytetrack", "track_high_thresh": 0.25,
                     "track_low_thresh": 0.1, "new_track_thresh": 0.25,
@@ -54,6 +55,12 @@ def load(path):
         base = LEGACY_ROOT if LEGACY_ROOT is not None and p.parent == LEGACY_ROOT / 'configs' else p.parent
         base = (base / result.get('path_base', '.')).resolve()
         for key in ('model', 'video', 'output_dir'):
+            if key == 'model' and result[key] == '${CCTV_MODEL_PATH}':
+                supplied = os.environ.get('CCTV_MODEL_PATH', '').strip()
+                # Keep the marker until CLI/API overrides are applied. Never
+                # resolve an unset weight path into site-packages.
+                result[key] = str(Path(supplied).expanduser().resolve()) if supplied else result[key]
+                continue
             value = Path(result[key]).expanduser()
             result[key] = str(value if value.is_absolute() else base / value)
     elif isinstance(result.get('videos'), list):

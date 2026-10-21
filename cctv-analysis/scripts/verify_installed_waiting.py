@@ -23,9 +23,9 @@ def main():
     parser.add_argument('--end', type=float, default=6)
     args = parser.parse_args()
     assert Path(cctv.__file__).is_relative_to(args.installed.resolve()), cctv.__file__
-    assert importlib.metadata.version('busan-cctv-analysis') == '0.3.1'
+    assert importlib.metadata.version('busan-cctv-analysis') == '0.3.2'
     videos = {'north': '북쪽_화장실_cctv.mp4', 'south': '남쪽 화장실_CCTV.mov', 'east': '동쪽_화장실_cctv.mov'}
-    report = {'version': '0.3.1', 'package': cctv.__file__, 'policy': WAITING_POLICY, 'rooms': {}}
+    report = {'version': '0.3.2', 'package': cctv.__file__, 'policy': WAITING_POLICY, 'rooms': {}}
     with AnalysisService() as service:
         for room, filename in videos.items():
             if room not in args.rooms:

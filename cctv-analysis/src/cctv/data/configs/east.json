@@ -249,7 +249,7 @@
       ]
     ]
   ],
-  "model": "models/yolo11n.pt",
+  "model": "${CCTV_MODEL_PATH}",
   "device": "auto",
   "imgsz": 640,
   "confidence": 0.1,

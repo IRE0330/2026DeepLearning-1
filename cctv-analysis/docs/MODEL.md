@@ -1,5 +1,7 @@
 # 모델·가중치·출처
 
+0.3.2 실행 설정의 `model` 기본값은 `${CCTV_MODEL_PATH}`입니다. `--model <자신의 파일>`, `AnalysisService.start(model_path=...)` 또는 환경변수 `CCTV_MODEL_PATH`로 지정하세요. 환경변수의 상대 경로는 실행 폴더 기준이며 직접 CLI/API 지정이 우선합니다. 미설정 상태로 실행하면 파일 누락 오류를 반환하며 자동 다운로드하지 않습니다.
+
 기존 **Ultralytics YOLO11n COCO 사전학습 탐지 모델**의 person 클래스0을 사용합니다. 이번 패키징에서 모델/가중치·추가 학습·입력 해상도·FP32 설정을 바꾸지 않았습니다. 실행 설정은 imgsz640/conf0.1/iou0.7, 환경별 기존 ByteTrack/판정 정책입니다.
 
 사용한 로컬 파일명: yolo11n.pt
