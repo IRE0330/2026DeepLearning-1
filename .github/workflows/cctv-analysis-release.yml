@@ -1,0 +1,46 @@
+name: Publish verified CCTV analysis 0.3.2
+
+on:
+  push:
+    tags:
+      - cctv-analysis-v0.3.2
+
+permissions: {}
+
+concurrency:
+  group: cctv-analysis-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify frozen artifacts and matching source
+        run: python cctv-analysis/scripts/verify_release_assets.py
+      - name: Publish module-only release without replacing existing assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to overwrite it."
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" \
+            --verify-tag --target "$GITHUB_SHA" --latest=false \
+            --title 'CCTV analysis 0.3.2 - verified stable handoff' \
+            --notes-file cctv-analysis/docs/RELEASE_NOTES_032.md \
+            cctv-analysis/release-files/busan_cctv_analysis-0.3.2-py3-none-any.whl \
+            cctv-analysis/release-files/busan_cctv_analysis-0.3.2-handoff.zip \
+            cctv-analysis/release-files/busan_cctv_analysis-0.3.2-deployment.zip \
+            cctv-analysis/release-files/busan_cctv_analysis-0.3.2-example-results.zip \
+            cctv-analysis/release-files/SHA256SUMS-0.3.2.txt

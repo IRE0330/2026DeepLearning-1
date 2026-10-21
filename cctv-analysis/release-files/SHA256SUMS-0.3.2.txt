@@ -1,0 +1,4 @@
+b7945dc46a55c759acb0a160d8cb6be4c4bf27211d933b04d3db9d9bf680981c  busan_cctv_analysis-0.3.2-deployment.zip
+6f7eee9a76f942a555c1e55b09cb2b6486f1a0519cd82dd7c7664476d140cb58  busan_cctv_analysis-0.3.2-example-results.zip
+198af19b58c4b9b4e5b11829a73bc67e8e02b127a727123843f75fcb55451ad2  busan_cctv_analysis-0.3.2-handoff.zip
+d1684fe3ca58b469728f2650e81aae07ad5cadc9141471557080cbaa09778c84  busan_cctv_analysis-0.3.2-py3-none-any.whl
