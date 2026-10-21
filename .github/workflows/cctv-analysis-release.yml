@@ -26,6 +26,8 @@ jobs:
         with:
           persist-credentials: false
           ref: cctv-analysis-v0.3.2
+      - name: Restore original checksum text bytes after Git newline conversion
+        run: python -c 'from pathlib import Path; p=Path("cctv-analysis/release-files/SHA256SUMS-0.3.2.txt"); p.write_bytes(p.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))'
       - name: Verify frozen artifacts and matching source
         run: python cctv-analysis/scripts/verify_release_assets.py
       - name: Publish module-only release without replacing existing assets
