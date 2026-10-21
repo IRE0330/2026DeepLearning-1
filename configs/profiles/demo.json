@@ -1,19 +1,25 @@
 {
   "schema_version": 1,
   "name": "demo",
-  "description": "MVP 시연 전용 가상 기준시각과 사용자 계산 가정. 운영 설정은 수정하지 않습니다.",
+  "description": "MVP 시연 전용 가상 기준시각과 초기 내부 인원. 칸 수와 평균 이용시간은 각 환경 설정에서 읽으며 운영 촬영시각·초기값은 수정하지 않습니다.",
   "defaults": {
     "record_interval_s": 1,
     "capture_start_time": "2026-10-14T00:00:00+09:00",
     "capture_time_kind": "virtual",
-    "average_stall_use_s": 105,
-    "measurement_status_tags": ["demo_assumptions", "synthetic_material", "mean_use_assumed_105"]
+    "measurement_status_tags": ["demo_assumptions", "synthetic_material", "mean_use_user_assumption", "all_stalls_operating_assumed"]
   },
   "environments": {
     "north": {
       "initial_inside": 29,
-      "available_stalls": 27,
-      "measurement_status_tags": ["initial_inside_assumed_29", "available_stalls_assumed_27"]
+      "measurement_status_tags": ["initial_inside_assumed_29"]
+    },
+    "south": {
+      "initial_inside": 3,
+      "measurement_status_tags": ["initial_inside_assumed_3"]
+    },
+    "east": {
+      "initial_inside": 3,
+      "measurement_status_tags": ["initial_inside_assumed_3"]
     }
   }
 }

@@ -29,7 +29,7 @@ def create(folder, rid, example=False):
     if not meta.exists():
         meta.write_text(json.dumps({"restroom_id": rid, "is_example": example,
                                    "events_complete": False, "annotated_start_s": None,
-                                   "waiting_count_policy": "candidate_confirmed_observed_plus_confirmed_grace_v2",
+                                   "waiting_count_policy": "confirmed_observed_plus_confirmed_grace_3p5s_v4",
                                    "annotated_end_s": None, "initial_time_s": None,
                                    "initial_inside": None,
                                    "note": "실제 영상 정답을 작성한 뒤 기준 시각과 전체 출입 라벨링 구간을 입력하세요."}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

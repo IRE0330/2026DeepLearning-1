@@ -21,22 +21,22 @@ class CandidatePolicy(unittest.TestCase):
             counter.update(i / 10, i, confirmed)
         return c, counter, confirmed[:3]
 
-    def test_two_candidates_three_confirmed_equal_five(self):
+    def test_two_candidates_three_confirmed_equal_three(self):
         c, counter, confirmed = self.warm()
         result, _, _ = counter.update(3.6, 36, confirmed + [obs(180, 700, 1), obs(400, 700, 2)])
         self.assertEqual((result['waiting_candidate_observed'], result['waiting_confirmed_observed']), (2, 3))
-        self.assertEqual((result['waiting_observed'], result['waiting_total']), (5, 5))
+        self.assertEqual((result['waiting_observed'], result['waiting_total']), (3, 3))
 
-    def test_confirmed_grace_adds_six_and_candidates_reach_q_and_seconds(self):
+    def test_confirmed_grace_only_reaches_q_and_seconds(self):
         c, counter, confirmed = self.warm(grace_track=True)
         result, _, _ = counter.update(3.6, 36, confirmed + [obs(180, 700, 1), obs(400, 700, 2)])
-        self.assertEqual((result['waiting_observed'], result['waiting_grace'], result['waiting_total']), (5, 1, 6))
-        self.assertEqual((result['internal_waiting_estimate'], result['total_queue_estimate']), (1, 7))
-        self.assertAlmostEqual(result['expected_wait_s'], 8 * 105 / 27)
+        self.assertEqual((result['waiting_observed'], result['waiting_grace'], result['waiting_total']), (3, 1, 4))
+        self.assertEqual((result['internal_waiting_estimate'], result['total_queue_estimate']), (1, 5))
+        self.assertAlmostEqual(result['expected_wait_s'], 6 * 105 / 27)
         row = usage_row(c, result, 0, 3.6)
-        self.assertEqual(row['현재대기인원_추정'], 7)
-        self.assertEqual(row['외부대기인원_추정'], 6)
-        self.assertEqual(row['전체대기인원_추정'], 7)
+        self.assertEqual(row['현재대기인원_추정'], 5)
+        self.assertEqual(row['외부대기인원_추정'], 4)
+        self.assertEqual(row['전체대기인원_추정'], 5)
         self.assertNotIn('예상대기시간_초', row)
 
     def test_candidate_to_confirmed_does_not_double_count(self):
@@ -45,7 +45,7 @@ class CandidatePolicy(unittest.TestCase):
         for i in range(40):
             result, _, _ = counter.update(i / 10, i, [obs(250)])
             seen_states.add(counter.tracks[1].wait)
-            self.assertEqual(result['waiting_total'], 1)
+            self.assertEqual(result['waiting_total'], int(counter.tracks[1].wait == 'confirmed'))
             self.assertEqual(result['waiting_candidate_observed'] + result['waiting_confirmed_observed'], 1)
         self.assertEqual(seen_states, {'candidate', 'confirmed'})
 
@@ -59,7 +59,7 @@ class CandidatePolicy(unittest.TestCase):
         c, counter, confirmed = self.warm(grace_track=True)
         result, _, _ = counter.update(3.6, 36, confirmed + [obs(400, 250, 1)])
         self.assertEqual((result['waiting_candidate_observed'], result['waiting_confirmed_observed']), (1, 3))
-        self.assertEqual((result['waiting_total'], result['waiting_grace'], result['grace_suppressed']), (4, 0, 1))
+        self.assertEqual((result['waiting_total'], result['waiting_grace'], result['grace_suppressed']), (3, 0, 1))
         self.assertIn(6, counter.tracks)
         self.assertIn(1, counter.tracks)
 
@@ -68,11 +68,12 @@ class CandidatePolicy(unittest.TestCase):
         # Overlap intentionally ensures entry takes precedence over waiting.
         c['waiting_zone'] = [[.1, .2], [.9, .2], [.9, .8], [.1, .8]]
         counter = Counter(c, 1000, 1000)
-        xs = [400] * 5 + [470, 490, 510, 530] + [600] * 5
+        xs = [400] * 36 + [470, 490, 510, 530] + [600] * 5
         found = False
         for i, x in enumerate(xs):
             result, events, _ = counter.update(i / 10, i, [obs(x)])
             if events:
+                self.assertEqual(counter.tracks[1].slow_elapsed, 0)
                 self.assertEqual(events[0]['direction'], 'entry')
                 self.assertEqual(result['waiting_total'], 0)
                 self.assertEqual(counter.tracks[1].wait, 'nonwaiting')
@@ -89,7 +90,7 @@ class UsageSummary(unittest.TestCase):
 
     def final(self, inside=30, external=5):
         return {'inside_estimate': inside, 'waiting_total': external,
-                'entries': 4, 'exits': 1, 'measurement_status': 'measuring;candidate_included'}
+                'entries': 4, 'exits': 1, 'measurement_status': 'measuring;candidate_excluded'}
 
     def test_exact_thirteen_headers_bom_and_one_interval_row(self):
         expected = ['촬영시작시각', '촬영종료시각', '화장실ID', '화장실_영상ID', '구간_입장인원',

@@ -168,7 +168,7 @@
       ]
     ]
   ],
-  "model": "models/yolo11n.pt",
+  "model": "${CCTV_MODEL_PATH}",
   "device": "auto",
   "imgsz": 640,
   "confidence": 0.1,
@@ -186,7 +186,7 @@
     "side_confirm_s": 0.2,
     "boundary_margin": 0.005,
     "max_observation_gap_s": 0.25,
-    "waiting_confirm_s": 3.0,
+    "waiting_confirm_s": 3.5,
     "occlusion_grace_s": 1.5,
     "zone_exit_s": 0.8,
     "motion_window_s": 1.0,
@@ -199,7 +199,8 @@
   "output_dir": "outputs",
   "capture_start_time": null,
   "capture_time_kind": null,
-  "available_stalls": null,
+  "total_stalls": 19,
+  "available_stalls": 19,
   "average_stall_use_s": 105.0,
   "video_id": "south_66e33f774b247cd0",
   "video_sha256": "66e33f774b247cd0313453a058f770f332fa3a5c83d339caed549415c9ba250c",

@@ -130,7 +130,7 @@ class PeriodicRecords(unittest.TestCase):
 
 
 class RegistryBatch(unittest.TestCase):
-    def test_demo_overlay_preserves_geometry_and_other_environments(self):
+    def test_demo_initial_assumptions_preserve_geometry_and_operating_values(self):
         original = settings()
         original['initial_inside'] = None
         before = clone(original)
@@ -142,7 +142,7 @@ class RegistryBatch(unittest.TestCase):
             c = settings(room, initial)
             c['available_stalls'] = stalls
             d = apply_profile(c, load_profile('demo'))
-            self.assertEqual((d['initial_inside'], d['available_stalls']), (initial, stalls))
+            self.assertEqual((d['initial_inside'], d['available_stalls']), (3, stalls))
             self.assertEqual(d['capture_start_time'], '2026-10-14T00:00:00+09:00')
             self.assertEqual(apply_profile(c, load_profile('operating'))['initial_inside'], initial)
         with self.assertRaises(ValueError):
@@ -185,7 +185,11 @@ class RegistryBatch(unittest.TestCase):
                 snapshot, _, _ = counter.update(start, 0, [])
                 calls.append((clone(c), snapshot['inside_estimate']))
                 sink = kwargs['interval_sink']
-                sink(usage_row(c, snapshot, start, start + 10), {'interval_end_s': start + 10})
+                row = usage_row(c, snapshot, start, start + 10)
+                detail = {'record_index': 1, 'record_interval_s': 10, 'interval_start_s': start,
+                          'interval_end_s': start + 10, 'source_time_s': start, 'state': snapshot}
+                kwargs['record_output'].write(row, detail, c)
+                sink(row, detail)
                 # Visible BEFORE fake analysis completes.
                 self.assertTrue(list(Path(kwargs['output_base']).parents[1].joinpath('shared').glob('*.csv')))
                 run = Path(kwargs['output_base']) / 'fake_run'
@@ -195,15 +199,16 @@ class RegistryBatch(unittest.TestCase):
                 out = run_batch(registry, 'demo', 20, output_dir=str(root / 'outputs'))
             data = json.loads((out / 'batch_summary.json').read_text(encoding='utf-8'))
             self.assertEqual((data['completed_count'], data['failed_count']), (3, 4))
-            self.assertEqual([initial for _, initial in calls], [29, 5, 29])
-            self.assertEqual([c['available_stalls'] for c, _ in calls], [27, 3, 27])
+            self.assertEqual([initial for _, initial in calls], [29, 3, 29])
+            # Demo inherits each environment's capacity, including unknown values.
+            self.assertEqual([c['available_stalls'] for c, _ in calls], [None, 3, None])
             self.assertNotEqual(calls[0][0]['waiting_zone'], calls[1][0]['waiting_zone'])
             self.assertTrue(all(Path(p).read_bytes() == raw for p, raw in config_bytes.items()))
-            original = (out / 'shared' / 'north_2026-10-14.csv').read_bytes()
+            original = (out / 'shared' / 'north_2026-10-14_0000.csv').read_bytes()
             with patch('cctv.batch.analyze', fake_analyze):
                 second = run_batch(registry, 'demo', 20, output_dir=str(root / 'outputs'))
             self.assertNotEqual(out, second)
-            self.assertEqual((out / 'shared' / 'north_2026-10-14.csv').read_bytes(), original)
+            self.assertEqual((out / 'shared' / 'north_2026-10-14_0000.csv').read_bytes(), original)
 
 
 if __name__ == '__main__':

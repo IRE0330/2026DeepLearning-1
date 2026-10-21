@@ -96,8 +96,8 @@ class Rules(unittest.TestCase):
         self.assertEqual(self.counter.enter, 0)
 
     def test_short_gap_resets_candidate_slow_evidence(self):
-        self.hold(250, 25)
-        self.assertGreater(self.counter.tracks[1].slow_elapsed, 1)
+        self.hold(250, 8)
+        self.assertGreater(self.counter.tracks[1].slow_elapsed, 0)
         self.step(None)
         self.step(250)
         self.assertEqual(self.counter.tracks[1].slow_elapsed, 0)
@@ -109,7 +109,7 @@ class Rules(unittest.TestCase):
         self.assertEqual(self.hold(480, 10)["waiting_observed"], 0)
 
     def test_candidate_does_not_confirm_during_occlusion(self):
-        self.hold(250, 20)
+        self.hold(250, 8)
         self.step(None, delta=1.0)
         self.step(250)
         self.assertEqual(self.counter.tracks[1].wait, "candidate")
@@ -121,7 +121,7 @@ class Rules(unittest.TestCase):
         self.hold(250, 2)
         self.step(None)
         result = self.step(250)
-        self.assertEqual(result["waiting_observed"], 1)
+        self.assertEqual(result["waiting_observed"], 0)
         self.assertEqual(result["waiting_confirmed_observed"], 0)
         self.assertEqual(self.counter.tracks[1].wait, "candidate")
 
@@ -132,7 +132,7 @@ class Rules(unittest.TestCase):
         self.assertEqual(self.step(250)["waiting_observed"], 1)
         self.assertEqual(self.step(None, delta=1.6)["waiting_total"], 0)
         result = self.step(250)
-        self.assertEqual(result["waiting_observed"], 1)
+        self.assertEqual(result["waiting_observed"], 0)
         self.assertEqual(result["waiting_confirmed_observed"], 0)
 
     def test_duplicate_grace_suppressed_without_identity_merge(self):

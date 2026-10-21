@@ -1,4 +1,8 @@
+**최종 인계 0.3.2 (2026-10-21):** 세 환경 최신 결과는 `outputs/final/{north|south|east}/`에 통합했습니다. 북쪽·남쪽은 3.5초 확정 결과, 동쪽은 소화기 제외 결과입니다. 대기 규칙·기록 정책은 유지하며 재분석·수치 보정하지 않았습니다. [최종 인계](cctv-analysis/docs/FINAL_HANDOFF.md)를 따릅니다. 아래 중간 실행·검증 설명은 이력이며 과거 경로는 보존 근거로 이동했습니다. 이번 인계에서는 추가 삭제·commit·push를 하지 않습니다. 최신0.3.2 ZIP과 wheel을 별도 전달하며 모델 경로는 실행자가 지정합니다.
+
 # 딥러닝 기초 1조
+
+> **최종 인계 (2026-10-18):** 팀원은 [최종 설치·Streamlit 연동 안내](cctv-analysis/docs/FINAL_HANDOFF.md)부터 확인하세요. 담당 패키지는 `cctv-analysis/`, 로컬 최종 영상/CSV는 `outputs/final/{north,south,east}/`, Git 공개용 동일 시연 CSV3개는 `cctv-analysis/examples/data/`입니다. 단독 전체 입력 모사의 기록 지연 목표는 충족했지만 시작 준비시간이 있으며 동시3개 처리는 미충족입니다. 자동 입장/퇴장은 북쪽5/9·남쪽2/2·동쪽5/3, 사용자 수동 총합10/11·4/3·7/6이며 시각별 정확도 평가는 미완료입니다. 초기29/3/3명·27/19/23칸·평균105초·가상시각·1초/13열/1시간 정책을 유지합니다. 실제 CCTV/네트워크/장시간 운영과 예측모델은 미검증/미구현입니다. 아래의 기존 outputs 경로와 push 관련 표현은 당시의 작업 이력이며, 현행 경로·별도 전달 자료·정리 내역은 최종 인계 문서를 기준으로 합니다.
 AI 기반 화장실 혼잡도 분석 및 분산 안내 시스템
 
 
@@ -6,15 +10,31 @@ AI 기반 화장실 혼잡도 분석 및 분산 안내 시스템
 
 # 부산역 CCTV 입장·퇴장·대기 카운팅 MVP
 
+**현재 공유 기준 (2026-10-18):** 기존 작업 브랜치 [mvp/busan-cctv-20261014](https://github.com/IRE0330/2026DeepLearning-1/tree/mvp/busan-cctv-20261014)에 오늘까지의 분석 패키지·Streamlit 연동 예시·관련 설정/문서를 새 커밋으로 반영합니다. demo는 영상 시각 기준1초 기록·한국시간 정시1시간 CSV 분할이며, 초기 내부/운영 가능 칸 수는 북쪽29명/27칸·남쪽3명/19칸·동쪽3명/23칸, 평균 칸 이용시간은 모두105초입니다. 초기값은 영상 시작 가정이며 누적 출입으로 변합니다. 운영 기본10초 기록은 보존합니다. 세 환경 각각의 단일 재생속도 입력 모사는 준비 완료 후 기록 지연 시험 목표를 충족했고, 세 환경 동시 처리 개선은 후속 과제입니다. 수동 카운팅 정확도·실제 CCTV·장시간 운영은 미검증이며 실제 예측모델은 미구현·미연동입니다. 기존83개 테스트·실제 짧은 설치/호출 검증을 재사용하고 이번 Git 공유를 위해 영상 재분석을 반복하지 않습니다.
+
+영상·가중치·MICC·가상환경·outputs/inspections·캐시·인증정보와 wheel 빌드 산출물은 Git 제외입니다. 저장소를 받은 담당자는 `cctv-analysis`에서 `python -m pip install build` 후 `python -m build --wheel`로 wheel을 생성하거나, CPU/CUDA PyTorch를 준비한 뒤 `python -m pip install '.[analysis,streamlit]'`로 소스 설치합니다. 자세한 명령은 [인계 문서](cctv-analysis/docs/HANDOFF.md)에 있습니다. 아래는 공유 전까지의 구현·검증 이력이며 과거의 미커밋/push 미실행 표기는 당시 상태입니다.
+
+**Python 모듈 인계 (2026-10-18):** 분석 담당 폴더는 [cctv-analysis/](cctv-analysis/README.md)입니다. 실제 소스는 `cctv-analysis/src/cctv`로 모았고 루트 `cctv`는 기존 `python -m cctv` 명령의 호환 경로입니다. 설치 가능한 wheel·공개 시작/상태/레코드/중지 인터페이스·단일 작업 Streamlit 호출 예제를 추가했습니다. 별도 CPU 환경의 외부 작업 폴더에서 wheel 실제 분석과 기존 GPU의 짧은 호출을 검증했으며, Streamlit은 실제 분석을 연결한 AppTest로 확인했습니다(실제 브라우저 미검증). 설치·사용·제한·향후 작업은 [분석 모듈 인계](cctv-analysis/docs/HANDOFF.md), [검증](cctv-analysis/docs/VALIDATION.md), [데이터 규격](cctv-analysis/docs/DATA_CONTRACT.md)에 있습니다. 기존 자료·마스킹·판정·CSV 정책을 보존하고 동시 처리 개선/예측 연동/외부 배포/push는 수행하지 않았습니다. 아래 실행 결과는 이전 검증 이력입니다.
+
+**최신 입력 지연 시험 (2026-10-17):** `simulate-input`으로 준비/워밍업 후 고정 monotonic 일정의 저장 영상 공급과1초 CSV flush 지연을 측정했습니다. 북쪽 단일 전체는2524프레임/105행·기록 지연 중앙값29ms/p95 36ms/최대43ms, 조기 저장·누락·중복0입니다. 세 환경은 별도 프로세스/공통 입력 시작으로 동시 공급했지만 지연이 증가해 입력24.023초 후 사전 보호 기준으로 자동 중단했습니다. 부분 결과는 북쪽467프레임/19행, 남쪽467/15, 동쪽468/15이며 마지막 지연4.506/8.192/8.175초입니다. 모든 비교 구간은 같은 GPU 비제한 속도 결과와 CSV13열/출입/진단이 일치합니다. 실제 CCTV 입력/장시간 운영/수동 정답 정확도는 미검증입니다. 모델·마스킹·계산·운영 설정과 기존 결과를 보존했으며 전달 disabled·영상 출력 없음입니다. 실제 명령·새 경로·전체 통계·제한·수동 검토 후보는 [PACED_INPUT.md](docs/PACED_INPUT.md)를 확인하세요.
+
+**직전 최대 처리속도·초기값 갱신 이력 (2026-10-17):** 북쪽 전체 GPU A/B CSV 저장 시점을 monotonic으로 측정하고 남쪽·동쪽 demo 초기값을3명으로 갱신했습니다. 북쪽은 각2,524프레임/1초105행이며 A 영상 모드와 B 데이터 모드의 CSV·출입·대기·상세 진단이 바이트 일치합니다. 첫 행 저장은 실행 후19.029/15.101초, 처리 루프는83.235/68.194초, 저장 간격 중앙값은0.764/0.632초였습니다. 남쪽·동쪽은 기존 전체 로그로94/90행을 재계산하고 원본을 재렌더링해 최종 내부3/5명·빈칸16/18칸을 확인했습니다. 초기3명으로 고정하지 않으며 실제 범위는2~4/3~8명입니다. 영상 출력 생략은 `--no-video`, 측정은 `--measure-csv-latency`입니다. 모든 실제 실행의 전달은 disabled, 실제 예측모델은 미연동입니다. 기존460개 보호 파일과 운영/마스킹/패키지를 보존했고 관련32개 테스트를 통과했습니다. [LATENCY_INITIAL3.md](docs/LATENCY_INITIAL3.md)에 실행 범위·A/B 표·새 CSV/영상·명령·한계가 있으며 [검증 JSON](docs/latency_initial3_checks.json)도 있습니다. 저장 파일 최대 처리속도 실험 이력입니다.
+
+**이전 GPU 구성·0~30초 비교 이력 (2026-10-17):** 기존 CPU `.venv`를 보존하고 RTX4060용 `.venv-gpu`를 구성했습니다. Python3.13.9·드라이버610.88·PyTorch2.14.1+cu132에서 실제 CUDA 입력/가중치/출력을 확인했습니다. 북쪽0~30초의 동일 FP32/demo/전달 disabled 비교는 CPU18.73 FPS → GPU25.19 FPS(분석 요약 기준 약1.34배),720프레임·30행이었습니다. CSV는 바이트 일치, 출입2/1·최종 내부30명도 같았습니다. 기존395개 파일과 CPU 패키지 보존·GPU 환경 관련28개 테스트를 확인했습니다. 병목과 정확한 명령·결과 경로는 [GPU_SETUP.md](docs/GPU_SETUP.md), 기계 판독 근거는 [gpu_benchmark_checks.json](docs/gpu_benchmark_checks.json)에 있습니다. 이번에는 GPU 구성/비교까지만 수행했고 예측모델 개발·실제 연동·Git push는 하지 않았습니다.
+
 고정 CCTV 영상에서 사람을 탐지하고 ByteTrack ID의 이동 순서로 출입을 집계합니다. 외부 대기 행동을 보이는 인원을 추정하고, 초기 내부 인원을 입력하면 내부 체류 인원을 계산합니다. 성별이나 외형으로 이용 목적을 판단하지 않습니다.
 
-**현재 상태 (2026-10-14 마지막 작업):** 공유 CSV는 **MVP 시연1초·기본/운영10초**로 설정값을 읽어 기록합니다. 13열과 대기 정책·누적 내부 계산은 유지했습니다. 새 기록 테스트5개와 관련 회귀 테스트7개가 통과했고, 북쪽0~10초 CPU 실행에서1~10초 기록10개를 생성·검증했습니다. 현재 north/south/east의 사용자 마스킹은 저장돼 있으며 이번에는 모두 그대로 보존하고 남쪽·동쪽 영상은 재분석하지 않았습니다. 기존 전체 분석 결과도 유지합니다. 정확도 평가는 미완료이며 예측모델 호출/전송은 구현하지 않았습니다. 실행/간격 설정은10절, 미래 연결 설계는11절, 검증은 `docs/VALIDATION.md`에 있습니다.
+**집계/전달 구현 상태 (2026-10-17):** 매 프레임 분석 → 영상 시각별 레코드 → CSV append/flush → 선택적 비동기 전달 → 한국시간 정시 파일 전환을 구현했습니다. demo 기록1초·운영 기록10초와 파일 분할1시간을 별도 설정하며 전달 기본값은 disabled입니다. 앞선 북쪽0~10초 demo+mock에서240프레임·CSV10행·모의 수신10건·미전달0건을 확인했습니다. 실제 예측모델은 연결하지 않았습니다. 전달 구조와 앞선 검증 경로는 [HOURLY_DELIVERY.md](docs/HOURLY_DELIVERY.md), 계약은 [PREDICTION_INTEGRATION.md](docs/PREDICTION_INTEGRATION.md)에 있습니다.
 
-**GitHub 인계:** 기존 원격 main을 보존한 `mvp/busan-cctv-20261014` 브랜치입니다. 공유 준비에서51개 테스트와 의존성 검사를 통과했습니다. 남쪽·동쪽의 최종 마스킹/전체 분석 기록도 확인했으며1초 실제 검증은 현재 북쪽만입니다. 현재 상태·남은 문제·내일 명령은 [HANDOFF.md](docs/HANDOFF.md)를 확인하세요. 문서의 과거 실행 경로는 로컬 이력이며 해당 영상·출력 자료는 저장소에 포함되지 않습니다.
+기존 전체 결과는 `outputs/batch_demo_recalc_20261017_144846_e9dd5976`에 그대로 보존합니다. demo 초기 내부29/18/18명·운영 가능27/19/23칸·평균105초·가상 시작2026-10-14T00:00:00+09:00와 최종 내부25/18/20명은 이전 전체 검증 결과입니다. 공유1초 CSV105/94/90행, 북쪽 영상 재사용·남쪽/동쪽 재렌더링 이력과 여는 명령은 [DEMO_INITIAL18.md](docs/DEMO_INITIAL18.md)를 확인하세요. 현재 상태는 [HANDOFF.md](docs/HANDOFF.md), 이전 이력은 [FULL_MVP_1S.md](docs/FULL_MVP_1S.md)와 [COMPACT_OVERLAY.md](docs/COMPACT_OVERLAY.md)에 있습니다. 운영 설정·마스킹·판정 정책과 기존 결과를 보존하며 Git push는 하지 않았습니다.
+
+**GitHub 인계:** 작업 브랜치는 `mvp/busan-cctv-20261014`입니다. 2026-10-14 공유 준비의51개 테스트·의존성 검사와 최초 전체1초 실행의12개 테스트, 초기18명 갱신의13개 테스트는 이전 이력입니다. 현재 인계 기준은 위의2026-10-18 공유 안내와 분석 모듈의83개 테스트/설치 검증입니다. 기존 이력을 보존하는 작업 브랜치의 새 커밋을 사용하며 main을 병합하거나 직접 반영하지 않습니다. 원본영상·모델·출력 자료는 별도 전달이 필요합니다.
+
+**결과 영상 표시:** 작은 한글 수치표는 왼쪽 아래를 기본으로 사용하며 동쪽은 대기열을 피한 오른쪽 아래입니다. 제목·수치4줄·짧은 추정/미설정 상태만 표시하고 기존 사람 ID·대기 상태는 유지합니다. 원본 영상과 위 전체 실행의 확정 추적 로그로 재렌더링하며 CSV·카운팅·계산·마스킹을 변경하지 않습니다. 디자인·위치 설정과 새 영상/미리보기 경로는 [COMPACT_OVERLAY.md](docs/COMPACT_OVERLAY.md)를 확인하세요.
 
 ## 1. 환경 설치 — Windows PowerShell
 
-지원·검증 기준은 **Windows 11, Python 3.13 (실측 3.13.9), CPU PyTorch**입니다. 다른 Python 버전·Linux/macOS·CUDA는 이번 환경에서 검증하지 않았습니다. VS Code 터미널에서 PowerShell을 선택하세요. 명령 앞의 `&`도 포함하며 가상환경 활성화/실행 정책 변경 없이 실행할 수 있습니다.
+지원·검증 기준은 **Windows 11, Python3.13.9**, 기존 CPU `.venv`와 별도 RTX4060 CUDA `.venv-gpu`입니다. GPU 검증 범위는 북쪽0~30초 비교이며 다른 Python 버전·Linux/macOS는 이번 환경에서 검증하지 않았습니다. 아래 기본 설치는 기존 CPU 환경이고 별도 GPU 설치/명령은 [GPU_SETUP.md](docs/GPU_SETUP.md)를 사용하세요. PowerShell 명령 앞의 `&`도 포함하며 가상환경 활성화/실행 정책 변경 없이 실행할 수 있습니다.
 
 저장소의 기존 `main`은 보존하며 MVP 코드는 아래 별도 브랜치에 있습니다. 팀원은 프로젝트 폴더가 없는 위치에서 내려받습니다.
 
@@ -33,15 +53,15 @@ python -m venv .venv
 
 개발 PC의 기존 `.venv`는 보존·재사용했습니다. 초기에는 설치된 Blender의 Python3.13.9로 표준 `venv`를 만든 이력이 있으며 Blender 패키지는 변경하지 않았습니다. **팀원 설치에 Blender는 필요하지 않습니다.** 위 설치는 같은 Python의 표준 venv/pip 방식입니다. GitHub 준비에서는 새 가상환경을 만들거나 모델/패키지를 다시 다운로드하지 않고 기존 환경의 테스트와 `pip check`를 실행했습니다. 새 팀원 PC에서의 다운로드/설치 성공까지 확인했다는 뜻은 아닙니다.
 
-`requirements-lock.txt`는 실제 개발 환경의 정확한 패키지 버전이고, `requirements.txt`는 허용 범위입니다. 다른 버전으로 설치하면 테스트와 짧은 실행을 다시 확인하세요. `doctor`는 실제 장치를 알려줍니다. 개발 PC에 RTX4060은 있지만 현재 설치는 CPU 빌드이며 자동 선택도 CPU입니다. GPU가 있다는 이유로 CUDA 동작을 주장하지 않습니다.
+`requirements-lock.txt`는 기존 CPU 개발 환경의 정확한 패키지 버전, `requirements-gpu-lock.txt`는 새 GPU 환경의 버전이며 `requirements.txt`는 허용 범위입니다. 기존 CPU 잠금 파일은 보존했습니다. `.venv`는 torch2.14.1+cpu/자동 CPU, `.venv-gpu`는 torch2.14.1+cu132/자동 CUDA이며 검증·비교에는 `--device cpu`/`--device cuda:0`을 명시합니다. 다른 패키지 버전이나 장치에서는 짧은 실행을 다시 검증하세요.
 
 **Git에 포함되지 않는 자료:** 원본영상, MICC/압축파일, 가중치, `.venv`, `outputs/`, `inspections/`, 설정 미리보기 이미지. 이 자료들은 별도로 준비해야 합니다. `download-model`은 실제 구현·실행 확인된 가중치 준비 명령이며 `models/yolo11n.pt`로 저장합니다. 이미 별도 전달받은 같은 가중치가 있으면 그 경로에 배치해도 됩니다. 분석은 가중치를 자동 다운로드하지 않습니다.
 
-CPU에서도 실행됩니다. CUDA 사용을 원하면 [PyTorch 공식 설치 안내](https://pytorch.org/get-started/locally/)에서 Windows/Pip/CUDA에 맞는 설치 명령의 `pip` 부분을 `& .\.venv\Scripts\python.exe -m pip`로 바꾸어 **이 가상환경에만** 설치하고 `doctor`를 다시 실행하세요. 이번에는 CUDA용 PyTorch를 설치·검증하지 않았습니다. `--device cuda:0`을 지정했는데 지원되지 않으면 CPU로 조용히 바꾸지 않고 오류를 냅니다.
+GPU 사용은 별도 `.venv-gpu`를 선택합니다. 기존 `.venv`에 CUDA 패키지를 덮어쓰지 않습니다. 공식 설치 방법, 실제 CUDA 텐서/NMS 검사, 같은 북쪽 구간의 CPU/GPU 수치와 남은 병목은 [GPU_SETUP.md](docs/GPU_SETUP.md)를 확인하세요. `--device cuda:0`을 지정했는데 지원되지 않으면 CPU로 조용히 바꾸지 않고 오류를 냅니다.
 
 ## 2. 영상 준비와 확인
 
-기존 CPU 전체 처리 실측은 북쪽 87.61초(25.76 FPS), 남쪽 134.71초(20.99 FPS)입니다. 약 94초 개발 영상을 짧게 반복 검증하는 현재 작업에 CPU로 진행할 수 있어 CUDA 전환은 하지 않았습니다. 실시간 처리나 긴 영상 대량 처리가 필요해지면 별도 장치 전환을 검토하세요. 장치 전환 자체는 정확도 개선을 의미하지 않습니다.
+과거 CPU 전체 처리 실측의 북쪽87.61초/남쪽134.71초는 당시 실행 이력입니다. 최신 장치 비교는 동일한 현재 코드·북쪽0~30초로 다시 측정한 CPU18.73 FPS/GPU25.19 FPS입니다. 전체 원본 PTS 검사와 CPU 디코딩/오버레이/영상 인코딩도 시간을 사용합니다. GPU 장치 전환 자체가 정확도 개선이나 세 CCTV 동시 실시간 처리를 뜻하지 않습니다.
 
 개발 PC에서 확인한 영상은 다음과 같습니다. GitHub에 영상은 없으므로 별도로 전달받아 프로젝트 최상위에 배치하면 기존 설정을 사용할 수 있습니다. 다른 위치라면 환경 JSON의 `video`와 영상 목록 JSON의 `video`를 같은 프로젝트 상대 경로로 지정하세요. 경로는 터미널 위치가 아니라 프로젝트 폴더 기준입니다. 다른 원본으로 교체했다면 새 영상ID/해시와 구도를 확인해야 합니다.
 
@@ -163,9 +183,9 @@ CSV는 UTF-8 BOM이며 Excel에서 열 수 있습니다. `inside_estimate`가 �
 
 출입은 확인 구역에서 일정 시간 관측한 뒤 유한 선분을 통과하고 반대쪽 확인 구역에서 다시 관측해야 확정됩니다. 최초부터 내부에 있거나 화면에서 사라지는 것만으로 입장을 추측하지 않습니다. 확인되지 않은 가림 공백은 미확정으로 남깁니다. ID가 실제 퇴장 후 재입장하면 새 이벤트를 기록합니다. `events.csv.video_time_s`는 **판정 확정 시각**이며 평가도 이 시각을 사용합니다. `crossing_time_estimate_s`는 두 관측점 사이에서 선분을 지난 시각의 선형 추정값이며 별도 의미입니다.
 
-대기 상태는 `nonwaiting → candidate → confirmed`로 유지합니다. **현재 관측된 candidate와 confirmed를 모두 외부 대기에 포함**하며 nonwaiting은 제외합니다. candidate는 구역 진입 직후 느린 이동 증거가 부족한 사람도 포함하므로, 짧게 머무르거나 구역을 통과하는 사람이 합계에 들어갈 수 있습니다. **confirmed만 집계하던 이전 정책보다 오탐 가능성이 높습니다.** 상태 확정에는 여전히 관측된 느린 이동 증거가 필요하며 가려진 시간으로 확정하지 않습니다. candidate는 관측이 끊기면 합계에서 빠지고 새 가림 유예를 받지 않습니다. confirmed만 기존 유예 시간·중복 억제 정책으로 가림 유예에 포함합니다. 동일 ID는 후보/확정/유예에 중복 집계하지 않으며 입장 확정 ID는 같은 프레임에서 외부 대기에서 제외합니다. 확정 대기의 짧은 전진과 짧은 구역 이탈 유지 정책은 그대로입니다.
+대기 상태는 `nonwaiting → candidate → confirmed`입니다. 0.2.0부터 candidate는 영상에 표시하되 대기 합계에서 제외합니다. 영상 시각으로 연속 관측된 3.5초의 정지·느린 이동 증거와 구간 평균 속도 조건을 만족해야 confirmed가 됩니다. 가려진 시간은 증거에 포함하지 않으며 confirmed에만 기존 1.5초 가림 유예를 적용합니다. 짧은 전진을 유지하고 지속 이탈 0.8초 또는 입장 확정으로 종료합니다. 3.5초는 현재 MVP 설정값으로 잠깐 멈춘 통행인도 대기로 오인할 수 있습니다. [수정과 전체 검증](cctv-analysis/docs/WAITING_35S.md)을 확인하세요.
 
-관측 외부 대기 = `waiting_candidate_observed + waiting_confirmed_observed` = `waiting_observed`입니다. 전체 외부 대기 = 관측 외부 대기 + 중복 억제 후 `waiting_grace` = `waiting_total`입니다. 영상은 후보·확정 관측 수와 합계를 따로 표시합니다. 표지 그림 오탐이나 박스 하단 흔들림은 이 정책에서도 구역/탐지 검토가 필요합니다.
+관측 외부 대기 = `waiting_confirmed_observed` = `waiting_observed`입니다. 전체 외부 대기 = 관측 confirmed + 중복 억제 후 `waiting_grace` = `waiting_total`입니다. 후보 수 필드는 별도로 유지합니다. 표지 그림 오탐이나 박스 하단 흔들림은 구역/탐지 검토가 필요합니다.
 
 | 설정 항목 (`rules`) | 초기값 | 의미 |
 |---|---|---|
@@ -210,7 +230,7 @@ CSV는 UTF-8 BOM이며 Excel에서 열 수 있습니다. `inside_estimate`가 �
 
 Excel에서 저장할 때 CSV UTF-8 형식을 선택하고 헤더 철자와 소수점을 유지하세요. 대기·내부 인원은 0 이상의 정수입니다. 빈 셀 대신 모르는 정답의 행을 삭제하세요. 정답은 환경별로 따로 작성합니다.
 
-새 대기 정답은 3초 이상 정지한 사람만 세지 않습니다. 대기 구역에 새로 들어와 candidate에 해당하는 사람도 즉시 포함합니다. confirmed의 짧은 전진/이탈 유지와 가림 유예를 적용하되 동일 인물을 중복 세지 않습니다. 가린 사람이 동일한 확정 대기자인지 확인할 수 없으면 그 시각의 정답 행을 비워 두세요. 알고리즘의 오탐 박스나 출력 숫자를 그대로 정답으로 복사하지 않습니다. `metadata.json.waiting_count_policy`는 `candidate_confirmed_observed_plus_confirmed_grace_v2`입니다. 이전 confirmed-only 기준으로 작성한 정답이 있으면 보존하고 새 기준에 맞게 따로 검토해야 하며 정책이 다른 정답의 MAE 계산은 거부합니다.
+새 대기 정답은 3.5초 이상 실제 관측된 정지·느린 이동 후 확정된 외부 대기 기준으로 작성하며 candidate를 포함하지 않습니다. 짧은 전진·이탈 유지와 확정자 가림 유예를 적용하되 동일 인물을 중복 세지 않습니다. 가림 동일인을 확인할 수 없으면 해당 정답 행은 비워 두세요. 알고리즘 출력은 정답으로 복사하지 않습니다. `metadata.json.waiting_count_policy`는 `confirmed_observed_plus_confirmed_grace_3p5s_v4`입니다. 기존 정책으로 작성한 정답은 보존하고 별도 재검토해야 하며 정책이 다른 정답의 MAE 계산은 거부합니다.
 
 ## 7. 평가
 
@@ -280,13 +300,13 @@ Flow·Queue·Groups마다 `RGB/*.png`, `depth/*.png`, `GT_dat/*.dat`가 있습�
 
 ## 10. 등록 영상 일괄 실행과 MVP1초·운영10초 CSV
 
-내일 북쪽1초 기록을 다시 확인하려면 아래 명령을 복사하세요. 0~10초만 분석하며 기록10개를 새 결과 폴더의 `usage_summary.csv`에 저장합니다. PowerShell에서 프로젝트 폴더를 연 상태로 실행합니다. 기본 프로필은 `operating`(10초)이며 `--profile demo`를 지정해야 MVP1초가 적용됩니다.
+북쪽1초 기록의 짧은 점검이 필요하면 아래 명령을 사용합니다. 0~10초만 분석하며 기록10개를 새 결과 폴더의 `usage_summary.csv`에 저장합니다. 전체 길이 결과는 아래 batch 명령을 사용하세요. PowerShell에서 프로젝트 폴더를 연 상태로 실행합니다. 기본 프로필은 `operating`(10초)이며 `--profile demo`를 지정해야 MVP1초가 적용됩니다.
 
 ```powershell
 & .\.venv\Scripts\python.exe -m cctv analyze --config configs/north.json --profile demo --start 0 --end 10
 ```
 
-화장실별·날짜별 CSV가 필요한 내일 전체 일괄 시연/운영 명령은 아래와 같습니다. 등록된 세 영상을 처리하므로 전체 분석할 때 실행하세요. 오늘은 아래 전체 명령을 실행하지 않았습니다.
+화장실별·시간별 CSV를 생성하는 전체 일괄 시연/운영 명령은 아래와 같습니다. 등록된 세 영상을 순서대로 첫 프레임부터 마지막 프레임까지 처리합니다. 세 CCTV 동시 실시간 처리는 구현하지 않았습니다. 전체 실행에는 `--limit-seconds`나 등록 항목의 `end_s`를 지정하지 않습니다. 전달 기본값은 disabled입니다.
 
 ```powershell
 & .\.venv\Scripts\python.exe -m cctv batch --registry configs/video_registry.json --profile demo
@@ -317,27 +337,29 @@ VS Code에서 `configs/video_registry.json`을 열고 `videos` 배열을 편집�
 
 동일 원본 영상의 반복 실행에는 **같은 video_id**를 사용합니다. 영상 교체 시 새 ID를 사용하세요. 같은 ID·같은 경로·동일 내용 해시의 중복 등록은 오류로 남기고 재실행/중복 기록을 막습니다. 기존 3개 항목에는 SHA-256도 저장해 파일 교체를 검사합니다. 새 영상 항목의 `video_sha256`은 선택사항이며, 없으면 실행 시 실제 해시를 계산해 `config_used.json`에 저장합니다. 같은 기존 ID를 재사용하면서 환경 설정의 원본 내용과 달라지면 거부합니다.
 
-일괄 분석의 **초기 내부 인원·촬영시각은 영상별 목록 값**을 사용합니다. `initial_inside`는 해당 영상의 실제 분석 시작 시점에 아는 인원으로 입력하고, 모르면 null입니다. 정확히 0명임을 확인했을 때만 0을 씁니다. `start_s`/`end_s`는 선택사항으로 원본 영상 기준 초이며, `--limit-seconds`는 각 시작 시점부터 최대 분석 길이를 제한합니다. 날짜를 알면 `capture_start_time`을 시간대가 포함된 ISO 시각으로 입력하고 실제 촬영은 `capture_time_kind: "real"`, 가상 시나리오는 `"virtual"`로 지정합니다. 시각을 모르면 두 항목을 null로 둡니다. 파일/실행 시각으로 대신하지 않습니다.
+일괄 분석은 환경 설정 → 영상 목록 → 선택 프로필 순으로 적용합니다. operating에서는 **초기 내부 인원·촬영시각에 영상별 목록 값**을 사용하고, demo는 나중에29/3/3명과 가상 시작시각을 덮어씁니다. 로그 재계산도 과거 설정 뒤에 현재 demo를 적용합니다. `initial_inside`는 해당 영상의 실제 분석 시작 시점에 아는 인원으로 입력하고, 모르면 null입니다. 정확히 0명임을 확인했을 때만 0을 씁니다. `start_s`/`end_s`는 선택사항으로 원본 영상 기준 초이며, `--limit-seconds`는 각 시작 시점부터 최대 분석 길이를 제한합니다. 날짜를 알면 `capture_start_time`을 시간대가 포함된 ISO 시각으로 입력하고 실제 촬영은 `capture_time_kind: "real"`, 가상 시나리오는 `"virtual"`로 지정합니다. 시각을 모르면 두 항목을 null로 둡니다. 파일/실행 시각으로 대신하지 않습니다.
 
-환경별 **운영 가능 칸 수**는 `configs/north.json`, `south.json`, `east.json`의 `available_stalls`, 평균 이용시간은 `average_stall_use_s`입니다. 특정 영상의 당시 값이 다르면 목록 항목에 같은 키를 추가해 그 영상만 지정할 수 있습니다. 단일 `analyze`는 환경 설정의 메타데이터를 사용하므로 목록의 초기값·촬영시각과 독립적입니다. 설정 수정은 저장하고 다음 실행부터 적용합니다. 이미 실행 중인 설정 사본에는 소급하지 않습니다.
+환경별 **총칸 수**는 `configs/north.json`, `south.json`, `east.json`의 `total_stalls`, **운영 가능 칸 수**는 기존 `available_stalls`, 평균 이용시간은 `average_stall_use_s`입니다. 현재 총칸 수/운영 가능 칸 수는 북쪽27/27, 남쪽19/19, 동쪽23/23이며 폐쇄·고장 칸이 없다는 사용자 가정입니다. 향후 폐쇄 칸이 생기면 총칸 수를 보존하고 `available_stalls`만 변경할 수 있습니다. 계산은 총칸 수나 현재 빈 칸 추정치가 아니라 `available_stalls`를 사용합니다. 평균105초는 모든 환경의 사용자 지정 계산 가정이며 실측 검증값이 아닙니다. 특정 영상의 당시 값이 다르면 목록 항목에 기존 `available_stalls`/`average_stall_use_s` 키를 추가해 그 영상만 지정할 수 있습니다. 단일 `analyze`는 환경 설정의 메타데이터를 사용하므로 목록의 초기값·촬영시각과 독립적입니다. 설정 수정은 다음 실행부터 적용하며 실행 중인 설정 사본에는 소급하지 않습니다.
 
 ### 운영과 시연 프로필
 
 `configs/profiles/operating.json.defaults.record_interval_s`는10, `demo.json.defaults.record_interval_s`는1입니다. 간격은 이 JSON에서 관리하며 공통 기록 코드에1/10초를 하드코딩하지 않았습니다. 기록 키가 없는 기존 환경 설정은 operating 프로필의 기본값10초를 사용합니다. 프로필을 생략한 단일 `analyze`도 운영10초입니다. 사용자 프로필 경로를 `--profile`로 지정할 수 있으며 간격은 양의 유한한 초여야 합니다.
 
-operating 프로필은 기록 간격10초만 지정하고 촬영시각/초기값/칸 수를 덮어쓰지 않습니다. demo 프로필은 기록 간격1초와 기존 **가상 촬영 기준시각 2026-10-14 00:00:00+09:00, 평균시간105초**, 북쪽만 **초기29명·운영27칸**을 적용합니다. 남쪽·동쪽 초기값/칸 수는 원래 확인된 값만 쓰며 현재 둘 다 null입니다. 저장된 마스킹·영상 경로·판정 기준은 변경하지 않습니다. 프로필의 허용 변경은 촬영시각·초기값·칸 수·평균시간·기록 간격·상태 표시이며 구역/행동 규칙은 환경 설정에서 읽습니다.
+operating 프로필은 기록 간격10초만 지정하고 촬영시각/초기값/칸 수를 덮어쓰지 않습니다. demo 프로필은 기록 간격1초와 **가상 촬영 기준시각 2026-10-14 00:00:00+09:00**, **북쪽 초기29명·남쪽3명·동쪽3명**을 적용합니다. 칸 수와 평균시간은 각 환경 설정에서 읽습니다. 저장된 마스킹·영상 경로·판정 기준은 변경하지 않습니다. 프로필은 촬영시각·초기값·칸 수·평균시간·기록 간격·상태 표시와 CSV 분할/전달 모드만 바꿀 수 있으며 구역/행동 규칙은 환경 설정에서 읽습니다.
 
-시연 CSV의 상태에는 `demo_assumptions`, `synthetic_material`, `virtual_scenario_time` 및 적용한 가정값 표기가 들어갑니다. 내부29명은 실제 관측값/정답이 아닙니다. 운영 설정에는 여전히 초기 내부 인원·촬영시각 null, 북쪽 운영27칸이 보존돼 있습니다. 프로필 우선순위는 환경 설정 → 영상 목록 → 선택 프로필입니다.
+시연 CSV의 상태에는 `demo_assumptions`, `synthetic_material`, `virtual_scenario_time`, `mean_use_user_assumption`, `all_stalls_operating_assumed`가 들어가며 북쪽은 `initial_inside_assumed_29`, 남쪽·동쪽은 `initial_inside_assumed_3`도 표시합니다. 초기 인원과 시연 일시는 실제 관측값/정답이 아닙니다. 운영 설정의 초기 내부 인원·촬영시각은 세 환경 모두 null을 유지합니다. 실제 적용한 칸 수/평균시간은 공유13열에 추가하지 않고 설정 사본·상세 레코드·실행 요약에 보존합니다. 프로필 우선순위는 환경 설정 → 영상 목록 → 선택 프로필입니다. 초기값을 덮어쓰면 오래된 `initial_inside_assumed_*` 태그도 제거하고 새 표기를 적용합니다.
 
-### 설정 간격과 날짜 파일
+### 기록 간격과 정시 파일 분할
 
-일괄 실행은 `shared/north_YYYY-MM-DD.csv`, `south_YYYY-MM-DD.csv`, `east_YYYY-MM-DD.csv`에 화장실별·촬영종료시각의 **한국 날짜**별로 저장합니다. 같은 화장실·같은 날짜의 여러 영상은 영상ID로 구분하고 촬영종료시각 → 영상ID 순으로 정렬합니다. 자정에 끝나는 구간은 다음 날짜 파일입니다. 촬영시각이 없으면 `north_날짜미설정.csv`처럼 따로 저장하고 `capture_time_unset`을 표시합니다. 실패하거나 완성된 설정 간격이 없으면 정기 데이터 행/날짜 파일을 만들지 않습니다. CSV는 날짜당 파일 하나이며 UTF-8 BOM입니다. 단일 `analyze`는 그 영상의 `usage_summary.csv`를 저장합니다.
+`configs/streaming.json`은 기록 간격과 별도로 `csv_split_interval_s=3600`, `prediction_mode=disabled`를 관리합니다. 단일/일괄 분석 모두 `shared/north_YYYY-MM-DD_HH00.csv`처럼 화장실별·한국시간 정시별로 나눕니다. **구간 시작일시**가 속한 시간대를 사용하므로14:59:59~15:00:00은1400,15:00:00~15:00:01은1500 파일입니다. 자정에 끝나는 구간도 시작한 전날2300 파일에 속합니다. 실행 시작부터60분 기준이 아닙니다. 관측하지 않은 시간대의 빈 CSV는 만들지 않으며 종료 때 현재 파일을 닫습니다. 파일마다 UTF-8 BOM·13열 헤더는 한 번입니다.
+
+촬영시각이 없으면 `shared/time_unset/north_relative.csv` 등 별도 경로에 저장하고 전달 레코드에 상대시각·시각 미설정 상태를 유지합니다. PC 실행/수정 시각으로 촬영일시를 만들지 않습니다. `--csv-split-seconds 86400`은 기존 종료일시 기준 날짜 분리/정렬/파일 교체 방식의 호환 옵션입니다. 과거 하루 단위 출력은 보존합니다. 영상별 `usage_summary.csv`도 같은13열 원장으로 계속 저장합니다.
 
 실제 첫 처리 프레임이 a초이고 간격이 d초이면 기록은 **a+d, a+2d, …**입니다. MVP는1,2,3…초이며 컴퓨터 실행시간이 아닌 영상 시각입니다. 출입은 판정 확정 시각으로 첫 구간 `[a,a+d]`, 이후 `(이전 경계,현재 경계]`에 일회만 집계합니다. 내부 인원에는 분석 시작부터의 누적 출입을 사용합니다. 현재 상태는 기록 경계 이하의 가장 최근 프레임이며 미래 프레임을 쓰지 않습니다. 24FPS의0~10초 실행은 마지막 처리 프레임9.958초의 재생 범위까지 포함해10초 행도 기록합니다. 소스 시각은 상세 파일에 구분하고 `--end`의 미처리 프레임 출입을 추정하지 않습니다.
 
 설정 간격 미만의 마지막 잔여는 정기 CSV에서 제외합니다. MVP는1초 미만, 운영은10초 미만입니다. `remainder.json`/`summary.json`에 원본 범위·길이·잔여 출입·마지막 상태를 남기고 `final_state.json`/`final_usage_detail.json`도 유지합니다. 단일/영상별 `usage_summary.csv`는 같은13열의 완성된 설정 구간 파일입니다. 과거10초/구간당1행14열 결과는 그대로 보존하며 새 결과와 구분하세요.
 
-행은 매 기록마다 추가·flush하며 날짜 파일도 그때마다 정렬된 완성본으로 갱신합니다. 탐지·추적·출입·대기 판정은 기존대로 모든 처리 프레임에서 실행하고 **기록 간격만** 바꿉니다. 전체 종료 전에도 저장된 행을 확인할 수 있습니다. 파일 쓰기 오류는 파일을 잠근 프로그램을 닫고 새 실행을 하세요. 과거 결과를 덮어쓰지 않습니다. 구간 완료와 실행 성공/정확도는 별개이므로 `batch_summary.json`/`summary.json.status`도 확인합니다.
+시간별 CSV는 파일 핸들을 유지해 매 기록 append/flush하고 시간대가 바뀔 때 교체합니다. 기록 중에도 완성된 행을 읽기 전용으로 사용할 수 있으며 마지막 불완전 행은 다음 읽기까지 보류합니다. 탐지·추적·출입·대기 판정은 기존대로 모든 처리 프레임에서 실행합니다. 기록은 영상 시각 기준이며 실제 처리속도가 느리면 현실의 매초 데이터가 도착하지 않을 수 있습니다. 저장 영상은 처리 속도로 실행하고 실시간처럼 보이게 sleep을 넣지 않습니다. 잔여가 있으면 마지막 CSV 행과 최종 프레임 상태가 다를 수 있습니다. 과거 결과를 덮어쓰지 않으며 실행 상태/처리 FPS/전달 요약도 확인합니다.
 
 ### 공유 CSV의 정확한13열
 
@@ -359,18 +381,18 @@ operating 프로필은 기록 간격10초만 지정하고 촬영시각/초기값
 
 내부 대기·빈 칸은 단순 인원 비교에 따른 가정이며 실제 칸 점유를 관측한 값이 아닙니다. 내부 인원을 칸 수로 제한하거나 평균 시간으로 차감하지 않습니다. 초기값이 null이면 내부/내부대기/현재대기/Q/빈칸/예상시간은 빈 칸이고 외부 대기는 유지합니다. 음수 내부 원시 값과 상태는 남기되 관련 계산은 비웁니다. 운영 칸 수가 null이면 의존 계산을 비우고, 0이면 빈 칸0/내부대기 비교는 가능하지만 예상시간은 계산 불가입니다. 음수 칸 수·잘못된 초기값·시각 역전은 오류입니다.
 
-예상 대기시간 `(Q+1) × average_stall_use_s ÷ available_stalls`는 **공유13열에 넣지 않고** `timeseries.csv.expected_wait_s`, `interval_details.jsonl`의 `state.expected_wait_s`, `final_state.json`에 저장하며 결과 영상에도 표시합니다. 분모는 운영 총칸 수이고 현재 빈 칸 추정치가 아닙니다. N=0/null이면 나누지 않고, Q=0일 때도 사용자 공식대로105/27초 같은 양수입니다. 실제 대기시간을 검증한 예측값은 아닙니다.
+예상 대기시간 `(Q+1) × average_stall_use_s ÷ available_stalls`는 **공유13열에 넣지 않고** `timeseries.csv.expected_wait_s`, `interval_details.jsonl`의 `state.expected_wait_s`, `final_state.json`에 저장하며 결과 영상에도 표시합니다. 분모는 운영 가능 칸 수이고 현재 빈 칸 추정치가 아닙니다. N=0/null이면 나누지 않고, Q=0일 때도 사용자 공식대로105/27초 같은 양수입니다. 실제 대기시간을 검증한 예측값은 아닙니다.
 
-수동 `ground_truth/*/waiting.csv`의 정답은 **외부 대기**입니다. candidate 포함 기준은6절을 따르며, 내부 추정 대기를 더한 새 공유 `현재대기인원_추정`을 외부 대기 정답으로 복사하지 마세요. 평가는 기존 상세 `timeseries.waiting_total`(외부)과 비교합니다. 초기값29 등 시연 가정과 참조 CSV는 실제 정답이 아닙니다.
+수동 `ground_truth/*/waiting.csv`의 정답은 **외부 대기**입니다. confirmed-only 기준은6절을 따르며, 내부 추정 대기를 더한 새 공유 `현재대기인원_추정`을 외부 대기 정답으로 복사하지 마세요. 평가는 기존 상세 `timeseries.waiting_total`(외부)과 비교합니다. 초기값29 등 시연 가정과 참조 CSV는 실제 정답이 아닙니다.
 
-현재 남쪽·동쪽도 사용자 구역이 저장돼 있습니다. 이번1초 변경에서는 기존 좌표를 그대로 보존하고 이 두 영상을 실행하지 않았습니다. 초기값/칸 수는 아직 null이며 아는 경우만 입력하세요. 구도가 바뀌어 재설정할 때는 다음 명령과3절 방법을 사용합니다. 사용자 좌표를 임의로 대체하지 않습니다.
+세 환경의 사용자 구역은 저장돼 있으며 전체1초 결과에도 기존 좌표를 그대로 사용합니다. 현재 demo 초기 내부 인원은29/3/3, 운영 가능 칸 수는27/19/23입니다. 운영 설정의 초기 인원null은 보존합니다. 구도가 바뀌어 재설정할 때만 다음 명령과3절 방법을 사용합니다. 사용자 좌표를 임의로 대체하지 않습니다.
 
 ```powershell
 & .\.venv\Scripts\python.exe -m cctv configure --config configs/south.json --time 47
 & .\.venv\Scripts\python.exe -m cctv configure --config configs/east.json --time 0 --max-width 1100 --max-height 620
 ```
 
-이번 **1초 기록 CSV**는 `outputs/batch_demo_20261014_232207_857644d5/shared/north_2026-10-14.csv`입니다. 0~1초부터9~10초까지 정확히10행이며 같은 영상별 `usage_summary.csv`에도10행을 저장했습니다. 북쪽240프레임을 CPU로 약20.10초에 처리했고 출력1280×720/24FPS/240프레임 전체 재디코딩을 확인했습니다. 마지막10초 행은9.958초 프레임을 사용합니다. 프로그램의 이 짧은 구간 판정은 입장/퇴장0/0이며 실제 정확도를 평가한 수치는 아닙니다.
+**이전 2026-10-14 북쪽 짧은1초 검증 이력:** `outputs/batch_demo_20261014_232207_857644d5/shared/north_2026-10-14.csv`입니다. 0~1초부터9~10초까지 정확히10행이며 같은 영상별 `usage_summary.csv`에도10행을 저장했습니다. 북쪽240프레임을 CPU로 약20.10초에 처리했고 출력1280×720/24FPS/240프레임 전체 재디코딩을 확인했습니다. 마지막10초 행은9.958초 프레임을 사용합니다. 프로그램의 이 짧은 구간 판정은 입장/퇴장0/0이며 실제 정확도를 평가한 수치는 아닙니다.
 
 화장실별 날짜 파일을 포함한 **이전 로컬 북쪽 전용 검증 명령 이력**은 아래와 같습니다. 이 inspection 목록은 GitHub에 포함되지 않으므로 새로 내려받은 팀원은 위의 단일 `analyze --profile demo --start 0 --end 10`이나 정식 영상 목록 batch 명령을 사용하세요. 개발 PC의 사본은 기존 등록에서 북쪽 항목만 복사했으며 원본 등록/환경 설정은 그대로입니다.
 
@@ -378,10 +400,30 @@ operating 프로필은 기록 간격10초만 지정하고 촬영시각/초기값
 & .\.venv\Scripts\python.exe -m cctv batch --registry inspections/mvp_1s_north_check_20261014_232206_9ce06691/north_registry.json --profile demo --limit-seconds 10 --device cpu
 ```
 
-기존10초 기록의20초 CSV `outputs/batch_demo_20261014_184050_53150edc/shared/north_2026-10-14.csv`(2행)와 전체 CSV `outputs/batch_demo_20261014_184158_d218fec0/shared/north_2026-10-14.csv`(10행)는 보존했습니다. 기존 전체 판정 입장5/퇴장9, 마지막잔여퇴장2와 후반 구도 검토 한계도 이전 검증 이력이며 이번에는 전체 영상을 다시 실행하지 않았습니다. 새 기록 상세 검증은 `docs/mvp_interval_checks.json`과 `docs/VALIDATION.md`에 있습니다. 빈 정답에는 정확도 수치를 생성하지 않습니다.
+기존10초 기록의20초 CSV `outputs/batch_demo_20261014_184050_53150edc/shared/north_2026-10-14.csv`(2행)와 전체 CSV `outputs/batch_demo_20261014_184158_d218fec0/shared/north_2026-10-14.csv`(10행)는 보존했습니다. 기존 전체 판정 입장5/퇴장9, 마지막10초 미만 잔여의 퇴장2와 후반 구도 검토 한계는 당시10초 실행의 이력입니다. 이전 짧은1초 검증은 `docs/mvp_interval_checks.json`과 `docs/VALIDATION.md`에 있으며 최신 전체 실행은 인수인계 문서에서 확인하세요. 빈 정답에는 정확도 수치를 생성하지 않습니다.
 
-## 11. 향후 예측모델 연결 준비
+## 11. 비동기 전달 연결부와 실제 예측모델 연결 위치
 
-집계 레코드 생성(`IntervalSampler`, `usage_row`)과 CSV 저장(`IntervalCSVWriter`, `DailyCSVWriter`)을 분리했습니다. 현재는 영상 시각 기준1초마다 생성·저장할 뿐 예측모델을 호출하거나 데이터를 전송하지 않습니다. 기록 번호·간격·원본 구간/소스 시각·누적 상태는 별도 상세 JSONL에 남고 공유13열은 유지됩니다.
+`StreamOutput`은 공통 생성 레코드를 공유 CSV에 추가·flush한 다음 직렬화해 전달합니다. 기본 `disabled`는 보내지 않습니다. `mock`은 제한된 메모리 큐·SQLite outbox·별도 전달 작업자를 사용해 로컬 모의 수신을 확인합니다. 같은 record_id의 제한 재시도·미전달 보존·재시작 복구와 큐 적체/지연 요약을 구현했습니다. 수신 확인은 예측 성공과 구분하며 실제 예측값은 생성하지 않습니다.
 
-향후 연결 위치, 전달할 `row/detail` 구조, 완전히 저장된 CSV 행만 읽는 방법, 같은 행의 영속 고유키/처리 이력과 중복 억제 설계는 [PREDICTION_INTEGRATION.md](docs/PREDICTION_INTEGRATION.md)에 있습니다. 날짜 CSV는 정렬하며 교체될 수 있어 파일 줄 번호만으로 중복을 판단하면 안 됩니다. 촬영시각이 없는 경우는 상세 기록 번호도 함께 사용해야 합니다. 미래 소비·전송·예측 기능은 아직 구현하지 않았습니다.
+전달용 envelope는 schema_version/run_id/record_id/영상·화장실ID/절대·상대 구간시각/자료 유형·시연 여부와 같은13열 본문·상세를 담습니다. CSV에 메타데이터 열을 추가하지 않습니다. `record_index.jsonl`은 ID와 CSV 행 대응, `delivery_summary.json`은 생성/저장/시도/확인/실패/대기와 파일 목록, `delivery/outbox.sqlite3`는 미전달 원장입니다. 미래 어댑터는 `cctv/delivery.py`의 `Receiver.send(envelope)`에 연결합니다. 확인 응답 유실로 중복 전송될 수 있으므로 수신 측 record_id 중복 방지가 필요합니다. 실제 모델/클라이언트·결과 검증은 남은 작업입니다. 계약·한계·복구 명령은 [PREDICTION_INTEGRATION.md](docs/PREDICTION_INTEGRATION.md)에 있습니다.
+
+```powershell
+& .\.venv\Scripts\python.exe -m cctv analyze --config configs/north.json --profile demo --start 0 --end 10 --csv-split-seconds 3600 --prediction disabled
+& .\.venv\Scripts\python.exe -m cctv analyze --config configs/north.json --profile demo --start 0 --end 10 --device cpu --csv-split-seconds 3600 --prediction mock
+```
+
+이번 북쪽240프레임의10행은 기존 전체 결과 첫10행과 계산값을 대조했습니다. 정각/자정·화장실별 분리·BOM/헤더·실패 후 CSV 보존·재시도/강제 중단 복구·느린 수신/큐 적체·미설정/이상 상태·13열을 포함한 관련28개 테스트를 통과했습니다. 실제 검증 출력은 [HOURLY_DELIVERY.md](docs/HOURLY_DELIVERY.md)를 확인하세요.
+
+## 12. 전체 영상 CSV 저장 시점과 데이터 중심 모드
+
+현재 demo 초기값은 north29/south3/east3명입니다. 다음은 북쪽 전체 영상을 같은 GPU 설정으로 처리하는 명령이며 매 실행은 새 결과 폴더를 만듭니다. 첫 명령은 기존 결과 영상/오버레이를 저장하고 두 번째는 해당 출력만 생략합니다. 프레임 분석·CSV·전체 진단 수준은 같습니다.
+
+```powershell
+& .\.venv-gpu\Scripts\python.exe -m cctv analyze --config configs/north.json --profile demo --device cuda:0 --prediction disabled --csv-split-seconds 3600 --measure-csv-latency
+& .\.venv-gpu\Scripts\python.exe -m cctv analyze --config configs/north.json --profile demo --device cuda:0 --prediction disabled --csv-split-seconds 3600 --measure-csv-latency --no-video
+```
+
+측정 결과는 `csv_latency.csv`, `timing_events.jsonl`, `timing_summary.json`에 저장하며 공유13열은 유지합니다. 모델 객체 준비와 첫 CUDA 백엔드/warmup을 구분하고 첫 처리시간에 warmup을 포함합니다. 음수 차이는 저장 영상을 재생속도보다 앞서 처리한 뜻이며 관측 이전 데이터를 얻었다는 의미가 아닙니다.
+
+A/B의 이번105행은 모든 값이 일치합니다. 이전 CPU 전체 결과 대비31/33/34/35행의 측정상태만 다르고 수치 열은 같습니다. 세부 후보/확정·가림 유예 경로는 달라 기존 결과를 보존했습니다. 실제 영상·지연 측정·재계산·PowerShell로 여는 명령은 [LATENCY_INITIAL3.md](docs/LATENCY_INITIAL3.md)를 확인하세요.

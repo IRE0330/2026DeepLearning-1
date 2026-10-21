@@ -1,0 +1,63 @@
+{
+  "version": "0.3.2",
+  "current_verification": "handoff_verification_032.json",
+  "note": "Nested report is preserved historical evidence, including paths and package versions used then; not current install instructions.",
+  "historical_report": {
+    "version": "0.3.1",
+    "method": "copy_only_no_reanalysis_or_numeric_correction",
+    "waiting_confirm_s": 3.5,
+    "occlusion_grace_s": 1.5,
+    "demo_record_interval_s": 1,
+    "csv_split_interval_s": 3600,
+    "candidate_included": false,
+    "prediction": "disabled",
+    "east_extinguisher_exclusion_appended": true,
+    "source_bundle_installed_files_equal": 58,
+    "package_tests": {
+      "run": 96,
+      "passed": 95,
+      "skipped_streamlit_optional": 1
+    },
+    "root_tests": {
+      "run": 88,
+      "passed": 88
+    },
+    "wheel_sha256": "f32a76bdaa8f944a23c7edb24ecfb7c6b6c5564929a9cd7ba22755c7983e11b1",
+    "examples_input_to_analysis": false,
+    "rooms": {
+      "north": {
+        "frames": 2524,
+        "csv_rows": 105,
+        "video_sha256": "d0cc069a8cbf5d1177540a001658fdcd081ca566bd56222af0f32a54ef15c0e7",
+        "csv_sha256": "819b5f9da3a719859b631f0630ef486160b3fbc3753b6093e775b9fafb8cd34e",
+        "events_sha256": "b3a1c2e414069f5ea29476551931545571cfa54a484b27ac4cce2cacd35a5947",
+        "video_all_frames_decoded": true,
+        "entries": 5,
+        "exits": 9,
+        "final_inside": 25
+      },
+      "south": {
+        "frames": 2827,
+        "csv_rows": 94,
+        "video_sha256": "8f4aa38b0a5e5462d18248a069bce9cdf607f13ba7d31f41475939f6e2bae2cb",
+        "csv_sha256": "18cd1b8ce1076b31b034af029868524fe6808ddd2cbc6f611b57b9d97f799e37",
+        "events_sha256": "a6732dd7f2028f0cf9c4c78819626f095fc2ecb51bba4725b0c93f15708e5261",
+        "video_all_frames_decoded": true,
+        "entries": 2,
+        "exits": 2,
+        "final_inside": 3
+      },
+      "east": {
+        "frames": 2700,
+        "csv_rows": 90,
+        "video_sha256": "2091fe6e12558f84fd56e5df86b8976ba24d3dc3cff73ee66ab6d20ebaddbe37",
+        "csv_sha256": "a8c17d9d85b95c07564cb6fd2b2fecf34f99ebb2f9097f867ea3824896753b46",
+        "events_sha256": "2d5ae113f654b82c330c8310764a798777129097833cbe76b5f1a5a3d0370c77",
+        "video_all_frames_decoded": true,
+        "entries": 5,
+        "exits": 3,
+        "final_inside": 5
+      }
+    }
+  }
+}

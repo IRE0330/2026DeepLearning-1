@@ -20,11 +20,24 @@ EXCLUDED_PROBES = [
     "outputs/nested/report.csv", "inspections/nested/report.json", "nested/.env.production",
     "nested/private.pem", "nested/.ssh/id_ed25519", "nested/credentials.json",
     "nested/micc.zip", "configs/north.preview.jpg",
+    "nested/.venv-cctv/pyvenv.cfg", "dist/package.whl",
+    "cctv-analysis/dist/package.whl", "cctv-analysis/build/lib/cctv/core.py",
+    "cctv-analysis/src/cctv/data/outputs/report.json",
+    "cctv-analysis/src/cctv/data/configs/.env",
+    "cctv-analysis/src/cctv/data/configs/credentials.json",
+    "cctv-analysis/src/cctv/data/ground_truth/north/token.json",
 ]
 INCLUDED_PROBES = ["configs/north.json", "configs/south.json", "configs/east.json",
+                   "cctv-analysis/examples/data/north_2026-10-14_0000.csv",
+                   "cctv-analysis/examples/data/south_2026-10-14_0000.csv",
+                   "cctv-analysis/examples/data/east_2026-10-14_0000.csv",
                    "configs/profiles/demo.json", "configs/video_registry.json",
                    "ground_truth/north/events.csv", "ground_truth/example_only/events.csv",
-                   "docs/HANDOFF.md", "cctv/core.py", "tests/test_record_intervals.py"]
+                   "docs/HANDOFF.md", "cctv/__init__.py", "tests/test_record_intervals.py",
+                   "cctv-analysis/pyproject.toml", "cctv-analysis/src/cctv/core.py",
+                   "cctv-analysis/src/cctv/data/configs/north.json",
+                   "cctv-analysis/src/cctv/data/configs/profiles/demo.json",
+                   "cctv-analysis/src/cctv/data/ground_truth/north/events.csv"]
 
 
 def git(*args, input_data=None):

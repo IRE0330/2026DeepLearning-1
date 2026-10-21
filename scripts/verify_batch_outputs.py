@@ -80,6 +80,11 @@ def verify_batch(path):
 
 
 if __name__ == '__main__':
+    if not sys.argv[1:] or sys.argv[1:] == ['outputs/final']:
+        # Current canonical layout has one shared CSV and no batch duplicate.
+        from finalize_handoff import verify
+        verify()
+        raise SystemExit(0)
     results = [verify_batch(p) for p in sys.argv[1:]]
     original = json.loads((ROOT / 'docs/batch_preservation_before.json').read_text(encoding='utf-8'))
     preserved = {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() == digest for p, digest in original.items()}
