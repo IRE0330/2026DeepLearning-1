@@ -1,0 +1,13 @@
+{
+  "restroom_id": "east",
+  "video": "동쪽_화장실_cctv.mov",
+  "event_time_definition": "반대 확인 구역에서 side_confirm_s 연속 관측을 충족한 첫 영상 프레임 시각; 경계 통과 추정 시각과 구분",
+  "is_example": false,
+  "events_complete": false,
+  "annotated_start_s": null,
+  "annotated_end_s": null,
+  "initial_time_s": null,
+  "initial_inside": null,
+  "note": "실제 영상 정답을 작성한 뒤 기준 시각과 전체 출입 라벨링 구간을 입력하세요.",
+  "waiting_count_policy": "confirmed_observed_plus_confirmed_grace_3p5s_v4"
+}

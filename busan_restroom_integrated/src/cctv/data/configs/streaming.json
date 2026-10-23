@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "csv_split_interval_s": 3600,
+  "prediction_mode": "disabled",
+  "delivery": {
+    "queue_capacity": 32,
+    "max_attempts": 3,
+    "retry_delay_s": 0.05,
+    "shutdown_timeout_s": 2.0,
+    "mock_delay_s": 0.0
+  }
+}

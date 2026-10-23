@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "videos": [
+    {
+      "restroom_id": "north",
+      "video": "북쪽_화장실_cctv.mp4",
+      "video_id": "north_b4126dab3c98ce77",
+      "video_sha256": "b4126dab3c98ce7713abbb826580048e7144601f8dbd0ac15c4e7b53ed746a04",
+      "capture_start_time": null,
+      "capture_time_kind": null,
+      "initial_inside": null,
+      "config": "configs/north.json"
+    },
+    {
+      "restroom_id": "south",
+      "video": "남쪽 화장실_CCTV.mov",
+      "video_id": "south_66e33f774b247cd0",
+      "video_sha256": "66e33f774b247cd0313453a058f770f332fa3a5c83d339caed549415c9ba250c",
+      "capture_start_time": null,
+      "capture_time_kind": null,
+      "initial_inside": null,
+      "config": "configs/south.json"
+    },
+    {
+      "restroom_id": "east",
+      "video": "동쪽_화장실_cctv.mov",
+      "video_id": "east_9b25794e5b6aff09",
+      "video_sha256": "9b25794e5b6aff09c84d60b85d715221bf19d4e0651155886f9a6d364ff35568",
+      "capture_start_time": null,
+      "capture_time_kind": null,
+      "initial_inside": null,
+      "config": "configs/east.json"
+    }
+  ]
+}

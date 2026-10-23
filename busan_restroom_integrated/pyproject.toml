@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=78", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "busan-cctv-analysis"
+version = "0.3.2"
+description = "Single saved-video restroom counting module and minimal Streamlit adapter"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = []
+
+[project.optional-dependencies]
+analysis = ["ultralytics==8.4.177", "torch==2.14.1", "torchvision==0.29.1", "opencv-python==5.0.0.93", "av==19.0.1", "lap==0.5.13", "pillow==12.3.0"]
+streamlit = ["streamlit==1.66.0"]
+gpu-tools = ["nvidia-ml-py==13.615.71"]
+
+[project.scripts]
+cctv-analysis = "cctv.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cctv = ["data/configs/*.json", "data/configs/profiles/*.json", "data/ground_truth/*/*.csv", "data/ground_truth/*/*.json"]

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "position": "bottom_left",
+  "width_ratio": 0.35,
+  "height_ratio": 0.22,
+  "margin_ratio": 0.01,
+  "opacity": 0.78,
+  "environments": {
+    "east": {"position": "bottom_right"}
+  }
+}
