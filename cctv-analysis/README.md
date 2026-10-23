@@ -1,3 +1,5 @@
+**팀원 다운로드·설치·연동:** [여기서 시작하세요](deployment/START_HERE.md)
+
 # 팀원 설치·연동 시작 — 안정 인계 0.3.2
 
 오늘의 구역/정확도 실험·수동 정답 변경을 포함하지 않는 **검증된 0.3.2 분석 모듈**입니다. 이 문서 순서대로 다운로드 → 새 가상환경 → 의존성 포함 설치 → 가중치 → 원본/환경 선택 → 짧은 실제 분석 → 집계 수신을 진행합니다. 기존 output은 필요하지 않습니다. 현재 공개 Release 여부와 검증 해시는 [배포 파일 목록](https://github.com/IRE0330/2026DeepLearning-1/blob/cctv-analysis-v0.3.2/cctv-analysis/docs/RELEASE_FILES_032.json)을 확인하세요.
