@@ -1,0 +1,9 @@
+# Use the existing cctv032/.venv-cctv Python 3.13 environment.
+# The CCTV module + analysis extras must already be installed there.
+streamlit==1.66.0
+pandas>=2.2,<4
+openpyxl>=3.1,<4
+altair>=5,<7
+av>=14,<20
+
+mysql-connector-python>=9,<10

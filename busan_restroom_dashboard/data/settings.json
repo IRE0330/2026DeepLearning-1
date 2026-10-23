@@ -1,0 +1,51 @@
+{
+  "videos": {
+    "north": "/Users/ire/Downloads/cctv032/북쪽_화장실.mp4",
+    "east": "/Users/ire/Downloads/cctv032/동쪽_화장실.mov",
+    "south": "/Users/ire/Downloads/cctv032/남쪽_화장실.mov"
+  },
+  "configs": {
+    "north": "",
+    "east": "",
+    "south": ""
+  },
+  "model": "/Users/ire/Downloads/cctv032/models/yolo11n.pt",
+  "device": "cpu",
+  "end": 0.0,
+  "walk": {
+    "north": {
+      "north": 0,
+      "east": 180,
+      "south": 240
+    },
+    "east": {
+      "north": 180,
+      "east": 0,
+      "south": 180
+    },
+    "south": {
+      "north": 240,
+      "east": 180,
+      "south": 0
+    }
+  },
+  "warning": 1,
+  "crowded": 6,
+  "minimum_gain": 30,
+  "train_path": "/Users/ire/Downloads/cctv032/busan_restroom_dashboard/assets/train_schedule.csv",
+  "save_video": false,
+  "capture_date": "2026-10-14",
+  "history_path": "/Users/ire/Downloads/cctv032/busan_restroom_dashboard/assets/restroom_usage.csv.gz",
+  "history_average": 105.0,
+  "history_stalls": {
+    "north": 27,
+    "east": 23,
+    "south": 19
+  },
+  "train_db": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "database": "railway_system",
+    "user": "root"
+  }
+}
