@@ -6,6 +6,12 @@ from core import ROOMS, values, at, label, wait_label, recommendation, cctv_stam
 from distance_demo import result_series
 from distance_display import panel as distance_panel, overlay as distance_overlay, script as distance_script
 from distance_stability import result_at
+from signage_time import total_time as signage_total, script as signage_time_script
+
+
+def signage_panel(distance=None, total='측정 불가', element_id='distance-result'):
+    shown={**distance,'wait':total} if distance else None
+    return distance_panel(shown,element_id=element_id).replace('예상 대기시간:','최종 예상 소요시간:')
 
 
 def playback_rows(records,cfg,room):
@@ -135,7 +141,7 @@ def floor_map(current,vals,cfg,best):
         status,color=label(vals[r],cfg)
         tag_y=y-114 if r!='south' else y+36
         bx=min(850,max(20,x-55))
-        svg.append(f'<circle cx="{x}" cy="{y}" r="31" id="ring-{r}" fill="white" stroke="{color}" stroke-width="3"/><circle cx="{x}" cy="{y}" r="25" id="dot-{r}" fill="{color}"/><text x="{x}" y="{y+10}" text-anchor="middle" fill="white" font-family="system-ui" font-size="30" font-weight="800">{nums[r]}</text><rect x="{bx}" y="{tag_y}" width="200" height="81" rx="12" id="tag-{r}" fill="{color}"/><text x="{bx+13}" y="{tag_y+22}" fill="white" font-family="system-ui" font-size="12" font-weight="650">{nums[r]}번 · {ROOMS[r]} 화장실</text><text x="{bx+13}" y="{tag_y+46}" fill="white" font-family="system-ui" font-size="20" font-weight="800" id="map-status-{r}">{status}</text><text x="{bx+13}" y="{tag_y+68}" text-anchor="start" fill="white" font-family="system-ui" font-size="17" font-weight="750" id="map-wait-{r}">{vals[r]["distance"]["wait"]}</text>')
+        svg.append(f'<circle cx="{x}" cy="{y}" r="31" id="ring-{r}" fill="white" stroke="{color}" stroke-width="3"/><circle cx="{x}" cy="{y}" r="25" id="dot-{r}" fill="{color}"/><text x="{x}" y="{y+10}" text-anchor="middle" fill="white" font-family="system-ui" font-size="30" font-weight="800">{nums[r]}</text><rect x="{bx}" y="{tag_y}" width="200" height="81" rx="12" id="tag-{r}" fill="{color}"/><text x="{bx+13}" y="{tag_y+22}" fill="white" font-family="system-ui" font-size="12" font-weight="650">{nums[r]}번 · {ROOMS[r]} 화장실</text><text x="{bx+13}" y="{tag_y+46}" fill="white" font-family="system-ui" font-size="20" font-weight="800" id="map-status-{r}">{status}</text><text x="{bx+13}" y="{tag_y+68}" text-anchor="start" fill="white" font-family="system-ui" font-size="17" font-weight="750" id="map-wait-{r}">{vals[r]["total_time"]}</text>')
         if r==current:svg.append(f'<rect x="{x-52}" y="{y-48}" width="104" height="23" rx="12" fill="#1554ed"/><text x="{x}" y="{y-32}" text-anchor="middle" font-family="system-ui" font-size="12" font-weight="700" fill="white">현재 위치</text>')
     svg.append('<text x="35" y="673" font-size="10" fill="#8a98a6" font-family="system-ui">제공 시안 기반 개념도 · 경로는 안내용이며 실제 보행 경로 검증이 필요합니다.</text></svg>')
     return ''.join(svg)
@@ -146,6 +152,7 @@ def signage(records,current,t,cfg):
     vals={}
     for r in ROOMS:
         vals[r]={**values(recs[r]),'distance':result_at(records[r],result_series(records[r],cfg,r),t)}
+        vals[r]['total_time']=signage_total(vals[r]['distance'],cfg.get('walk',{}).get(current,{}).get(r))
     best=recommendation(current,vals,cfg)
     nums={'south':1,'north':2,'east':3}
     dt=cctv_stamp(t,cfg);date=dt.strftime('%Y.%m.%d');clock=dt.strftime('%H:%M:%S')
@@ -155,8 +162,9 @@ def signage(records,current,t,cfg):
         status,color=label(vals[r],cfg);distance=vals[r]['distance']
         cls='red' if status in ('혼잡','매우 혼잡') else 'yellow' if status=='보통' else 'green' if status=='여유' else 'gray'
         badge='<span class="badge">혼잡 단계 낮음</span>' if r==best else ''
-        panels.append(f'<div class="sg-item {cls}">{badge}<h3>{nums[r]}번 · {ROOMS[r]} 화장실</h3><div id="sign-state-{r}">{status}</div><div class="minutes" id="sign-wait-{r}">{distance["wait"]}</div><footer>예상 대기시간 · 임의 거리 기준 시연값<br>도보 안내: {wait_label(cfg["walk"][current][r])} (대기시간과 별도)</footer>{distance_panel(distance,element_id="distance-sign-"+r)}</div>')
-    return STYLE+SIGNAGE_FILL_STYLE+f'''<div class="sg-head"><div><div class="small" style="color:#0068e9">● 역내 편의시설 안내 / RESTROOM GUIDE</div><h1>화장실 혼잡도 안내</h1><p>예상 대기시간·혼잡도는 임의 거리 기준 시연값입니다.</p></div><div class="date">{date}<strong id="sign-clock">{clock}</strong><span class="pill">시연 · 영상 {t:.1f}초</span></div></div><div class="sg-layout"><div class="map">{floor_map(current,vals,cfg,best)}</div><div class="sg-side"><div class="small" style="color:#0068e9">TOILET STATUS</div><h2>화장실 이용 안내</h2><div id="sign-items">{''.join(panels)}</div></div></div><div class="sg-note">임의 거리 기준 시연값 · 거리 혼잡 단계가 낮은 곳을 안내하며 동일 단계는 도보시간으로 정렬합니다. 정확한 총 소요시간이나 가장 빠른 도착을 보장하지 않습니다. 측정 불가가 있으면 추천하지 않습니다.</div>'''
+        total=vals[r]['total_time']
+        panels.append(f'<div class="sg-item {cls}">{badge}<h3>{nums[r]}번 · {ROOMS[r]} 화장실</h3><div id="sign-state-{r}">{status}</div><div class="minutes" id="sign-wait-{r}">{total}</div><footer>최종 예상 소요시간 · 임의 거리 기준 시연값</footer>{signage_panel(distance,total,element_id="distance-sign-"+r)}</div>')
+    return STYLE+SIGNAGE_FILL_STYLE+f'''<div class="sg-head"><div><div class="small" style="color:#0068e9">● 역내 편의시설 안내 / RESTROOM GUIDE</div><h1>화장실 혼잡도 안내</h1><p>도보 이동을 포함한 최종 예상 소요시간·혼잡도는 임의 거리 기준 시연값입니다.</p></div><div class="date">{date}<strong id="sign-clock">{clock}</strong><span class="pill">시연 · 영상 {t:.1f}초</span></div></div><div class="sg-layout"><div class="map">{floor_map(current,vals,cfg,best)}</div><div class="sg-side"><div class="small" style="color:#0068e9">TOILET STATUS</div><h2>화장실 이용 안내</h2><div id="sign-items">{''.join(panels)}</div></div></div><div class="sg-note">임의 거리 기준 시연값 · 최종 예상 소요시간은 도보 이동을 포함한 시연용 범위입니다. 거리 혼잡 단계가 낮은 곳을 안내하며 동일 단계는 도보시간으로 정렬합니다. 정확한 실제 소요시간이나 가장 빠른 도착을 보장하지 않습니다. 측정 불가가 있으면 추천하지 않습니다.</div>'''
 
 
 def detail_video(room,records,url,cfg,start=0.):
@@ -205,14 +213,14 @@ def live_signage(records,current,urls,cfg):
     return body+f'''<script>
 {playback_source()}
 {distance_script()}
+{signage_time_script()}
 const rows={json_js(series)},cfg={json_js(cfg)},current={json_js(current)},roomNames={json_js(ROOMS)};
 const rooms=Object.keys(rows), nums={{south:1,north:2,east:3}},pos={{north:[600,160],east:[950,440],south:[160,500]}};
 const videos=rooms.map(r=>document.getElementById('sign-video-'+r)).filter(Boolean);
 const seek=document.getElementById('sign-seek'),button=document.getElementById('sign-play');let lastRecords='';
-const distanceTemplates={json_js({r:distance_panel(element_id='distance-sign-'+r) for r in ROOMS})};
+const distanceTemplates={json_js({r:signage_panel(element_id='distance-sign-'+r) for r in ROOMS})};
 function distancePanel(r){{return distanceTemplates[r];}}
 function clock(s){{return new Date((14*3600+Math.floor(s))*1000).toISOString().slice(11,19);}}
-function walkLabel(s){{return s<60?Math.ceil(s)+'초':Math.ceil(s/60)+'분';}}
 function render(t,end){{
  document.getElementById('sign-clock').textContent=clock(t);document.getElementById('sign-position').textContent='CCTV '+clock(t)+' 기준';
  document.getElementById('sign-timeline').textContent=clock(t)+' / '+clock(end);seek.max=end||1;seek.value=t;
@@ -221,14 +229,14 @@ function render(t,end){{
  const id=ids.join('|');if(id===lastRecords)return;lastRecords=id;
  const best=recommendDistance(current,vals,cfg),rank=r=>distanceValue(vals[r]).reached_m??Infinity;
  const order=[current,...rooms.filter(r=>r!==current).sort((a,b)=>rank(a)-rank(b)||cfg.walk[current][a]-cfg.walk[current][b])];
- const panels=order.map(r=>{{const d=distanceValue(vals[r]),[state,color,cls]=distanceState(vals[r]);
-  document.getElementById('ring-'+r).setAttribute('stroke',color);document.getElementById('dot-'+r).setAttribute('fill',color);document.getElementById('tag-'+r).setAttribute('fill',color);document.getElementById('map-status-'+r).textContent=state;document.getElementById('map-wait-'+r).textContent=d.wait;
-  return `<div class="sg-item ${{cls}}">${{r===best?'<span class="badge">혼잡 단계 낮음</span>':''}}<h3>${{nums[r]}}번 · ${{roomNames[r]}} 화장실</h3><div id="sign-state-${{r}}">${{state}}</div><div class="minutes" id="sign-wait-${{r}}">${{d.wait}}</div><footer>예상 대기시간 · 임의 거리 기준 시연값<br>도보 안내: ${{walkLabel(cfg.walk[current][r])}} (대기시간과 별도)</footer>${{distancePanel(r)}}</div>`;
+ const panels=order.map(r=>{{const d=distanceValue(vals[r]),[state,color,cls]=distanceState(vals[r]),total=signageTotal(d,cfg.walk?.[current]?.[r]);
+  document.getElementById('ring-'+r).setAttribute('stroke',color);document.getElementById('dot-'+r).setAttribute('fill',color);document.getElementById('tag-'+r).setAttribute('fill',color);document.getElementById('map-status-'+r).textContent=state;document.getElementById('map-wait-'+r).textContent=total;
+  return `<div class="sg-item ${{cls}}">${{r===best?'<span class="badge">혼잡 단계 낮음</span>':''}}<h3>${{nums[r]}}번 · ${{roomNames[r]}} 화장실</h3><div id="sign-state-${{r}}">${{state}}</div><div class="minutes" id="sign-wait-${{r}}">${{total}}</div><footer>최종 예상 소요시간 · 임의 거리 기준 시연값</footer>${{distancePanel(r)}}</div>`;
  }}).join('');document.getElementById('sign-items').innerHTML=panels;
- rooms.forEach(r=>paintDistance(document.getElementById('distance-sign-'+r),distanceValue(vals[r])));
+ rooms.forEach(r=>{{const d=distanceValue(vals[r]);paintDistance(document.getElementById('distance-sign-'+r),{{...d,wait:signageTotal(d,cfg.walk?.[current]?.[r])}});}});
  const route=document.getElementById('sign-route');route.style.display=best?'block':'none';
  if(best){{const [x,y]=pos[current],[xx,yy]=pos[best];route.setAttribute('d',`M${{x}} ${{y}} L400 ${{y}} L400 435 L${{xx}} 435 L${{xx}} ${{yy}}`);}}
- document.getElementById('sign-note').textContent='임의 거리 기준 시연값 · '+(best?'거리 혼잡 단계가 낮은 화장실 안내 · 정확한 최단 소요시간은 계산하지 않습니다.':'낮은 혼잡 단계가 없거나 측정 불가가 있으면 추천하지 않습니다.')+' 도보시간은 대기시간과 별도 안내합니다.';
+ document.getElementById('sign-note').textContent='임의 거리 기준 시연값 · 최종 예상 소요시간은 도보 이동을 포함한 시연용 범위입니다. '+(best?'거리 혼잡 단계가 낮은 화장실 안내 · 정확한 실제 소요시간이나 가장 빠른 도착을 보장하지 않습니다.':'낮은 혼잡 단계가 없거나 측정 불가가 있으면 추천하지 않습니다.');
 }}
 const fallback=Math.max(0,...rooms.map(r=>rows[r].length?rows[r][rows[r].length-1].t:0));
 const player=createPlayback({{videos,key:cfg.playback_key||'default',limit:cfg.playback_end,fallbackEnd:fallback,onTime:render,onState:playing=>{{button.disabled=playing;button.setAttribute('aria-pressed',String(playing));}},onError:message=>document.getElementById('sign-error').textContent=message}});

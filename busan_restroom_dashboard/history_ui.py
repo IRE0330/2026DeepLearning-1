@@ -4,7 +4,7 @@ import pandas as pd
 import altair as alt
 import streamlit as st
 from history import load_history
-from distance_demo import result_series, DISCLAIMER
+from distance_demo import BANDS, result_series, DISCLAIMER
 from core import cctv_stamp
 from distance_stability import timeline_events
 
@@ -41,7 +41,7 @@ def render_history(room,cfg,records=None,analysis_cfg=None):
     else:
         chart=alt.Chart(timeline).mark_line(interpolate='step-after',point=True).encode(
             x=alt.X('시각:T',title='CCTV 시각'),
-            y=alt.Y('예상 대기시간:O',sort=['측정 불가','1분 미만','1분 이상','2분 이상','3분 이상']),
+            y=alt.Y('예상 대기시간:O',sort=['측정 불가']+[band[2] for band in BANDS]),
             tooltip=['시각:T','혼잡도:N','예상 대기시간:N','판정표시:N','원시혼잡도:N','마지막유효관측초:Q','측정 안내:N','기준:N']).properties(height=220)
         st.altair_chart(chart,width='stretch')
     st.markdown('**날짜·시간별 대기 기록**')

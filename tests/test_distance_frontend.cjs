@@ -41,7 +41,7 @@ async function editorTests(){
 }
 
 function playbackTests(folder){
-  for(const [name,panelId,seekId] of [['dashboard','distance-north','seek'],['detail','distance-detail',null],['detail-east','distance-detail',null],['detail-south','distance-detail',null],['signage','distance-sign-north','sign-seek']]){
+  for(const [name,panelId,seekId] of [['dashboard','distance-north','seek'],['detail','distance-detail',null],['detail-east','distance-detail',null],['detail-south','distance-detail',null],['signage','distance-sign-north','sign-seek'],['signage-east','distance-sign-east','sign-seek'],['signage-south','distance-sign-south','sign-seek']]){
     const html=fs.readFileSync(path.join(folder,name+'.html'),'utf8');
     assert.match(html,/임의 거리 기준 시연값/);
     assert.doesNotMatch(html,/"expected_wait_s"\s*:/);
@@ -54,7 +54,7 @@ function playbackTests(folder){
       requestAnimationFrame(){},performance:{now:()=>100},console,URL});
     for(const source of scripts)new vm.Script(source).runInContext(context);
     assert.equal(get(panelId).querySelector('[data-distance="status"]').textContent,'측정 불가');
-    for(const [t,expected,wait] of [[1,'여유','1분 미만'],[4,'보통','1분 이상'],[6,'혼잡','2분 이상'],[8,'매우 혼잡','3분 이상']]){
+    for(const [t,expected,wait] of [[1,'여유','5분 미만'],[4,'보통','5분 이상'],[6,'혼잡','10분 이상'],[8,'매우 혼잡','15분 이상']]){
       if(seekId){get(seekId).value=t;get(seekId).oninput();}
       else vm.runInContext('update('+t+')',context);
       assert.equal(get(panelId).querySelector('[data-distance="status"]').textContent,expected,name+' at '+t);
@@ -70,10 +70,15 @@ function playbackTests(folder){
         assert.equal(get('detail-congestion-wait').textContent,wait);
         assert.equal(get('detail-queue').textContent,'1명');
       }
-      if(name==='signage')for(const room of ['north','east','south']){
+      if(name.startsWith('signage'))for(const room of ['north','east','south']){
+        const current=name==='signage-east'?'east':name==='signage-south'?'south':'north';
+        const walks={north:{north:0,east:3,south:4},east:{north:3,east:0,south:3},south:{north:4,east:3,south:0}};
+        const total=wait.replace(/^\d+/,minutes=>String(Number(minutes)+walks[current][room]));
         assert.equal(get('map-status-'+room).textContent,expected);
-        assert.equal(get('map-wait-'+room).textContent,wait);
-        assert.ok(get('sign-items').innerHTML.includes(wait));
+        assert.equal(get('map-wait-'+room).textContent,total);
+        assert.ok(get('sign-items').innerHTML.includes(`id="sign-wait-${room}">${total}</div>`));
+        assert.equal(get('distance-sign-'+room).querySelector('[data-distance="wait"]').textContent,total);
+        assert.doesNotMatch(get('sign-items').innerHTML,/도보 안내:|대기시간과 별도|예상 대기시간:/);
       }
     }
     // Outside coverage clears the distance result instead of retaining the last band.
@@ -86,28 +91,28 @@ function playbackTests(folder){
     assert.equal(get(panelId).querySelector('[data-distance="wait"]').textContent,'측정 불가');
     if(name==='dashboard')assert.equal(get('north-wait').textContent,'측정 불가');
     if(name.startsWith('detail'))assert.equal(get('detail-congestion-wait').textContent,'측정 불가');
-    if(name==='signage')assert.equal(get('map-wait-north').textContent,'측정 불가');
+    if(name.startsWith('signage'))assert.equal(get('map-wait-north').textContent,'측정 불가');
     }
     // Backward seek uses the target timestamp, never the last rendered band.
     if(seekId){get(seekId).value=4;get(seekId).oninput();}
     else vm.runInContext('update(4)',context);
-    assert.equal(get(panelId).querySelector('[data-distance="wait"]').textContent,'1분 이상');
+    assert.equal(get(panelId).querySelector('[data-distance="wait"]').textContent,'5분 이상');
     // A paused frame does not expire when wall-clock time advances.
     if(seekId){get(seekId).value=9;get(seekId).oninput();}
     else vm.runInContext('update(9)',context);
     assert.equal(get(panelId).querySelector('[data-distance="stability"]').textContent,'최근 판정 유지');
     context.performance.now=()=>1e9;
     if(name==='dashboard')get('pause').onclick();
-    else if(name==='signage')get('sign-pause').onclick();
+    else if(name.startsWith('signage'))get('sign-pause').onclick();
     else vm.runInContext('update(9)',context);
-    assert.equal(get(panelId).querySelector('[data-distance="wait"]').textContent,'3분 이상');
+    assert.equal(get(panelId).querySelector('[data-distance="wait"]').textContent,'15분 이상');
     // Expiry between records must not wait for the next saved row.
     if(name==='dashboard')vm.runInContext('t=11.001;render()',context);
     else if(name.startsWith('detail'))vm.runInContext('update(11.001)',context);
     else vm.runInContext('render(11.001,12)',context);
     assert.equal(get(panelId).querySelector('[data-distance="wait"]').textContent,'측정 불가');
     if(name==='dashboard')get('reset').onclick();
-    else if(name==='signage')get('sign-reset').onclick();
+    else if(name.startsWith('signage'))get('sign-reset').onclick();
     else vm.runInContext('update(0)',context);
     assert.equal(get(panelId).querySelector('[data-distance="status"]').textContent,'측정 불가');
     console.log('PASS playback:',name,'all 4 bands, waiting labels, missing/out-of-range data');
@@ -118,6 +123,12 @@ function playbackTests(folder){
   const unavailable=fs.readFileSync(path.join(folder,'static-unknown.html'),'utf8');
   assert.match(unavailable,/id="sign-wait-north">측정 불가/);
   assert.doesNotMatch(unavailable,/28초/);
+  for(const [name,current] of [['static','north'],['static-east','east'],['static-south','south']]){
+    const html=fs.readFileSync(path.join(folder,name+'.html'),'utf8');
+    const walks={north:{north:0,east:3,south:4},east:{north:3,east:0,south:3},south:{north:4,east:3,south:0}};
+    for(const room of ['north','east','south'])assert.ok(html.includes(`id="sign-wait-${room}">${15+walks[current][room]}분 이상</div>`));
+    assert.doesNotMatch(html,/도보 안내:|대기시간과 별도|예상 대기시간:/);
+  }
   console.log('PASS static signage export');
 }
 

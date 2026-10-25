@@ -74,6 +74,7 @@ for key in ['walk','warning','crowded','minimum_gain','capture_date']:run_cfg[ke
 run_cfg['distance_demo']=cfg.get('distance_demo',{})
 # Match media_urls()'s effective sources, including a replacement at the same path.
 playback_sources={r:run_cfg['videos'][r] if run_cfg['videos'][r] and Path(run_cfg['videos'][r]).expanduser().is_file() else cfg['videos'][r] for r in ROOMS}
+if run:run_cfg['distance_current_videos']=playback_sources
 run_cfg['playback_key']=hashlib.sha256((str(ROOT)+json.dumps({'run':run['id'] if run else None,'videos':{r:video_key(p) for r,p in playback_sources.items()}},sort_keys=True)).encode()).hexdigest()[:24]
 run_cfg['playback_end']=common_end(records) if run and run['status']=='completed' else None
 

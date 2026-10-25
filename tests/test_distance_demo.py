@@ -28,10 +28,10 @@ class DistanceBands(unittest.TestCase):
         return evaluate(rec, annotation or setting(), 'test-video')
 
     def test_fixed_bands_and_exact_boundaries(self):
-        for y, status, wait, reached in [(.2,'여유','1분 미만',0),(.3,'보통','1분 이상',5),
-                                        (.49,'보통','1분 이상',5),(.5,'혼잡','2분 이상',10),
-                                        (.69,'혼잡','2분 이상',10),(.7,'매우 혼잡','3분 이상',15),
-                                        (.95,'매우 혼잡','3분 이상',15)]:
+        for y, status, wait, reached in [(.2,'여유','5분 미만',0),(.3,'보통','5분 이상',5),
+                                        (.49,'보통','5분 이상',5),(.5,'혼잡','10분 이상',10),
+                                        (.69,'혼잡','10분 이상',10),(.7,'매우 혼잡','15분 이상',15),
+                                        (.95,'매우 혼잡','15분 이상',15)]:
             with self.subTest(y=y):
                 result=self.result(record(y))
                 self.assertEqual((result['status'],result['wait'],result['reached_m']),(status,wait,reached))

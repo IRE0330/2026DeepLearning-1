@@ -5,7 +5,7 @@ import io
 import json
 from pathlib import Path
 import streamlit as st
-from distance_demo import DISCLAIMER, validate_lines, video_key
+from distance_demo import BANDS, DISCLAIMER, validate_lines, video_key
 
 _EDITOR = st.components.v2.component(
     'restroom_distance_lines',
@@ -49,7 +49,11 @@ def render_distance_settings(cfg, save_settings, disabled=False):
     st.caption(DISCLAIMER+' · 실제 거리 측정값이 아닙니다. 후보자는 대기 ROI 안에서 연속 2초 저속 체류 또는 확정 대기줄과 동반 이동한 근거가 있을 때만 거리 분석에 포함합니다. 기존 인원 카운팅은 바뀌지 않습니다. 시작점에서 대기줄이 길어지는 방향으로 선을 지정하고 각 선은 대기줄 전체 폭을 가로질러야 합니다. 굽은 줄이나 가림으로 판정이 어려우면 측정 불가로 표시합니다.')
     st.table({'지정 기준': ['5m 미만', '5m 이상 ~ 10m 미만', '10m 이상 ~ 15m 미만', '15m 이상'],
               '혼잡도': ['여유', '보통', '혼잡', '매우 혼잡'],
-              '예상 대기시간': ['1분 미만', '1분 이상', '2분 이상', '3분 이상']})
+              '예상 대기시간': [band[2] for band in BANDS]})
+    from distance_reference import shared_editor_hidden
+    if shared_editor_hidden(cfg):
+        st.caption('세 CCTV 원본과 공통 기준선이 일치합니다. 기준선은 영상 위에 계속 표시됩니다.')
+        return
     room = st.radio('기준선을 지정할 CCTV', ['north', 'east', 'south'],
                     format_func=lambda r: {'north':'북쪽','east':'동쪽','south':'남쪽'}[r],
                     horizontal=True, key='distance_room', disabled=disabled)

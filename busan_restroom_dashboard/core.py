@@ -170,7 +170,9 @@ def validate(cfg):
 def start_run(cfg):
     validate(cfg)
     from distance_demo import video_key
+    from distance_reference import video_fingerprint
     cfg['distance_video_keys']={r:video_key(cfg['videos'][r]) for r in ROOMS}
+    cfg['distance_video_fingerprints']={r:video_fingerprint(cfg['videos'][r]) for r in ROOMS}
     rid=uuid.uuid4().hex
     with db() as c:
         c.execute('BEGIN IMMEDIATE')

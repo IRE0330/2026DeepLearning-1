@@ -4,8 +4,8 @@ import math
 from pathlib import Path
 
 DISCLAIMER = '임의 거리 기준 시연값'
-BANDS = ((0, '여유', '1분 미만'), (5, '보통', '1분 이상'),
-         (10, '혼잡', '2분 이상'), (15, '매우 혼잡', '3분 이상'))
+BANDS = ((0, '여유', '5분 미만'), (5, '보통', '5분 이상'),
+         (10, '혼잡', '10분 이상'), (15, '매우 혼잡', '15분 이상'))
 
 
 def video_key(source):
@@ -162,12 +162,8 @@ def evaluate(record, setting, source_key):
 
 
 def settings_for(cfg, room):
-    setting = cfg.get('distance_demo', {}).get(room, {})
-    key = video_key(cfg.get('videos', {}).get(room, ''))
-    frozen = cfg.get('distance_video_keys', {}).get(room)
-    if frozen is not None and frozen != key:
-        key = ''
-    return setting, key
+    from distance_reference import settings_for as resolve_settings
+    return resolve_settings(cfg, room)
 
 
 def result_series(records, cfg, room):

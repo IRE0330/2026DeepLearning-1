@@ -37,6 +37,9 @@ def build(folder):
         bodies={'dashboard':dashboard(records,{},cfg), 'detail':detail_video('north',records['north'],'',cfg),
                 'signage':live_signage(records,'north',{},cfg), 'static':signage(records,'north',8,cfg)}
         for r in ['east','south']:bodies['detail-'+r]=detail_video(r,records[r],'',cfg)
+        for r in ['east','south']:
+            bodies['signage-'+r]=live_signage(records,r,{},cfg)
+            bodies['static-'+r]=signage(records,r,8,cfg)
         bodies['static-unknown']=signage(records,'north',12,cfg)
         for name,body in bodies.items():(folder/(name+'.html')).write_text(body,encoding='utf-8')
         rows = records['north']
