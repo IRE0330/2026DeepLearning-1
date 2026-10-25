@@ -4,12 +4,46 @@ import sys
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
+import copy
+import json
+import re
+import tempfile
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'busan_restroom_dashboard'))
 from streamlit.testing.v1 import AppTest
 
 
 class SettingsUI(unittest.TestCase):
+    def test_playback_identity_tracks_run_and_effective_video_without_layout_changes(self):
+        import core
+        import preview
+        with tempfile.TemporaryDirectory() as folder:
+            video=Path(folder)/'test.mp4'
+            video.write_bytes(b'identity-only; media decoding is mocked')
+            cfg=copy.deepcopy(core.DEFAULTS)
+            cfg['videos']={r:str(video) for r in core.ROOMS}
+            current=[None]
+            with patch.object(core,'settings',return_value=cfg), \
+                 patch.object(core,'latest_run',side_effect=lambda:current[0]), \
+                 patch.object(core,'run_data',return_value=({r:[] for r in core.ROOMS},{})), \
+                 patch.object(preview,'browser_preview',side_effect=lambda source,*args:Path(source)):
+                app=AppTest.from_file(str(Path(core.__file__).with_name('app.py')),default_timeout=120).run()
+                def key():
+                    self.assertFalse(app.exception,[e.message for e in app.exception])
+                    frames=app.get('iframe')
+                    self.assertEqual(len(frames),1)
+                    return re.search(r'"playback_key"\s*:\s*"([a-f0-9]+)"',frames[0].proto.srcdoc).group(1)
+                first=key()
+                for page in (1,3,0):
+                    app.button(key='nav_'+str(page)).click().run()
+                    self.assertEqual(key(),first)
+                video.write_bytes(b'a different source at exactly the same path')
+                app.run();replacement=key()
+                self.assertNotEqual(replacement,first)
+                current[0]={'id':'new-analysis','request':json.dumps(cfg),'status':'completed'}
+                app.run()
+                self.assertNotEqual(key(),replacement)
+
     def test_dashboard_menus_history_and_removed_inputs(self):
         at=AppTest.from_file(str(Path(__file__).resolve().parents[1]/'busan_restroom_dashboard/app.py'),default_timeout=120).run()
         for i in range(5):

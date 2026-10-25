@@ -9,7 +9,7 @@ from views import dashboard, signage, detail_video, live_signage
 from train_ui import attach_train_events, render_train_page
 from history_ui import render_history
 from distance_ui import render_distance_settings
-from distance_demo import DISCLAIMER
+from distance_demo import DISCLAIMER, video_key
 from distance_demo import result_series as distance_result_series
 
 st.set_page_config(page_title='부산역 · 화장실 모니터링',page_icon='🚉',layout='wide')
@@ -72,7 +72,9 @@ records,jobs=run_data(run)
 run_cfg=json.loads(run['request']) if run else cfg
 for key in ['walk','warning','crowded','minimum_gain','capture_date']:run_cfg[key]=cfg[key]
 run_cfg['distance_demo']=cfg.get('distance_demo',{})
-run_cfg['playback_key']=hashlib.sha256((str(ROOT)+(run['id'] if run else json.dumps(cfg['videos'],sort_keys=True))).encode()).hexdigest()[:24]
+# Match media_urls()'s effective sources, including a replacement at the same path.
+playback_sources={r:run_cfg['videos'][r] if run_cfg['videos'][r] and Path(run_cfg['videos'][r]).expanduser().is_file() else cfg['videos'][r] for r in ROOMS}
+run_cfg['playback_key']=hashlib.sha256((str(ROOT)+json.dumps({'run':run['id'] if run else None,'videos':{r:video_key(p) for r,p in playback_sources.items()}},sort_keys=True)).encode()).hexdigest()[:24]
 run_cfg['playback_end']=common_end(records) if run and run['status']=='completed' else None
 
 def go_page(page):st.session_state['nav']=page
