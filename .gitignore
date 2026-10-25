@@ -67,3 +67,18 @@ tokens.json
 Thumbs.db
 .idea/
 .vscode/
+
+# Local CCTV dashboard runtime and private settings
+.local-run/
+analysis_runs/
+rr313/
+*.sqlite
+*.sqlite3
+*.sqlite*-wal
+*.sqlite*-shm
+*.db
+*.db-wal
+*.db-shm
+.streamlit/secrets.toml
+backups/
+project.zip

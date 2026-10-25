@@ -1,3 +1,31 @@
+## CCTV 거리 기반 대시보드 (2026-10-25)
+
+부산역 북쪽·동쪽·남쪽 화장실의 CCTV 분석 결과를 영상 시각에 맞춰 보여주는 Streamlit 대시보드입니다. 기존 출입·잔류·대기 인원 카운팅을 유지하며, 혼잡도와 대기시간 표시는 거리 기준으로 통일했습니다.
+
+- CCTV마다 시작점과 5m·10m·15m 기준선을 지정·저장합니다. 확정 대기자와 조건부 후보자 위치를 분석하고 메인·상세·사이니지에 같은 판정을 표시합니다.
+- 5m 미만: 여유/1분 미만, 5m 이상: 보통/1분 이상, 10m 이상: 혼잡/2분 이상, 15m 이상: 매우 혼잡/3분 이상입니다. **5m당 1분의 임의 거리 기준 시연값**이며 실측·실제 대기시간 정확도는 미검증입니다. 판정 실패 시 인원 기반 시간으로 대체하지 않습니다.
+- Windows 분석 출력은 프로젝트의 `analysis_runs/<실행ID>`로 분리하여 긴 CSV 경로를 줄였습니다. 프로젝트 경로 자체가 매우 길면 더 짧은 경로를 사용하세요.
+
+Python 3.13 환경에서 저장소 최상위에서 실행합니다.
+
+```powershell
+python -m venv .venv-cctv
+.\.venv-cctv\Scripts\python.exe -m pip install './cctv-analysis[analysis,streamlit]'
+.\.venv-cctv\Scripts\python.exe -m pip install -r busan_restroom_dashboard/requirements-dashboard.txt
+.\run-dashboard.ps1
+```
+
+기존 환경은 `./run-dashboard.ps1 -Python '<사용할 Python 실행파일>'` 또는 `DASHBOARD_PYTHON` 환경변수로 선택합니다. 기본 주소는 http://localhost:8501 입니다. macOS 및 MySQL 설치·데이터 공유 안내는 [기존 팀원 가이드](busan_restroom_dashboard/README.md)를 보존했습니다.
+
+영상은 팀에서 별도로 받아 `videos/`에 방향별로 준비하고, `yolo11n.pt`는 별도 전달받아 `models/`에 둡니다. 앱에서 실제 영상·모델을 선택한 뒤 CCTV별 기준선을 저장하세요. 영상·가중치·사용자 설정·SQLite·분석 결과·비밀번호는 이번 커밋에 포함하지 않습니다. 상세 설정은 [거리 기준선 안내](busan_restroom_dashboard/DISTANCE_DEMO.md), 개발 상태는 [LOCAL_PROGRESS.md](LOCAL_PROGRESS.md)를 참고하세요.
+
+현재 미해결 문제는 북쪽 영상의 2분 이상/측정 불가 표시 불안정, 실제 거리·대기시간·전체 영상 정확도 미검증, 로컬 MySQL의 `auth_gssapi_client` 인증 방식 호환 오류입니다. 최대 3초 최근 판정 유지로 일부 완화했으나 실제 CCTV 스트림·동시 실시간 처리·예측 모델은 미검증입니다.
+
+아래 기존 문서의 인원 기반 시간 및 과거 브랜치·push 안내는 당시 이력입니다. 현재 거리 기반 대시보드 실행에는 위 안내를 우선 적용합니다.
+
+---
+
+
 **최종 인계 0.3.2 (2026-10-21):** 세 환경 최신 결과는 `outputs/final/{north|south|east}/`에 통합했습니다. 북쪽·남쪽은 3.5초 확정 결과, 동쪽은 소화기 제외 결과입니다. 대기 규칙·기록 정책은 유지하며 재분석·수치 보정하지 않았습니다. [최종 인계](cctv-analysis/docs/FINAL_HANDOFF.md)를 따릅니다. 아래 중간 실행·검증 설명은 이력이며 과거 경로는 보존 근거로 이동했습니다. 이번 인계에서는 추가 삭제·commit·push를 하지 않습니다. 최신0.3.2 ZIP과 wheel을 별도 전달하며 모델 경로는 실행자가 지정합니다.
 
 # 딥러닝 기초 1조

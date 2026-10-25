@@ -39,13 +39,3 @@ def load_history(path):
         try:d=pd.read_csv(p,encoding='utf-8-sig')
         except UnicodeDecodeError:d=pd.read_csv(p,encoding='cp949')
     return normalize_history(d)
-
-def with_waits(frame,stalls,average):
-    d=frame.copy()
-    # Same positive-queue formula as the CCTV module; no queue means no waiting.
-    divisor=d['room'].map(stalls)
-    if divisor.isna().any() or (divisor<=0).any():raise ValueError('화장실별 운영 칸 수는 양수여야 합니다.')
-    if average<=0:raise ValueError('평균 이용시간은 양수여야 합니다.')
-    d['대기시간_초']=((d['대기인원']+1)*average/divisor).where(d['대기인원']>0,0.)
-    d['대기시간_분']=d['대기시간_초']/60
-    return d

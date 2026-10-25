@@ -106,21 +106,16 @@ def number(x):
     except (ValueError,TypeError):return None
 
 def values(record):
-    if not record:return {'inside':None,'queue':None,'outside':None,'wait':None,'entry':None,'exit':None,'free':None}
+    if not record:return {'inside':None,'queue':None,'outside':None,'entry':None,'exit':None,'free':None}
     row=record.get('csv_row',{})
     if isinstance(row,list):row=dict(zip(COLS,row))
-    state=record.get('detail',{}).get('state',{})
     return {'inside':number(row.get(COLS[6])),'queue':number(row.get(COLS[10])),
         'outside':number(row.get(COLS[12])),'free':number(row.get(COLS[11])),
-        'entry':number(row.get(COLS[4])),'exit':number(row.get(COLS[5])),
-        'wait':number(state.get('expected_wait_s'))}
+        'entry':number(row.get(COLS[4])),'exit':number(row.get(COLS[5]))}
 
 def label(v,cfg):
-    q=v.get('queue')
-    if q is None:return '미측정','#8393a5'
-    if q>=cfg['crowded']:return '혼잡','#d7413e'
-    if q>=cfg['warning']:return '보통','#c28a00'
-    return '여유','#008b6a'
+    status=v.get('distance',{}).get('status','측정 불가')
+    return status,{'여유':'#008b6a','보통':'#c28a00','혼잡':'#d7413e','매우 혼잡':'#8e1b40'}.get(status,'#8393a5')
 
 def wait_label(sec):
     if sec is None:return '미측정'
@@ -174,6 +169,8 @@ def validate(cfg):
 
 def start_run(cfg):
     validate(cfg)
+    from distance_demo import video_key
+    cfg['distance_video_keys']={r:video_key(cfg['videos'][r]) for r in ROOMS}
     rid=uuid.uuid4().hex
     with db() as c:
         c.execute('BEGIN IMMEDIATE')
@@ -195,13 +192,12 @@ def request_stop(rid):
     with db() as c:c.execute('UPDATE runs SET stop=1 WHERE id=?',(rid,))
 
 def recommendation(current, vals,cfg):
-    # Do not rank partial measurements or unknown/negative estimates.
-    if any(vals[r]['wait'] is None or vals[r]['queue'] is None or vals[r]['queue']<0 or vals[r]['inside'] is None or vals[r]['inside']<0 for r in ROOMS):return None
-    if vals[current]['queue']<cfg['warning']:return None
-    base=vals[current]['wait']
-    others=[r for r in ROOMS if r!=current]
-    best=min(others,key=lambda r:cfg['walk'][current][r]+vals[r]['wait'])
-    return best if base-(cfg['walk'][current][best]+vals[best]['wait'])>=cfg['minimum_gain'] else None
+    # Fixed time bands are not exact durations: suggest a lower congestion band,
+    # without claiming a shortest total time or adding walking seconds to a bound.
+    bands={r:vals[r].get('distance',{}).get('reached_m') for r in ROOMS}
+    if any(bands[r] is None for r in ROOMS):return None
+    others=[r for r in ROOMS if bands[r]<bands[current]]
+    return min(others,key=lambda r:(bands[r],cfg['walk'][current][r])) if others else None
 
 
 def cctv_stamp(seconds, cfg):

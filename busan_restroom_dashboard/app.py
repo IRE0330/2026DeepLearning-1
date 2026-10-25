@@ -8,6 +8,9 @@ from core import ROOT, DATA, ROOMS, COLS, TERMINAL, settings, save_settings, lat
 from views import dashboard, signage, detail_video, live_signage
 from train_ui import attach_train_events, render_train_page
 from history_ui import render_history
+from distance_ui import render_distance_settings
+from distance_demo import DISCLAIMER
+from distance_demo import result_series as distance_result_series
 
 st.set_page_config(page_title='부산역 · 화장실 모니터링',page_icon='🚉',layout='wide')
 st.markdown('''<style>
@@ -68,6 +71,7 @@ records,jobs=run_data(run)
 # Freeze interpretation settings with each run; edited thresholds/walk times remain UI settings.
 run_cfg=json.loads(run['request']) if run else cfg
 for key in ['walk','warning','crowded','minimum_gain','capture_date']:run_cfg[key]=cfg[key]
+run_cfg['distance_demo']=cfg.get('distance_demo',{})
 run_cfg['playback_key']=hashlib.sha256((str(ROOT)+(run['id'] if run else json.dumps(cfg['videos'],sort_keys=True))).encode()).hexdigest()[:24]
 run_cfg['playback_end']=common_end(records) if run and run['status']=='completed' else None
 
@@ -126,10 +130,14 @@ def media_urls():
 
 def record_df(room):
     rows=[]
-    for rec in records[room]:
+    for rec,distance in zip(records[room],distance_result_series(records[room],run_cfg,room)):
         d=rec['csv_row']
         if isinstance(d,list):d=dict(zip(COLS,d))
-        rows.append({'영상초':rec['interval_end_s'],'CCTV표시시각':cctv_stamp(rec['interval_end_s'],run_cfg).isoformat(),**d,'예상대기시간_초':values(rec)['wait']})
+        rows.append({'영상초':rec['interval_end_s'],'CCTV표시시각':cctv_stamp(rec['interval_end_s'],run_cfg).isoformat(),**d,
+                     '거리시연혼잡도':distance['status'],'거리시연예상대기시간':distance['wait'],
+                     '거리시연기준':DISCLAIMER,'거리시연측정안내':distance['reason'],
+                     '판정표시':distance['stability'],'원시혼잡도':distance['raw_status'],
+                     '마지막유효관측초':distance.get('last_valid_time_s')})
     return pd.DataFrame(rows)
 
 
@@ -239,7 +247,7 @@ elif nav=='화장실 상세':
     room=st.radio('화장실 선택',list(ROOMS),format_func=lambda r:ROOMS[r]+' 화장실',horizontal=True)
     urls=media_urls()
     st.iframe(detail_video(room,records[room],urls.get(room,''),run_cfg),height='content')
-    render_history(room,cfg)
+    render_history(room,cfg,records[room],run_cfg)
     with st.expander('CCTV 모델 분석 기록'):
         df=record_df(room)
         if df.empty:st.info('메인 상단에서 CCTV 분석을 시작하세요. 위의 날짜별 엑셀 기록은 분석 전에도 조회할 수 있습니다.')
@@ -247,7 +255,9 @@ elif nav=='화장실 상세':
             st.dataframe(df,hide_index=True,width='stretch')
             st.download_button('CCTV 분석 기록 CSV 다운로드',df.to_csv(index=False).encode('utf-8-sig'),f'{room}_cctv.csv','text/csv')
             st.caption('CCTV표시시각은 14:00:00 시작 기준입니다. 기존 촬영시작시각/촬영종료시각은 원본 그대로 보존합니다.')
-            st.json(jobs.get(room,{}))
+            # Raw job metadata includes legacy module-only wait values; keep it in files.
+            job=jobs.get(room,{})
+            st.json({k:job[k] for k in ['status','phase','processed_frames','run_dir','error'] if k in job})
 
 elif nav=='열차 정보':
     banner('열차 운행 정보','MySQL에 저장된 부산역 시간표를 날짜·운행구분·열차종류로 조회합니다.')
@@ -270,6 +280,7 @@ else:
     active=run is not None and run['status'] not in TERMINAL
     st.info('영상 분석과 모델·영상 경로 설정은 메인 대시보드 상단에서 할 수 있습니다.')
     new=json.loads(json.dumps(cfg))
+    render_distance_settings(cfg,save_settings,disabled=active)
     st.subheader('화장실 이용 기록')
     st.caption('기본 엑셀의 모의 기록 125,280행이 포함되어 있습니다. 파일을 바꾸려면 아래에서 업로드하세요.')
     history_upload=st.file_uploader('화장실 이용 엑셀 또는 CSV',type=['xlsx','csv'],key='history_upload')
@@ -281,23 +292,14 @@ else:
                 checked=load_history(history_candidate)
                 cfg['history_path']=history_candidate;save_settings(cfg);st.success(f'{len(checked):,}개 기록을 적용했습니다.');st.rerun()
             except Exception as e:st.error(str(e))
-    st.caption('TOILET_A=북쪽 · TOILET_B=동쪽 · TOILET_C=남쪽 / 대기시간 열이 없는 원본은 아래 가정으로 계산합니다.')
-    cols=st.columns(4)
-    new['history_average']=cols[0].number_input('기록용 평균 이용시간 · 초',min_value=1.,value=float(cfg['history_average']))
-    for col,r in zip(cols[1:],ROOMS):new['history_stalls'][r]=col.number_input(ROOMS[r]+' 운영 칸 수',min_value=1,value=int(cfg['history_stalls'][r]))
-    st.subheader('02 / 사이니지와 혼잡도')
-    st.caption('도보시간은 실측값을 입력하세요. 기본값은 시연 설정입니다. 대기시간 계산식은 분석 모듈의 원본 값을 유지합니다.')
+    st.caption('TOILET_A=북쪽 · TOILET_B=동쪽 · TOILET_C=남쪽 / 과거 인원 기록으로 대기시간을 계산하지 않습니다. 거리 좌표가 없으면 측정 불가입니다.')
+    st.subheader('02 / 사이니지 도보 안내')
+    st.caption('도보시간은 이동 안내에만 사용합니다. 예상 대기시간·혼잡도는 저장된 거리 기준선의 고정 결과이며, 도보시간과 합산하지 않습니다.')
     for r in ROOMS:
         cols=st.columns(3)
         for i,other in enumerate(ROOMS):
             new['walk'][r][other]=cols[i].number_input(f'{ROOMS[r]} → {ROOMS[other]} · 도보 초',min_value=0,value=int(cfg['walk'][r][other]),step=10,disabled=r==other,key='walk_'+r+other)
-    a,b,c=st.columns(3)
-    new['warning']=a.number_input('보통 기준 · 전체 대기 명',min_value=1,value=int(cfg['warning']))
-    new['crowded']=b.number_input('혼잡 기준 · 전체 대기 명',min_value=2,value=int(cfg['crowded']))
-    new['minimum_gain']=c.number_input('추천 최소 절감시간 · 초',min_value=1,value=int(cfg['minimum_gain']))
-    if new['crowded']<=new['warning']:st.error('혼잡 기준은 보통 기준보다 커야 합니다.')
-    valid_threshold=new['crowded']>new['warning']
-    if st.button('설정 저장',width='stretch',disabled=active or not valid_threshold):
+    if st.button('설정 저장',width='stretch',disabled=active):
         new['videos']={r:str(Path(p).expanduser().resolve()) if p else '' for r,p in new['videos'].items()}
         save_settings(new);st.success('설정을 저장했습니다.')
     if active:st.warning('분석이 진행 중입니다. 메인 상단에서 진행률을 확인하거나 중지할 수 있습니다. 완료 후 결과 불러오기를 누르세요.')

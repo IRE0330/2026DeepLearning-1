@@ -17,7 +17,8 @@ def run(rid):
                         c.execute("UPDATE runs SET status='stopped' WHERE id=?",(rid,));return
                 job=service.start(owner=rid,restroom_id=room,video_path=request['videos'][room],
                     model_path=request['model'],config_path=request['configs'][room] or None,
-                    output_dir=str(DATA/rid/'analysis'),profile=str(profile_path),device=request['device'],
+                    # Service adds job_<id>/analysis/<run>/shared/<CSV>; keep below MAX_PATH.
+                    output_dir=str(DATA.parent.parent/'analysis_runs'/rid),profile=str(profile_path),device=request['device'],
                     end=request['end'] or None,save_video=request['save_video'])
                 cursor=0;stop_sent=False
                 while True:
