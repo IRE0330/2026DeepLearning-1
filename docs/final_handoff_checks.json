@@ -1,0 +1,33 @@
+{
+  "version": "0.3.2",
+  "current_verification": "handoff_verification_032.json",
+  "note": "Nested report is preserved historical evidence, including paths and package versions used then; not current install instructions.",
+  "historical_report": {
+    "analysis_source_changed": false,
+    "core_thresholds_changed": false,
+    "package_install_configuration_changed": false,
+    "prior_install_validation": "validation_checks.json",
+    "prior_functional_tests": 83,
+    "wheel_rebuild_policy": "rebuild only if runtime source or packaged assets differ",
+    "manual_event_accuracy": "not_evaluated_missing_timestamped_truth",
+    "real_prediction_model": "not_implemented_not_integrated",
+    "related_tests_after_cleanup": {
+      "passed": 21,
+      "returncode": 0,
+      "scope": "public API ownership/start/status/record/stop and interval/hourly delivery"
+    },
+    "wheel": {
+      "path": "cctv-analysis/dist/busan_cctv_analysis-0.1.0-py3-none-any.whl",
+      "sha256": "4aafb24755d61754c0bacaeb33887576ce931d2ddf86aa7da73c89540cdc3bd1",
+      "runtime_source_assets_all_equal": true,
+      "files": 58,
+      "rebuild_required": false
+    },
+    "history_security": {
+      "scope": "all reachable local and fetched refs",
+      "blobs_scanned": 222,
+      "issues": [],
+      "passed": true
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "file": "restroom_usage.xlsx",
+  "source_name": "화장실 더미데이터 수정 최종.xlsx",
+  "sha256": "91b24562c7478bcb58b29e4163deacb2dec0cab0cd0d225a103dc18c5d7af161",
+  "rows": 125280,
+  "period": [
+    "2026-09-15 00:00:00",
+    "2026-10-13 23:59:00"
+  ],
+  "mapping": {
+    "TOILET_A": "north",
+    "TOILET_B": "east",
+    "TOILET_C": "south"
+  },
+  "data_kind": "모의데이터",
+  "wait_column_in_source": false
+}
