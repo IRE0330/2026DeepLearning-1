@@ -405,8 +405,6 @@ def render():
                     st.dataframe(audit,use_container_width=True,hide_index=True)
                     st.caption('최종 재학습의 선택 결과입니다. 관련성 점수는 인과관계가 아닙니다.')
                 st.caption(f'표시 기간: {shown["예측시각"].min():%Y-%m-%d %H:%M} ~ {shown["예측시각"].max():%Y-%m-%d %H:%M}. 기록 간격에 맞는 시각만 표시합니다.')
-                if yc=='대기거리구간_예측단계':
-                    st.caption('대기거리 구간: 0=대기 없음 · 1=5m 미만 · 2=5~10m · 3=10~15m · 4=15m 이상. 그래프는 예측 단계값이며 표·다운로드는 가장 가까운 구간으로 변환합니다. 구간 분류 확률이나 정확한 미터값은 아닙니다.')
                 st.subheader('선택한 기간의 미래 예측')
                 future_group=st.selectbox('미래 예측을 볼 대상',list(shown['구분'].unique()),key='future_display_group') if shown['구분'].nunique()>1 else shown['구분'].iloc[0]
                 future_view=shown.loc[shown['구분']==future_group]
