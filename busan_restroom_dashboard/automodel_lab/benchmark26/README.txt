@@ -1,1 +1,0 @@
-2.6 development replay, not untouched external validation. Each model was fixed before evaluation. Three non-overlapping past weeks in each training file. No external answer CSV read. Results compare individual models and do not establish final AutoML accuracy.

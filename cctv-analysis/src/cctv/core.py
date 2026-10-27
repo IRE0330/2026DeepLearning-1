@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 import math
 from .geometry import in_polygon, line_distance, segments_intersect
 from .usage import queue_estimates
-from .distance_candidates import DistanceCandidates, DWELL_SECONDS
 
 
 @dataclass
@@ -53,7 +52,6 @@ class Counter:
                           "observation_gap_resets": 0, "grace_suppression_frames": 0,
                           "unconfirmed_crossings": 0}
         self.negative_before = False
-        self.distance_candidates = DistanceCandidates(config, width, height)
         self.inside_sign = 1 if line_distance(config["entry_direction"][1], config["boundary"]) > 0 else -1
 
     def log(self, kind, t, tid=None, **data):
@@ -262,22 +260,7 @@ class Counter:
             status.append("negative_inside")
         if suppressed:
             status.append("uncertain_grace_suppressed")
-        # Additive detail only: keep all existing count rules and the 13-column CSV.
-        distance_candidates = self.distance_candidates.update(t, observations, self.tracks)
-        queue_geometry = {"version": 2, "candidate_dwell_s": DWELL_SECONDS,
-                          "candidates": distance_candidates,
-                          "confirmed_roi_ids": self.distance_candidates.confirmed_roi_ids,
-                          "points": [{"track_id": o.track_id,
-                                      "point": list(self.normalized(o.point)),
-                                      "confidence": o.confidence}
-                                     for o in observations if o.track_id in observed
-                                     and self.tracks[o.track_id].wait == "confirmed"],
-                          "candidate_count": waiting_candidates,
-                          "occluded_count": grace, "suppressed_count": len(suppressed)}
-        for candidate in distance_candidates:
-            self.log("distance_candidate", t, candidate['track_id'], **{k:v for k,v in candidate.items() if k!='track_id'})
         snapshot = {"restroom_id": self.c["restroom_id"], "source_time_s": t,
-                    "queue_geometry": queue_geometry,
                     "frame_index": frame_index, "entries": self.enter, "exits": self.exit,
                     "waiting_observed": waiting_observed, "waiting_grace": grace,
                     "waiting_candidate_observed": waiting_candidates,
