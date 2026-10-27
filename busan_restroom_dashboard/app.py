@@ -7,6 +7,7 @@ import streamlit as st
 from core import ROOT, DATA, ROOMS, COLS, TERMINAL, settings, save_settings, latest_run, run_data, at, values, common_end, label, wait_label, start_run, request_stop, cctv_stamp
 from views import dashboard, signage, detail_video, live_signage
 from train_ui import attach_train_events, render_train_page
+from train_registration_ui import render_train_registration
 from history_ui import render_history
 from distance_ui import render_distance_settings
 from distance_demo import DISCLAIMER, video_key
@@ -25,7 +26,8 @@ st.markdown('''<style>
 [data-testid="stSidebar"] [role="radiogroup"]>label:nth-of-type(2)::before{content:'▤'}
 [data-testid="stSidebar"] [role="radiogroup"]>label:nth-of-type(3)::before{content:'⇄'}
 [data-testid="stSidebar"] [role="radiogroup"]>label:nth-of-type(4)::before{content:'▣'}
-[data-testid="stSidebar"] [role="radiogroup"]>label:nth-of-type(5)::before{content:'⚙'}
+[data-testid="stSidebar"] [role="radiogroup"]>label:nth-of-type(5)::before{content:'⇧'}
+[data-testid="stSidebar"] [role="radiogroup"]>label:nth-of-type(6)::before{content:'⚙'}
 [data-testid="stSidebar"] [role="radiogroup"]>label:has(input:checked){background:#eaf3ff;color:#0867df;font-weight:750}
 [data-testid="stSidebar"] [role="radiogroup"]>label:has(input:checked)::before{color:#368ae7}
 [data-testid="stSidebar"] [role="radiogroup"]>label:focus-within{outline:2px solid #6ca7ed;outline-offset:2px}
@@ -85,7 +87,7 @@ with st.sidebar:
     st.title('RESTROOM')
     st.caption('화장실 혼잡도 모니터링')
     nav=st.session_state.get('nav','메인 대시보드')
-    for index,(page,icon) in enumerate([('메인 대시보드',':material/dashboard:'),('화장실 상세',':material/wc:'),('열차 정보',':material/train:'),('사이니지 보기',':material/monitor:'),('시연 설정',':material/settings:')]):
+    for index,(page,icon) in enumerate([('메인 대시보드',':material/dashboard:'),('화장실 상세',':material/wc:'),('열차 정보',':material/train:'),('열차 데이터 등록',':material/upload_file:'),('사이니지 보기',':material/monitor:'),('시연 설정',':material/settings:')]):
         st.button(page,icon=icon,key='nav_'+str(index),type='primary' if nav==page else 'tertiary',width='stretch',on_click=go_page,args=(page,))
     st.divider()
     st.markdown('<div class="sidebar-footer"><span class="connection-dot"></span> MVP · CCTV 시연<br><small>북쪽 · 동쪽 · 남쪽</small></div>',unsafe_allow_html=True)
@@ -265,6 +267,10 @@ elif nav=='화장실 상세':
 elif nav=='열차 정보':
     banner('열차 운행 정보','MySQL에 저장된 부산역 시간표를 날짜·운행구분·열차종류로 조회합니다.')
     render_train_page(cfg,save_settings)
+
+elif nav=='열차 데이터 등록':
+    banner('열차 데이터 등록','KTX·일반열차 시간표 전처리 및 날짜별 운행 기록을 MySQL에 저장합니다.')
+    render_train_registration()
 
 elif nav=='사이니지 보기':
     banner('사이니지 보기','CCTV 재생 위치를 이어받아 대기 상태와 추천 경로를 표시합니다.')
