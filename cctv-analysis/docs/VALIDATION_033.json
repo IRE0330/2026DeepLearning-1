@@ -1,0 +1,258 @@
+{
+  "version": "0.3.3",
+  "scope": "development_videos_only",
+  "configuration": {
+    "north": "YOLO11s",
+    "south": "YOLO11n",
+    "east": "YOLO11n",
+    "imgsz": 640,
+    "nms_iou": 0.7,
+    "confidence": 0.1,
+    "geometry_and_rules": "unchanged 0.3.2"
+  },
+  "ground_truth_events": {
+    "north": 20,
+    "south": 7,
+    "east": 14,
+    "total": 41
+  },
+  "matching": {
+    "same_direction": true,
+    "tolerance_s": 1.0,
+    "one_to_one": true,
+    "aggregation": "room-separated micro"
+  },
+  "event_metrics": [
+    {
+      "configuration": "baseline",
+      "room": "north",
+      "basis": "crossing_estimate",
+      "tp": 14,
+      "fp": 0,
+      "fn": 6,
+      "precision": 1.0,
+      "recall": 0.7,
+      "f1": 0.8235294117647058
+    },
+    {
+      "configuration": "baseline",
+      "room": "north",
+      "basis": "confirmation",
+      "tp": 11,
+      "fp": 3,
+      "fn": 9,
+      "precision": 0.7857142857142857,
+      "recall": 0.55,
+      "f1": 0.6470588235294118
+    },
+    {
+      "configuration": "baseline",
+      "room": "south",
+      "basis": "crossing_estimate",
+      "tp": 4,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273
+    },
+    {
+      "configuration": "baseline",
+      "room": "south",
+      "basis": "confirmation",
+      "tp": 3,
+      "fp": 1,
+      "fn": 4,
+      "precision": 0.75,
+      "recall": 0.42857142857142855,
+      "f1": 0.5454545454545454
+    },
+    {
+      "configuration": "baseline",
+      "room": "east",
+      "basis": "crossing_estimate",
+      "tp": 8,
+      "fp": 0,
+      "fn": 6,
+      "precision": 1.0,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273
+    },
+    {
+      "configuration": "baseline",
+      "room": "east",
+      "basis": "confirmation",
+      "tp": 5,
+      "fp": 3,
+      "fn": 9,
+      "precision": 0.625,
+      "recall": 0.35714285714285715,
+      "f1": 0.45454545454545453
+    },
+    {
+      "configuration": "baseline",
+      "room": "total",
+      "basis": "crossing_estimate",
+      "tp": 26,
+      "fp": 0,
+      "fn": 15,
+      "precision": 1.0,
+      "recall": 0.6341463414634146,
+      "f1": 0.7761194029850746
+    },
+    {
+      "configuration": "baseline",
+      "room": "total",
+      "basis": "confirmation",
+      "tp": 19,
+      "fp": 7,
+      "fn": 22,
+      "precision": 0.7307692307692307,
+      "recall": 0.4634146341463415,
+      "f1": 0.5671641791044776
+    },
+    {
+      "configuration": "final",
+      "room": "north",
+      "basis": "crossing_estimate",
+      "tp": 16,
+      "fp": 0,
+      "fn": 4,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.8888888888888888
+    },
+    {
+      "configuration": "final",
+      "room": "north",
+      "basis": "confirmation",
+      "tp": 13,
+      "fp": 3,
+      "fn": 7,
+      "precision": 0.8125,
+      "recall": 0.65,
+      "f1": 0.7222222222222222
+    },
+    {
+      "configuration": "final",
+      "room": "south",
+      "basis": "crossing_estimate",
+      "tp": 4,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273
+    },
+    {
+      "configuration": "final",
+      "room": "south",
+      "basis": "confirmation",
+      "tp": 3,
+      "fp": 1,
+      "fn": 4,
+      "precision": 0.75,
+      "recall": 0.42857142857142855,
+      "f1": 0.5454545454545454
+    },
+    {
+      "configuration": "final",
+      "room": "east",
+      "basis": "crossing_estimate",
+      "tp": 8,
+      "fp": 0,
+      "fn": 6,
+      "precision": 1.0,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273
+    },
+    {
+      "configuration": "final",
+      "room": "east",
+      "basis": "confirmation",
+      "tp": 5,
+      "fp": 3,
+      "fn": 9,
+      "precision": 0.625,
+      "recall": 0.35714285714285715,
+      "f1": 0.45454545454545453
+    },
+    {
+      "configuration": "final",
+      "room": "total",
+      "basis": "crossing_estimate",
+      "tp": 28,
+      "fp": 0,
+      "fn": 13,
+      "precision": 1.0,
+      "recall": 0.6829268292682927,
+      "f1": 0.8115942028985508
+    },
+    {
+      "configuration": "final",
+      "room": "total",
+      "basis": "confirmation",
+      "tp": 21,
+      "fp": 7,
+      "fn": 20,
+      "precision": 0.75,
+      "recall": 0.5121951219512195,
+      "f1": 0.6086956521739131
+    }
+  ],
+  "previous_verification_reused": {
+    "api_termination_opt_in_tests": 15,
+    "installed_n_cpu_smoke": {
+      "frames": 30,
+      "records": 1
+    },
+    "installed_s_gpu_smoke": {
+      "frames": 78,
+      "records": 3,
+      "backend": "cuda:0",
+      "dtype": "float32"
+    },
+    "final_s_gpu_smoke": {
+      "frames": 78,
+      "records": 3
+    },
+    "full_north_s": {
+      "frames": 2524,
+      "csv_rows": 105,
+      "entries": 6,
+      "exits": 10,
+      "final_inside": 25
+    },
+    "source_installed_wheel_zip_runtime_files": 61
+  },
+  "upload_validation": {
+    "targeted_opt_in_and_model_path_tests": 12,
+    "tests_passed": true,
+    "source_wheel_zip_runtime_files_equal_after_newline_normalization": 61,
+    "embedded_wheel_identical": true,
+    "base_default_runtime_source_functionally_unchanged": true,
+    "full_inference_rerun": false,
+    "package_rebuilt": false
+  },
+  "artifacts": {
+    "busan_cctv_analysis-0.3.3-handoff.zip": {
+      "bytes": 383862,
+      "sha256": "7a9a2a3bfb4917d47abaacb5a0ce7eaeb2e17ccca4d6b3d48ad6429fc4c50457"
+    },
+    "busan_cctv_analysis-0.3.3-py3-none-any.whl": {
+      "bytes": 102877,
+      "sha256": "7e280f3d49de425e3e8d085e0ddb12c8fa3d133305566a9af340d62d47368aa3"
+    }
+  },
+  "limitations": [
+    "Held-out video generalization unverified.",
+    "Actual cameras, multi-input real-time recording and other GPU/driver combinations unverified.",
+    "Archived all-room n results have CUDA device metadata but no actual backend dtype record.",
+    "Archived wheel/ZIP metadata documentation predates current web README."
+  ],
+  "excluded_from_upload": [
+    "failed or unadopted continuity/reverse/NMS/resolution experiments",
+    "manual review tools and unfinished labels",
+    "reviews tree, large logs, videos, outputs, virtual environments, MICC data, personal settings and credentials"
+  ]
+}

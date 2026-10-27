@@ -10,4 +10,4 @@ AI 기반 화장실 혼잡도 분석 및 분산 안내 시스템
 - [API·데이터 계약](cctv-analysis/docs/DATA_CONTRACT.md) · [최종 인계](cctv-analysis/docs/FINAL_HANDOFF.md)
 - [이전 상세 실행·검증 기록](cctv-analysis/docs/ROOT_README_HISTORY.md)
 
-안정 배포는 0.3.2, 검증 환경은 Windows x64·Python 3.13.9·CPU입니다. 실제 CCTV 수신·예측모델 연동은 제공하지 않으며, 정확도·동시 실시간 처리·다른 환경의 지원 범위는 시작 안내를 확인하세요.
+기존 안정 배포 0.3.2와 선택형 북쪽 GPU 기능을 추가한 0.3.3을 함께 제공합니다. 기본 n·남쪽·동쪽 실행과 AnalysisService API는 유지됩니다. 검증 환경은 Windows x64·Python 3.13.9이며 북쪽 s는 RTX 4060 CUDA FP32에서 확인했습니다. 실제 CCTV 수신·예측모델 연동은 제공하지 않습니다. [개발 영상 평가·검증과 한계](cctv-analysis/docs/NORTH_GPU_S_033.md)를 확인하세요.

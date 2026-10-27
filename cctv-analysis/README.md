@@ -1,12 +1,27 @@
-# 화장실 CCTV 분석 모듈 — 0.3.2
+# 화장실 CCTV 분석 모듈 — 0.3.3
 
-저장 영상의 사람 탐지·추적으로 출입과 외부 대기를 집계하고, 초기값에 따른 내부 인원 추정치와 CSV를 생성합니다. 공개 AnalysisService로 시작·상태 조회·레코드 수신·중지를 연동합니다.
+저장 영상에서 출입·외부 대기와 내부 인원 추정치를 집계하고 CSV/API 레코드를 생성합니다. 0.3.3은 **선택형 북쪽 GPU YOLO11s**를 추가합니다. 기본 n, 사용자 가중치·장치 선택, 남쪽·동쪽, 공개 AnalysisService는 유지됩니다.
 
-**[다운로드 → 준비 → 설치 → 짧은 실행](deployment/START_HERE.md)**에서 진행하세요. 설치 명령은 이 시작 안내 한 곳에 모았습니다. main을 보고 있어도 같은 안정 Release를 사용하며, ZIP 안의 기존 README는 배포 당시 기록입니다.
+## 설치
 
-- 준비: 공식 yolo11n.pt와 사용 권한이 있는 영상. 새 CCTV 구도는 마스킹을 다시 설정합니다. [모델·라이선스](docs/MODEL.md) · [배포 고지](docs/RELEASE_NOTICES.md)
-- 결과: 지정한 출력 폴더 아래 새 작업에 생성되며, 정확한 경로는 상태의 `run_dir`·`csv_files`로 확인합니다. 기존 CSV·outputs는 입력으로 필요하지 않습니다. [예시 CSV 3개](examples/data/README.md)
-- 검증: Windows x64·Python 3.13.9·CPU. wheel은 Python >=3.13,<3.14입니다. 다른 OS·PC·GPU/드라이버·장시간·세 CCTV 동시 실시간은 이번 안정 배포에서 미검증입니다.
-- 한계: 가림·ID 유실로 출입을 놓칠 수 있고 내부 인원·빈칸·대기시간은 가정에 따른 추정입니다. 수동 정답 기반 정확도는 미평가이며 실제 CCTV 수신·예측모델 연동은 제공하지 않습니다.
+[시작 안내](deployment/START_HERE.md)의 0.3.3 ZIP·wheel과 공식 가중치를 준비합니다. Python 3.13의 새 환경에서 CPU 또는 GPU용 PyTorch를 먼저 설치한 뒤, ZIP을 푼 폴더에서 실행합니다.
 
-상세: [AnalysisService·데이터 계약](docs/DATA_CONTRACT.md) · [실행 예제](examples/analyze_video.py) · [최종 인계](docs/FINAL_HANDOFF.md) · [검증 근거](docs/handoff_verification_032.json) · [이전 인계·검증 이력](docs/README_HISTORY.md).
+```powershell
+& $py -m pip install '.\dist\busan_cctv_analysis-0.3.3-py3-none-any.whl[analysis]'
+& $py -m pip check
+```
+
+## 기본 실행 · 선택형 GPU 실행
+
+```powershell
+# 기본 n CPU. 남쪽·동쪽은 room과 영상을 함께 변경합니다.
+& $py .\examples\analyze_video.py --room north --video .\inputs\north.mp4 --model .\models\yolo11n.pt --device cpu --profile demo --output .\runs-n --end 3.25
+# CUDA 환경에서 명시적으로 선택한 북쪽 s만 적용합니다.
+& $py -m cctv.gpu_profile --runtime-profile north-gpu-s --video .\inputs\north.mp4 --model .\models\yolo11s.pt --profile demo --output-dir .\runs-s --end 3.25
+```
+
+`$py`는 선택한 가상환경의 Python 경로입니다. 실제 영상과 가중치를 직접 준비하세요. 기본 API의 `model_path`·`device`·`config_path`와 `CCTV_MODEL_PATH`는 유지됩니다. 선택형 s는 공식 가중치 해시와 CUDA를 검증하며 자동 적용·CPU 폴백을 하지 않습니다. `demo`의 초기 인원·가상 촬영시각은 시연 가정입니다.
+
+개발 영상 41이벤트의 **통과 시각** 합산 F1은 전 환경 n 77.61% → 북쪽 s·남/동 n 81.16%입니다. 가림·ID 유실로 누락될 수 있고 별도 영상 일반화·실제 CCTV·세 입력 동시 실시간은 미검증입니다. 새 구도는 마스킹을 다시 설정해야 합니다.
+
+상세: [설치·다운로드·버전 차이](deployment/START_HERE.md) · [평가·GPU 검증·한계](docs/NORTH_GPU_S_033.md) · [검증 요약](docs/VALIDATION_033.json) · [API 연동](docs/DATA_CONTRACT.md) · [기존 인계](docs/FINAL_HANDOFF.md).

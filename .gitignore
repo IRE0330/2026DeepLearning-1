@@ -34,6 +34,8 @@ reviews/
 *.engine
 *.safetensors
 *.zip
+!cctv-analysis/deployment/busan_cctv_analysis-0.3.3-handoff.zip
+!cctv-analysis/deployment/busan_cctv_analysis-0.3.3-py3-none-any.whl
 *.7z
 *.rar
 *.tar
