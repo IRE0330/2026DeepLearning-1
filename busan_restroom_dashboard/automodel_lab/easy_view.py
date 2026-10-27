@@ -29,14 +29,8 @@ def guess_interval(df, time_col, group=None):
 
 def result_table(frame, value_col, label, group_label='구분'):
     ts=pd.to_datetime(frame['예측시각'])
-    values=frame[value_col].values
-    if '대기거리구간_예측단계' in str(label):
-        labels=['대기 없음','5m 미만','5m 이상 ~ 10m 미만','10m 이상 ~ 15m 미만','15m 이상']
-        numeric=pd.to_numeric(frame[value_col],errors='coerce')
-        values=numeric.map(lambda v: labels[int(np.clip(np.floor(v+0.5),0,4))] if pd.notna(v) and np.isfinite(v) else '정보 없음').values
-        label='예상 대기거리 구간' if str(label).startswith('예상') else '기록된 대기거리 구간'
     return pd.DataFrame({'날짜':ts.dt.strftime('%Y-%m-%d'), '시간':ts.dt.strftime('%H:%M:%S'),
-                         group_label:frame['구분'].values, label:values}).reset_index(drop=True)
+                         group_label:frame['구분'].values, label:frame[value_col].values}).reset_index(drop=True)
 
 
 def range_plan(last, start, end, interval):
