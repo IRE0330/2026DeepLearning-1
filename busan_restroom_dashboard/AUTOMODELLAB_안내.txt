@@ -1,0 +1,3 @@
+사이드 메뉴의 혼잡도 예측모델에서 AutoModelLab을 실행합니다.
+추가 패키지 설치: python -m pip install -r busan_restroom_dashboard/requirements-dashboard.txt
+이 버전은 제공한 AutoModelLab 원본의 일반 파일 업로드 방식을 유지합니다. 화장실 3개 시트 자동 통합, 2개 엑셀 전용 연결, 사이니지 예측값 자동 반영은 포함하지 않습니다.
