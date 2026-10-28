@@ -14,6 +14,17 @@ from distance_demo import DISCLAIMER, video_key
 from distance_demo import result_series as distance_result_series
 
 st.set_page_config(page_title='부산역 · 화장실 모니터링',page_icon='🚉',layout='wide')
+if not st.session_state.get('_saved_forecast_loaded'):
+    st.session_state['_saved_forecast_loaded']=True
+    try:
+        from automodel_lab.saved_model import load_model
+        restored=load_model()
+        if restored:
+            st.session_state['_persistent_forecast']=restored
+            st.session_state['forecast_result']=restored['result']
+    except Exception as error:
+        st.session_state['_saved_model_load_error']=str(error)
+
 st.markdown('''<style>
 :root{color-scheme:light} .stApp{background:#f1f6fa;color:#172431} [data-testid="stSidebar"]{background:white;border-right:1px solid #e4edf5} [data-testid="stSidebar"] h1{font-size:25px;color:#0967df} .block-container{padding-top:2rem;padding-bottom:2rem;max-width:1800px} h1{letter-spacing:-1.3px;font-size:30px!important} h2{font-size:21px!important;letter-spacing:-.6px} h3{font-size:17px!important} [data-testid="stMetric"]{background:white;border:1px solid #e5edf4;border-radius:14px;padding:17px} [data-testid="stMetricLabel"]{color:#8393a4} .stButton>button{border-radius:8px} [data-testid="stSidebar"] [role="radiogroup"]>label{padding:10px 12px;border-radius:9px;margin-bottom:4px} [data-testid="stSidebar"] [role="radiogroup"]>label:has(input:checked){background:#eaf3ff;color:#0866df} .intro{color:#8193a4;font-size:13px;margin-bottom:20px}.eyebrow{color:#0867df;font-size:11px;font-weight:800;letter-spacing:1.8px}.summary-box{padding:20px;border-radius:14px;background:white;border:1px solid #e6edf4}.summary-box h3{margin-top:0}.summary-box p{font-size:13px;color:#7c8fa1}
 
@@ -35,9 +46,9 @@ st.markdown('''<style>
 .sidebar-footer{font-size:12px;line-height:2;color:#72859a;padding:12px}.sidebar-footer small{color:#9ca9b6}.connection-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#008b6a;margin-right:5px}
 [data-testid="stSidebar"] h1{font-size:23px!important;margin:0}
 
-.block-container{padding-top:1rem!important;padding-bottom:.7rem!important;max-width:1500px}
+.block-container{padding-top:5rem!important;padding-bottom:.7rem!important;max-width:1500px}
 [data-testid="stHeader"]{height:0}
-h1{font-size:23px!important;margin:0!important;padding-top:0!important;padding-bottom:4px!important}
+h1{font-size:23px!important;line-height:1.35!important;margin:0!important;padding-top:0!important;padding-bottom:8px!important}
 h2{font-size:17px!important}h3{font-size:14px!important}
 .intro{font-size:11px;margin-bottom:8px}.eyebrow{font-size:9px;letter-spacing:1.2px}
 [data-testid="stMetric"]{padding:10px 12px;border-radius:10px}
@@ -80,22 +91,44 @@ if run:run_cfg['distance_current_videos']=playback_sources
 run_cfg['playback_key']=hashlib.sha256((str(ROOT)+json.dumps({'run':run['id'] if run else None,'videos':{r:video_key(p) for r,p in playback_sources.items()}},sort_keys=True)).encode()).hexdigest()[:24]
 run_cfg['playback_end']=common_end(records) if run and run['status']=='completed' else None
 
-def go_page(page):st.session_state['nav']=page
+def go_page(page):
+    current=st.session_state.get('nav','메인 대시보드')
+    if current=='혼잡도 예측모델' and page!=current:
+        excluded=('nav','forecast_file_','main_upload_','history_upload','nav_','shared_','clear_forecast_data','primary_forecast_download','reuse_saved_button','reuse_latest_button')
+        st.session_state['_forecast_widget_snapshot']={k:st.session_state[k] for k in list(st.session_state) if not k.startswith('_') and not k.startswith(excluded)}
+    if page=='혼잡도 예측모델' and current!=page:
+        for key,value in st.session_state.get('_forecast_widget_snapshot',{}).items():
+            st.session_state[key]=value
+    st.session_state['nav']=page
 
 with st.sidebar:
     st.markdown('<div class="eyebrow">BUSAN STATION</div>',unsafe_allow_html=True)
     st.title('RESTROOM')
     st.caption('화장실 혼잡도 모니터링')
     nav=st.session_state.get('nav','메인 대시보드')
-    for index,(page,icon) in enumerate([('메인 대시보드',':material/dashboard:'),('화장실 상세',':material/wc:'),('열차 정보',':material/train:'),('열차 데이터 등록',':material/upload_file:'),('사이니지 보기',':material/monitor:'),('예측 CSV 등록',':material/analytics:'),('시연 설정',':material/settings:')]):
+    for index,(page,icon) in enumerate([('메인 대시보드',':material/dashboard:'),('화장실 상세',':material/wc:'),('열차 정보',':material/train:'),('열차 데이터 등록',':material/upload_file:'),('사이니지 보기',':material/monitor:'),('예측 CSV 등록',':material/upload_file:'),('혼잡도 예측모델',':material/analytics:'),('시연 설정',':material/settings:')]):
         st.button(page,icon=icon,key='nav_'+str(index),type='primary' if nav==page else 'tertiary',width='stretch',on_click=go_page,args=(page,))
     st.divider()
+    from simulation_clock import now as simulation_now, start_epoch
+    @st.fragment(run_every='1s')
+    def show_simulation_clock():
+        st.caption('현재 시각 · 시연 기준')
+        st.write(simulation_now().strftime('%Y.%m.%d %H:%M:%S'))
+    show_simulation_clock()
     st.markdown('<div class="sidebar-footer"><span class="connection-dot"></span> MVP · CCTV 시연<br><small>북쪽 · 동쪽 · 남쪽</small></div>',unsafe_allow_html=True)
+
+run_cfg['sim_clock_epoch_ms']=int(start_epoch()*1000)
+run_cfg['playback_key'] += '-clock-'+str(run_cfg['sim_clock_epoch_ms'])+'-'+str(st.session_state.get('_sim_clock_generation',0))
+run_cfg['capture_date']=simulation_now().date().isoformat()
+
 
 
 def banner(title,sub):
-    st.markdown('<div class="eyebrow">RESTROOM MONITORING</div>',unsafe_allow_html=True)
-    st.title(title);st.markdown(f'<div class="intro">{html.escape(sub)}</div>',unsafe_allow_html=True)
+    st.html(f'''<div style="display:block;padding-top:4px;padding-bottom:20px">
+      <div style="display:block;font-size:11px;line-height:16px;font-weight:800;letter-spacing:1.2px;color:#0867df;margin:0 0 12px 0">RESTROOM MONITORING</div>
+      <div role="heading" aria-level="1" style="display:block;font-size:27px;line-height:36px;font-weight:800;letter-spacing:-0.8px;color:#172431;margin:0 0 10px 0">{html.escape(title)}</div>
+      <div style="display:block;font-size:12px;line-height:19px;color:#718797;margin:0">{html.escape(sub)}</div>
+    </div>''')
 
 
 def upload_save(upload,folder):
@@ -159,6 +192,8 @@ def begin_analysis(selection):
     for field in ['videos','configs']:
         request[field]={r:str(Path(v).expanduser().resolve()) if v else '' for r,v in request[field].items()}
     request['model']=str(Path(request['model']).expanduser().resolve())
+    if request.get('north_s_model'):
+        request['north_s_model']=str(Path(request['north_s_model']).expanduser().resolve())
     start_run(request);save_settings(request)
 
 
@@ -204,8 +239,8 @@ def analysis_controls():
             request_stop(rr['id']);st.rerun()
         if d.button('결과 불러오기',width='stretch'):st.rerun()
         analysis_status()
-        st.caption('북쪽 → 동쪽 → 남쪽 순차 분석 · CCTV 표시 시각 14:00:00부터 시작')
-        with st.expander('영상·모델 분석 설정'):
+        st.caption('북쪽 → 동쪽 → 남쪽 순차 분석 · CCTV 영상의 재생 시점과 현재 시각을 함께 표시')
+        with st.expander('영상·모델 분석 설정',key='analysis_settings'):
             editable=json.loads(json.dumps(cfg))
             for r in ROOMS:
                 editable['videos'][r]=st.text_input(ROOMS[r]+' CCTV 원본 경로',value=cfg['videos'][r],key='main_video_'+r,disabled=active).strip().strip('"').strip("'")
@@ -213,6 +248,14 @@ def analysis_controls():
                 if video:editable['videos'][r]=upload_save(video,'videos')
                 editable['configs'][r]=st.text_input(ROOMS[r]+' 구역 JSON · 기본 구역은 비우기',value=cfg['configs'][r],key='main_config_'+r,disabled=active).strip()
             editable['model']=st.text_input('YOLO 모델 경로',value=cfg['model'],key='main_model',disabled=active).strip()
+            editable['runtime_profile']=st.selectbox('모델 실행 프로필',['default-n','north-gpu-s'],
+                index=1 if cfg.get('runtime_profile')=='north-gpu-s' else 0,
+                format_func=lambda p:'기본 n (모든 방향)' if p=='default-n' else 'north-gpu-s (북쪽만 s / 동쪽·남쪽 n)',
+                key='main_runtime_profile',disabled=active)
+            if editable['runtime_profile']=='north-gpu-s':
+                editable['north_s_model']=st.text_input('북쪽 s 가중치 경로 (공식 yolo11s.pt)',
+                    value=cfg.get('north_s_model',''),key='main_north_s_model',disabled=active).strip()
+                st.caption('cuda:0 + 검증된 공식 YOLO11s + 번들 북쪽 구역 전용입니다. 사용자 북쪽 JSON은 기본 n을 사용하세요. 동쪽·남쪽은 위 기본 n 가중치를 사용합니다.')
             editable['device']=st.selectbox('분석 장치',['cpu','cuda:0'],index=0 if cfg['device']=='cpu' else 1,key='main_device',disabled=active)
             day=st.date_input('CCTV 시연 날짜',value=datetime.fromisoformat(cfg['capture_date']).date(),key='capture_date',disabled=active)
             editable['capture_date']=day.isoformat()
@@ -225,9 +268,23 @@ from prediction_csv import attach as attach_predictions, load_predictions
 run_cfg=attach_predictions(run_cfg,cfg.get('prediction_csv_path',''))
 
 if nav=='메인 대시보드':
-    banner('화장실 실시간 모니터링','저장 영상 3곳의 분석 결과를 같은 영상 시점으로 확인합니다.')
+    title_col,clock_col=st.columns([4,1])
+    with title_col:
+        st.markdown('''<div style="display:flex;flex-direction:column;gap:7px;padding:2px 0 12px">
+          <div style="font-size:11px;line-height:1.3;font-weight:800;letter-spacing:1.2px;color:#0867df">RESTROOM MONITORING</div>
+          <div role="heading" aria-level="1" style="font-size:27px;line-height:1.3;font-weight:800;letter-spacing:-0.8px;color:#172431">화장실 실시간 모니터링</div>
+          <div style="font-size:12px;line-height:1.5;color:#718797">저장 영상 3곳의 분석 결과를 같은 영상 시점으로 확인합니다.</div>
+        </div>''',unsafe_allow_html=True)
+    with clock_col:
+        @st.fragment(run_every='1s')
+        def dashboard_clock():
+            st.markdown(f"<div style='text-align:right;white-space:nowrap'><div style='font-size:14px;color:#718797;font-weight:600'>현재 시각</div><div style='font-size:clamp(32px,3vw,46px);line-height:1.15;font-weight:750;font-variant-numeric:tabular-nums;color:#172431'>{simulation_now():%H:%M:%S}</div></div>",unsafe_allow_html=True)
+        dashboard_clock()
     analysis_controls()
     train_run_cfg=attach_train_events(cfg,run_cfg)
+    if st.button('처음부터',key='reset_video_clock_main'):
+        from simulation_clock import reset
+        reset();st.rerun()
     st.iframe(dashboard(records,media_urls(),train_run_cfg),height='content')
     with st.expander('열차 알림·시스템 상태'):
         left,right=st.columns([1.2,1])
@@ -245,10 +302,17 @@ if nav=='메인 대시보드':
                 st.session_state.pop('_train_schedule_cache',None);st.rerun()
         with right:
             st.subheader('시스템 연결 상태')
-            st.write('CCTV 분석: 설치된 0.3.2 모듈을 직접 호출')
+            from analysis_runtime import runtime_info
+            try:
+                runtime=runtime_info()
+                st.write('CCTV 분석: '+runtime['version']+' · '+cfg.get('runtime_profile','default-n'))
+                st.caption('Python: '+runtime['python'])
+                st.caption('분석 소스: '+runtime['source'])
+            except Exception as error:
+                st.error(str(error))
             st.write('저장: 분석 원본 CSV + 대시보드 SQLite')
             st.write('열차: MySQL 예정 시간표 조회 · '+('연결됨' if train_run_cfg['train_db_status']=='connected' else '연결 확인 필요'))
-            st.caption('예측 CSV: '+('연결됨' if run_cfg.get('uploaded_predictions') else '미등록 또는 불러오기 실패')+' · CCTV 측정값과 별도 표시')
+            st.caption('예측모델 미연동 · 미측정값을 0명으로 대체하지 않습니다.')
 
 elif nav=='화장실 상세':
     banner('화장실 상세','CCTV 영상과 현재 대기 상태, 날짜·시간별 이용 기록을 확인합니다.')
@@ -306,6 +370,9 @@ elif nav=='사이니지 보기':
     realtime_tab,platform_tab=st.tabs(['화장실 실시간 대기 현황 사이니지','플랫폼 구역 사이니지'])
     with realtime_tab:
         current=st.radio('현재 사이니지 위치',list(ROOMS),format_func=lambda r:ROOMS[r]+' 화장실',horizontal=True)
+        if st.button('처음부터',key='reset_video_clock_signage'):
+            from simulation_clock import reset
+            reset();st.rerun()
         st.iframe(live_signage(records,current,media_urls(),run_cfg),height='content',width='stretch')
         with st.expander('마지막 분석 시점 화면 저장'):
             end=common_end(records) or 0.
@@ -314,6 +381,10 @@ elif nav=='사이니지 보기':
     with platform_tab:
         from platform_signage import render_platform
         render_platform(run_cfg,media_urls())
+
+elif nav=='혼잡도 예측모델':
+    import runpy
+    runpy.run_module('automodel_lab.app', run_name='automodel_lab.embedded')
 
 else:
     banner('시연 설정','이용 기록과 사이니지 표시 기준을 설정합니다.')

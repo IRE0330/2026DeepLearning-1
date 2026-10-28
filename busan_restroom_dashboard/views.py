@@ -79,17 +79,16 @@ def dashboard(records,urls,cfg):
     for i,(r,name) in enumerate(ROOMS.items(),1):
         video=f'<video id="v-{r}" controls muted playsinline preload="metadata" src="{html.escape(urls[r],quote=True)}"></video>' if urls.get(r) else '<div class="empty">시연 설정에서 영상을 연결하세요</div>'
         chunks.append(f'''<div class="card"><div class="cardhead">{name} 화장실 <span class="pill">CAM 0{i}</span></div><div class="video">{video}{distance_overlay(cfg,r)}<span class="cctv-tag">● CCTV · {name}</span><span class="cctv-clock" id="{r}-clock">14:00:00</span></div><div class="metrics"><div><div class="small">외부 대기 인원</div><div class="big" id="{r}-outside">—</div></div><div><div class="small">예상 대기시간</div><div class="big" id="{r}-wait">측정 불가</div></div><div><div class="small">내부 잔류 인원 · 추정</div><div class="big" id="{r}-inside">—</div></div><div><div class="small">전체 대기 인원 · 추정</div><div class="big" id="{r}-queue">—</div></div></div><div class="foot"><span class="congestion-badge" data-state="측정 불가" id="{r}-status">측정 불가</span><span id="{r}-time">기록 없음</span></div><div class="alert" id="{r}-error"></div>{distance_panel(element_id="distance-"+r)}</div>''')
-    return STYLE+'''<div class="bar"><button type="button" id="play">▶ 동시 재생</button><button type="button" class="pause-button" id="pause">Ⅱ 일시정지</button><button class="secondary" id="reset">처음부터</button><input id="seek" aria-label="공통 영상 시점" type="range" min="0" max="1" step="0.1" value="0"><span id="time" style="font-size:12px;min-width:150px">14:00:00 / 14:00:00</span></div><div class="alert" id="playback-error" role="status"></div><div class="statline"><div><span class="small">모니터링 화장실</span><strong>3 <span class="unit">곳</span></strong></div><div><span class="small">동일 시점 전체 대기 · 추정</span><strong id="total">—</strong></div><div><span class="small">혼잡 화장실</span><strong id="busy">—</strong></div></div><div class="cards">'''+''.join(chunks)+'''</div><section class="train-alert-panel" style="margin-top:18px;padding:20px;background:white;border:1px solid #e2eaf2;border-radius:14px"><h2 style="margin:0 0 10px;font-size:18px">도착·출발 예정 열차 알림</h2><div id="train-alert-caption" class="notice"></div><div id="train-alert-message" role="status" style="margin:12px 0;color:#677f93"></div><table id="train-alert-table" style="width:100%;text-align:left;border-collapse:collapse;font-size:13px"><thead><tr><th>예정일시</th><th>열차번호</th><th>열차종류</th><th>운행구분</th></tr></thead><tbody id="train-alert-rows"></tbody></table></section><div class="notice">CCTV 시연 영상 · 14:00:00 시작 / YOLO11n + ByteTrack 분석 결과 / 재생 시각에 저장된 기록을 연결합니다. 분석 전·기록 범위 밖은 미측정으로 표시합니다.<br>세 영상을 순차 분석한 뒤 동시 재생해 비교합니다. 내부 인원은 분석 모듈의 추정값입니다. 예상 대기시간·혼잡도는 임의 거리 기준 시연값입니다.</div>'''+f'''<script>
+    return STYLE+'''<div class="bar"><button type="button" id="play">▶ 동시 재생</button><button type="button" class="pause-button" id="pause">Ⅱ 일시정지</button><input id="seek" aria-label="공통 영상 시점" type="range" min="0" max="1" step="0.1" value="0"><span id="time" style="font-size:12px;min-width:150px">14:00:00 / 14:00:00</span></div><div class="alert" id="playback-error" role="status"></div><div class="statline"><div><span class="small">모니터링 화장실</span><strong>3 <span class="unit">곳</span></strong></div><div><span class="small">동일 시점 전체 대기 · 추정</span><strong id="total">—</strong></div><div><span class="small">혼잡 화장실</span><strong id="busy">—</strong></div></div><div class="cards">'''+''.join(chunks)+'''</div><section class="train-alert-panel" style="margin-top:18px;padding:20px;background:white;border:1px solid #e2eaf2;border-radius:14px"><h2 style="margin:0 0 10px;font-size:18px">도착·출발 예정 열차 알림</h2><div id="train-alert-caption" class="notice"></div><div id="train-alert-message" role="status" style="margin:12px 0;color:#677f93"></div><table id="train-alert-table" style="width:100%;text-align:left;border-collapse:collapse;font-size:13px"><thead><tr><th>예정일시</th><th>열차번호</th><th>열차종류</th><th>운행구분</th></tr></thead><tbody id="train-alert-rows"></tbody></table></section><div class="notice">CCTV 시연 영상 · 현재 표시 시각과 재생 기록 / YOLO + ByteTrack 분석 결과 / 재생 시각에 저장된 기록을 연결합니다. 분석 전·기록 범위 밖은 미측정으로 표시합니다.<br>세 영상을 순차 분석한 뒤 동시 재생해 비교합니다. 내부 인원은 분석 모듈의 추정값입니다. 예상 대기시간·혼잡도는 임의 거리 기준 시연값입니다.</div>'''+f'''<script>
 {playback_source()}
 {distance_script()}
 const data={json_js(series)}, cfg={json_js(cfg)}, rooms=Object.keys(data), vs=rooms.map(r=>document.getElementById('v-'+r)).filter(Boolean);
 let t=0,end=0;
 const seek=document.getElementById('seek'),btn=document.getElementById('play');
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0');
-const clock=s=>new Date((14*3600+Math.floor(s))*1000).toISOString().slice(11,19);
+const clock=s=>new Date(Date.UTC(2026,9,14,14,0,0)+Math.max(0,Date.now()-cfg.sim_clock_epoch_ms)).toISOString().slice(11,19);
 const field=(r,k,x)=>document.getElementById(r+'-'+k).textContent=x;
 function render(){{
-  
   let sum=0,known=0,busy=0,distanceKnown=0;
   rooms.forEach(r=>{{let a=data[r].filter(x=>x.t<=t+0.001), rec=a.length?a[a.length-1]:null;
     if(rec && t>data[r][data[r].length-1].t+1.1) rec=null;
@@ -101,11 +100,11 @@ function render(){{
     if(d.reached_m!=null){{distanceKnown++;if(d.reached_m>=10)busy++;}}
     field(r,'status',name);document.getElementById(r+'-status').dataset.state=name;
     field(r,'clock',clock(t));
-    field(r,'time',rec?'CCTV '+clock(rec.t)+' 기준':'이 시점의 기록 없음');
+    field(r,'time',rec?'영상 '+fmt(rec.t)+' 기록 기준':'이 시점의 기록 없음');
     if(q!=null){{sum+=q;known++;}}
   }});
   document.getElementById('total').textContent=known===3?sum+' 명':'미측정';document.getElementById('busy').textContent=distanceKnown===3?busy+' 곳':'측정 불가';
-  seek.value=t;document.getElementById('time').textContent=clock(t)+' / '+clock(end);
+  seek.value=t;document.getElementById('time').textContent=fmt(t)+' / '+fmt(end);
   renderTrainAlerts(t);
 }}
 let lastTrainSecond=-1;
@@ -115,9 +114,10 @@ function trainEventLabel(row,seconds){{
  return seconds>=row.offset_s?row.event:row.event+'예정 ('+duration+' 남음)';
 }}
 function renderTrainAlerts(seconds){{
+ const timeText=clock(0), parts=timeText.split(':').map(Number); seconds=parts[0]*3600+parts[1]*60+parts[2]-14*3600;
  const second=Math.floor(seconds);if(second===lastTrainSecond)return;lastTrainSecond=second;
- const stamp=new Date((cfg.capture_date||'2026-10-14')+'T14:00:00Z');stamp.setUTCSeconds(stamp.getUTCSeconds()+second);
- document.getElementById('train-alert-caption').textContent='영상 재생 기준 '+stamp.toISOString().slice(0,19).replace('T',' ')+'부터 20분 · 예정 시각 경과 후 1분간 표시 · MySQL 예정 시간표';
+ const stamp=new Date((cfg.capture_date||'2026-10-14')+'T'+timeText+'Z');
+ document.getElementById('train-alert-caption').textContent='현재 표시 시각 '+stamp.toISOString().slice(0,19).replace('T',' ')+'부터 20분 · 예정 시각 경과 후 1분간 표시 · MySQL 예정 시간표';
  const body=document.getElementById('train-alert-rows'),table=document.getElementById('train-alert-table'),message=document.getElementById('train-alert-message');
  body.replaceChildren();
  if(cfg.train_db_status!=='connected'){{table.hidden=true;message.textContent=cfg.train_db_message||'열차 정보 탭에서 MySQL 연결을 설정해주세요.';return;}}
@@ -127,7 +127,8 @@ function renderTrainAlerts(seconds){{
  for(const row of upcoming){{const tr=document.createElement('tr');for(const [index,value] of [row.day+' '+row.time,row.number,row.kind,trainEventLabel(row,seconds)].entries()){{const td=document.createElement('td');td.textContent=value;if(index===3){{td.style.color=seconds>=row.offset_s?'#087f5b':row.event==='출발'?'#b66b00':'#0867df';td.style.fontWeight='750';}}td.style.padding='10px 4px';td.style.borderTop='1px solid #e5edf4';tr.appendChild(td);}}body.appendChild(tr);}}
 }}
 const player=createPlayback({{videos:vs,expectedVideos:3,key:cfg.playback_key||'default',limit:cfg.playback_end,fallbackEnd:Math.max(0,...rooms.map(r=>data[r].length?data[r][data[r].length-1].t:0)),onTime:(s,d)=>{{t=s;end=d;seek.max=end||1;render();}},onState:playing=>{{btn.disabled=playing;btn.setAttribute('aria-pressed',String(playing));}},onError:message=>{{document.getElementById('playback-error').textContent=message;}},onVideoError:(video,message)=>{{const r=rooms.find(r=>document.getElementById('v-'+r)===video);if(r)field(r,'error',message);}}}});
-btn.onclick=()=>{{document.getElementById('playback-error').textContent='';rooms.forEach(r=>field(r,'error',''));player.play();}};document.getElementById('pause').onclick=()=>player.pause();seek.oninput=()=>player.seek(Number(seek.value));document.getElementById('reset').onclick=()=>player.reset();
+setInterval(render,1000);
+btn.onclick=()=>{{document.getElementById('playback-error').textContent='';rooms.forEach(r=>field(r,'error',''));player.play();}};document.getElementById('pause').onclick=()=>player.pause();seek.oninput=()=>player.seek(Number(seek.value));
 </script>'''
 
 def floor_map(current,vals,cfg,best):
@@ -172,14 +173,13 @@ def detail_video(room,records,url,cfg,start=0.):
     series=playback_rows(records,cfg,room)
     video=f'<video id="detail-video" controls muted playsinline preload="metadata" src="{html.escape(url,quote=True)}"></video>' if url else '<div class="empty" style="padding:120px;text-align:center;color:white">영상 파일을 찾지 못했습니다. 메인 상단에서 연결을 확인하세요.</div>'
     fields=''.join(f'<div><span class="small">{title}</span><strong id="detail-{key}">미측정</strong></div>' for key,title in [('outside','외부 대기 인원'),('inside','내부 잔류 · 추정'),('queue','전체 대기 · 추정'),('wait','예상 대기시간')])
-    return STYLE+f'''<div class="detail-head"><span>{ROOMS[room]} 화장실 CCTV</span><span class="detail-head-actions"><span class="statepill" id="detail-status">측정 불가</span></span></div><div class="detail-shell"><div class="detail-video" id="detail-stage">{video}{distance_overlay(cfg,room)}<span class="cctv-tag">● CCTV · {ROOMS[room]} 화장실</span><span class="cctv-clock" id="detail-clock">14:00:00</span></div><aside class="detail-side"><section class="detail-congestion" id="detail-congestion"><h3>{ROOMS[room]} 화장실</h3><div class="congestion-state" id="detail-congestion-state">현재 혼잡도 · 측정 불가</div><div class="congestion-wait" id="detail-congestion-wait">측정 불가</div><footer id="detail-congestion-note">이 시점의 분석 기록 없음</footer></section><div class="detail-info">{fields}</div>{distance_panel(element_id="distance-detail")}</aside></div><div class="notice" id="detail-note">14:00:00 시작 · 재생 시점에 해당하는 모델 분석 기록</div><script>
+    return STYLE+f'''<div class="detail-head"><span>{ROOMS[room]} 화장실 CCTV</span><span class="detail-head-actions"><span class="statepill" id="detail-status">측정 불가</span></span></div><div class="detail-shell"><div class="detail-video" id="detail-stage">{video}{distance_overlay(cfg,room)}<span class="cctv-tag">● CCTV · {ROOMS[room]} 화장실</span><span class="cctv-clock" id="detail-clock">14:00:00</span></div><aside class="detail-side"><section class="detail-congestion" id="detail-congestion"><h3>{ROOMS[room]} 화장실</h3><div class="congestion-state" id="detail-congestion-state">현재 혼잡도 · 측정 불가</div><div class="congestion-wait" id="detail-congestion-wait">측정 불가</div><footer id="detail-congestion-note">이 시점의 분석 기록 없음</footer></section><div class="detail-info">{fields}</div>{distance_panel(element_id="distance-detail")}</aside></div><div class="notice" id="detail-note">현재 표시 시각 · 재생 시점에 해당하는 모델 분석 기록</div><script>
 {playback_source()}
 {distance_script()}
 const rows={json_js(series)},cfg={json_js(cfg)},start={float(start)};
 const video=document.getElementById('detail-video');
-function clock(s){{return new Date((14*3600+Math.floor(s))*1000).toISOString().slice(11,19);}}
+function clock(s){{return new Date(Date.UTC(2026,9,14,14,0,0)+Math.max(0,Date.now()-cfg.sim_clock_epoch_ms)).toISOString().slice(11,19);}}
 function update(t){{
- 
  const records=rows.filter(r=>r.t<=t+.001);let rec=records.length?records[records.length-1]:null;
  if(rec&&t>rows[rows.length-1].t+1.1)rec=null;
  const d=distanceAt(rows,t);
@@ -193,8 +193,9 @@ function update(t){{
  document.getElementById('detail-congestion-state').textContent='현재 혼잡도 · '+state;
  document.getElementById('detail-congestion-wait').textContent=d.wait;
  document.getElementById('detail-congestion-note').textContent='임의 거리 기준 시연값 · '+d.reason;
- document.getElementById('detail-note').textContent=(rec?'CCTV '+clock(rec.t)+' 분석 기록 기준':'이 시점의 분석 기록이 없습니다.')+' · 예상 대기시간·혼잡도는 임의 거리 기준 시연값';
+ document.getElementById('detail-note').textContent=(rec?'영상 '+Math.floor(rec.t)+'초 분석 기록 기준':'이 시점의 분석 기록이 없습니다.')+' · 예상 대기시간·혼잡도는 임의 거리 기준 시연값';
 }}
+setInterval(()=>{{document.getElementById('detail-clock').textContent=clock(0);}},1000);
 createPlayback({{videos:video?[video]:[],key:cfg.playback_key||'default',limit:cfg.playback_end,fallbackEnd:rows.length?rows[rows.length-1].t:0,onTime:update,onError:message=>document.getElementById('detail-note').textContent=message}});
 </script>'''
 
@@ -205,7 +206,7 @@ def live_signage(records,current,urls,cfg):
     for r in ROOMS:
         clip=f'<video id="sign-video-{r}" muted playsinline preload="metadata" src="{html.escape(urls[r],quote=True)}"></video>' if urls.get(r) else '<div>영상 없음</div>'
         previews.append(f'<div>{clip}<small>{ROOMS[r]} CCTV</small></div>')
-    controls='<div class="bar"><button type="button" id="sign-play">▶ 재생</button><button type="button" class="pause-button" id="sign-pause">Ⅱ 일시정지</button><button class="secondary" id="sign-reset">처음부터</button><input id="sign-seek" aria-label="CCTV 공통 재생 시점" type="range" min="0" max="1" step="0.1" value="0"><span id="sign-timeline" style="min-width:142px;font-size:11px">14:00:00</span></div>'
+    controls='<div class="bar"><button type="button" id="sign-play">▶ 재생</button><button type="button" class="pause-button" id="sign-pause">Ⅱ 일시정지</button><input id="sign-seek" aria-label="CCTV 공통 재생 시점" type="range" min="0" max="1" step="0.1" value="0"><span id="sign-timeline" style="min-width:142px;font-size:11px">14:00:00</span></div>'
     controls+='<details class="previews"><summary>CCTV 재생 화면 펼치기</summary><div class="preview-grid">'+''.join(previews)+'</div></details><div class="alert" id="sign-error"></div>'
     body=signage(records,current,0,cfg)
     close=body.index('</style>')+len('</style>')
@@ -222,11 +223,10 @@ const videos=rooms.map(r=>document.getElementById('sign-video-'+r)).filter(Boole
 const seek=document.getElementById('sign-seek'),button=document.getElementById('sign-play');let lastRecords='';
 const distanceTemplates={json_js({r:signage_panel(element_id='distance-sign-'+r) for r in ROOMS})};
 function distancePanel(r){{return distanceTemplates[r];}}
-function clock(s){{return new Date((14*3600+Math.floor(s))*1000).toISOString().slice(11,19);}}
+function clock(s){{return new Date(Date.UTC(2026,9,14,14,0,0)+Math.max(0,Date.now()-cfg.sim_clock_epoch_ms)).toISOString().slice(11,19);}}
 function render(t,end){{
- 
  document.getElementById('sign-clock').textContent=clock(t);document.getElementById('sign-position').textContent='CCTV '+clock(t)+' 기준';
- document.getElementById('sign-timeline').textContent=clock(t)+' / '+clock(end);seek.max=end||1;seek.value=t;
+ document.getElementById('sign-timeline').textContent=Math.floor(t)+'초 / '+Math.floor(end)+'초';seek.max=end||1;seek.value=t;
  const vals={{}},ids=[];
  for(const r of rooms){{const available=rows[r].filter(x=>x.t<=t+.001);let rec=available.length?available[available.length-1]:null;if(rec&&t>rows[r][rows[r].length-1].t+1.1)rec=null;vals[r]={{...(rec||{{}}),distance:distanceAt(rows[r],t)}};ids.push(r+':'+vals[r].distance.status+':'+vals[r].distance.stability+':'+vals[r].distance.reason);}}
  const id=ids.join('|');if(id===lastRecords)return;lastRecords=id;
@@ -243,10 +243,9 @@ function render(t,end){{
 }}
 const fallback=Math.max(0,...rooms.map(r=>rows[r].length?rows[r][rows[r].length-1].t:0));
 const player=createPlayback({{videos,key:cfg.playback_key||'default',limit:cfg.playback_end,fallbackEnd:fallback,onTime:render,onState:playing=>{{button.disabled=playing;button.setAttribute('aria-pressed',String(playing));}},onError:message=>document.getElementById('sign-error').textContent=message}});
-button.onclick=()=>player.play();document.getElementById('sign-pause').onclick=()=>player.pause();document.getElementById('sign-reset').onclick=()=>player.reset();seek.oninput=()=>player.seek(Number(seek.value));
+setInterval(()=>{{document.getElementById('sign-clock').textContent=clock(0);}},1000);
+button.onclick=()=>player.play();document.getElementById('sign-pause').onclick=()=>player.pause();seek.oninput=()=>player.seek(Number(seek.value));
 </script>'''
-
-
 
 
 _live_signage_screen_base=live_signage
