@@ -4,8 +4,11 @@ import hashlib
 import io
 import json
 from pathlib import Path
+from datetime import datetime
+from uuid import uuid4
 import streamlit as st
 from distance_demo import BANDS, DISCLAIMER, validate_lines, video_key
+from distance_policy import active_meters
 
 _EDITOR = st.components.v2.component(
     'restroom_distance_lines',
@@ -55,8 +58,9 @@ def render_distance_settings(cfg, save_settings, disabled=False):
         st.caption('세 CCTV 원본과 공통 기준선이 일치합니다. 기준선은 영상 위에 계속 표시됩니다.')
         return
     room = st.radio('기준선을 지정할 CCTV', ['north', 'east', 'south'],
-                    format_func=lambda r: {'north':'북쪽','east':'동쪽','south':'남쪽'}[r],
+                    format_func=lambda r: {'north':'북쪽','east':'신관','south':'남쪽'}[r],
                     horizontal=True, key='distance_room', disabled=disabled)
+    meters=active_meters(room)
     source = cfg['videos'].get(room, '')
     signature = video_key(source)
     setting = cfg.get('distance_demo', {}).get(room, {})
@@ -77,21 +81,22 @@ def render_distance_settings(cfg, save_settings, disabled=False):
     usable = setting if setting.get('source_key') == signature else {}
     revision = hashlib.sha256(json.dumps(usable, sort_keys=True).encode()).hexdigest()[:12]
     result = _EDITOR(data={'setting': usable, 'image': image, 'width':size[0], 'height':size[1],
-                           'source_key':signature, 'disabled':disabled},
+                           'source_key':signature, 'disabled':disabled, 'meters':list(meters)},
                      key=f'distance-editor-{room}-{signature or "draft"}-{seconds}-{revision}',
                      on_apply_change=lambda: None)
     payload = result.apply
     if payload and not disabled:
-        issue = validate_lines(payload)
+        issue = validate_lines(payload,meters)
         if payload.get('source_key') != signature:
             issue = '영상이 변경되었습니다. 현재 영상에서 다시 지정하세요.'
         if issue:
             st.error(issue)
         else:
             updated = json.loads(json.dumps(cfg))
-            updated.setdefault('distance_demo', {})[room] = {
-                'origin':payload['origin'], 'lines':payload['lines'],
+            updated.setdefault('distance_demo', {})[room] = {**setting,
+                'origin':payload['origin'], 'lines':{**setting.get('lines',{}),**{str(m):payload['lines'][str(m)] for m in meters}},
                 'source_key':signature, 'frame_s':seconds, 'label':DISCLAIMER}
+            backup_distance_settings(cfg,room)
             save_settings(updated)
             st.session_state['distance_saved_message'] = ('연습용 ' if not signature else '')+'기준선을 저장했습니다. · '+DISCLAIMER
             st.rerun()
@@ -99,3 +104,15 @@ def render_distance_settings(cfg, save_settings, disabled=False):
         st.success(message)
     if usable:
         st.caption('저장 상태: '+('현재 영상 연결됨' if signature else '영상 없는 연습용')+' · '+DISCLAIMER)
+
+
+def backup_distance_settings(cfg, room):
+    """Preserve only distance geometry before a user explicitly saves a change."""
+    import core
+    folder = core.DATA/'distance_backups'
+    folder.mkdir(parents=True, exist_ok=True)
+    target = folder/(datetime.now().strftime('%Y%m%d-%H%M%S-%f')+'-'+room+'-'+uuid4().hex[:8]+'.json')
+    with target.open('x', encoding='utf-8') as output:
+        json.dump({'room':room, 'distance_demo':cfg.get('distance_demo', {})},
+                  output, ensure_ascii=False, indent=2)
+    return target

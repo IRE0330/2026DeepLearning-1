@@ -65,7 +65,7 @@ def panel_text(config, state, mode="analysis"):
             return "—"
         return (f"{v:.1f}" if decimal else str(v)) + unit
     if korean:
-        title = f"{ {'north': '북쪽', 'south': '남쪽', 'east': '동쪽'}.get(room, room)} · {time} · {'시연·미검증' if demo else '미검증'}"
+        title = f"{ {'north': '북쪽', 'south': '남쪽', 'east': '신관 화장실'}.get(room, room)} · {time} · {'시연·미검증' if demo else '미검증'}"
         rows = [(f"입장 {value('entries', '명')}", f"퇴장 {value('exits', '명')}"),
                 (f"내부 {value('inside_estimate', '명')}", f"빈 칸 {value('available_stalls_estimate', '칸')}"),
                 (f"외부 대기 {value('waiting_total', '명')}", f"내부 대기 {value('internal_waiting_estimate', '명')}"),
@@ -80,7 +80,7 @@ def panel_text(config, state, mode="analysis"):
         if mode == "baseline":
             notes = ["탐지·추적 전용 · 집계 없음"]
     else:
-        title = f"{room.title()} · {time} · {'Demo / unvalidated' if demo else 'Unvalidated'}"
+        title = f"{ {'east': 'New Wing Restroom'}.get(room, room.title())} · {time} · {'Demo / unvalidated' if demo else 'Unvalidated'}"
         rows = [(f"In {value('entries')}", f"Out {value('exits')}"),
                 (f"Inside {value('inside_estimate')}", f"Free {value('available_stalls_estimate')}"),
                 (f"Outside queue {value('waiting_total')}", f"Inside queue {value('internal_waiting_estimate')}"),

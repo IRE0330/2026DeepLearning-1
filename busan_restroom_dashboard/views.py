@@ -2,11 +2,13 @@
 import html, json, math
 from pathlib import Path
 from datetime import datetime
-from core import ROOMS, values, at, label, wait_label, recommendation, cctv_stamp
+from core import ROOMS, values, at, wait_label, cctv_stamp
+from cctv_presentation import label, recommendation
 from distance_demo import result_series
 from distance_display import panel as distance_panel, overlay as distance_overlay, script as distance_script
 from distance_stability import result_at
-from signage_time import total_time as signage_total, script as signage_time_script
+from cctv_presentation import total_time as signage_total, script as signage_time_script
+from distance_policy import rank_value
 
 
 def signage_panel(distance=None, total='측정 불가', element_id='distance-result'):
@@ -16,7 +18,7 @@ def signage_panel(distance=None, total='측정 불가', element_id='distance-res
 
 def playback_rows(records,cfg,room):
     return [{'t':float(rec['interval_end_s']),**values(rec),'distance':distance}
-            for rec,distance in zip(records,result_series(records,cfg,room))]
+            for rec,distance in zip(records,result_series(records,cfg,room,retain_last=True))]
 
 STYLE='''<style>
 *{box-sizing:border-box}body{margin:0;background:#f1f6fa;color:#14212d;font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif}button{cursor:pointer;border:0;border-radius:8px;background:#0667e8;color:white;padding:11px 18px;font-weight:750}button.secondary{background:#edf3f8;color:#536579}.bar{display:flex;align-items:center;gap:12px;background:white;border:1px solid #e6edf4;border-radius:14px;padding:14px 18px;margin-bottom:20px}.bar input{flex:1;accent-color:#0868eb}.pill{font-size:11px;border-radius:5px;padding:4px 7px;background:#edf5ff;color:#1265c5}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{border:1px solid #e2eaf2;background:white;border-radius:15px;overflow:hidden}.cardhead{padding:17px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:750}.video{background:#142332;aspect-ratio:16/9;position:relative}.video video{width:100%;height:100%;object-fit:contain}.video .empty{height:100%;display:flex;align-items:center;justify-content:center;color:#b2c0cd;font-size:13px}.metrics{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:20px 8px}.small{color:#8694a3;font-size:11px;font-weight:650}.big{font-size:26px;font-weight:800;letter-spacing:-1px;margin-top:5px}.unit{font-size:12px;font-weight:600;color:#8392a2;margin-left:4px}.foot{padding:12px 18px;border-top:1px solid #edf1f6;display:flex;justify-content:space-between;font-size:11px;color:#8493a2}.notice{font-size:12px;color:#7b8d9e;line-height:1.7;margin-top:14px}.statline{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}.statline>div{background:white;padding:18px;border:1px solid #e4ecf3;border-radius:13px}.statline strong{font-size:26px;display:block;margin-top:8px}.sg-head{display:flex;justify-content:space-between;align-items:flex-start;padding:24px 6px}.sg-head h1{font-size:36px;letter-spacing:-2px;margin:5px 0 10px}.sg-head p{font-size:12px;color:#8193a4}.sg-layout{display:grid;grid-template-columns:3fr 1fr;gap:14px}.map{background:white;border-radius:22px;overflow:hidden;min-height:500px}.sg-side{padding:22px;background:white;border-radius:22px}.sg-side h2{font-size:23px;margin:5px 0 22px}.sg-item{border-radius:16px;padding:18px;margin-bottom:16px;background:#f2f5f8}.sg-item h3{font-size:13px;margin:0 0 8px}.sg-item .minutes{font-size:60px;font-weight:850;letter-spacing:-3px;line-height:1.25}.sg-item .minutes span{font-size:18px;letter-spacing:0}.sg-item footer{padding-top:10px;border-top:1px solid #d9e5e8;margin-top:10px;font-size:11px;font-weight:650}.green{background:#e1f5ee;color:#00846c}.yellow{background:#fff2ce;color:#965d00}.red{background:#fff1ef;color:#d6403d}.gray{background:#f3f5f7;color:#88939d}.badge{display:inline-block;font-size:10px;background:#00846c;color:white;border-radius:20px;padding:4px 8px;float:right}.sg-note{font-size:11px;color:#8a9baa;line-height:1.7;padding:10px}.date{text-align:right;color:#738290;font-size:13px}.date strong{font-size:32px;color:#152331;display:block}.alert{color:#c24842;font-size:12px}.fullscreen{background:#dde9f5;color:#31649a;padding:8px 12px}.row{display:flex;justify-content:space-between;align-items:center}
@@ -92,15 +94,16 @@ function render(){{
   let sum=0,known=0,busy=0,distanceKnown=0;
   rooms.forEach(r=>{{let a=data[r].filter(x=>x.t<=t+0.001), rec=a.length?a[a.length-1]:null;
     if(rec && t>data[r][data[r].length-1].t+1.1) rec=null;
-    const d=distanceAt(data[r],t);
+    const d=distanceAt(data[r],t,distanceMedia([document.getElementById('v-'+r)]));
     paintDistance(document.getElementById('distance-'+r),d,document.getElementById('distance-overlay-'+r));
-    ['outside','inside','queue'].forEach(k=>field(r,k,rec&&rec[k]!=null?rec[k]+' 명':'—'));
+    const shown=d.display_values||rec;
+    ['outside','inside','queue'].forEach(k=>field(r,k,shown&&shown[k]!=null?shown[k]+' 명':'—'));
     field(r,'wait',d.wait);
-    let q=rec?.queue, name=d.status;
+    let q=shown?.queue, name=d.status;
     if(d.reached_m!=null){{distanceKnown++;if(d.reached_m>=10)busy++;}}
     field(r,'status',name);document.getElementById(r+'-status').dataset.state=name;
     field(r,'clock',clock(t));
-    field(r,'time',rec?'영상 '+fmt(rec.t)+' 기록 기준':'이 시점의 기록 없음');
+    field(r,'time',d.stability==='재생 종료'?'재생 종료':d.held?'갱신 지연 · 마지막 정상 영상 '+d.last_valid_time_s.toFixed(2)+'초':rec?'영상 '+fmt(rec.t)+' 기록 기준':'대기정보 확인 중');
     if(q!=null){{sum+=q;known++;}}
   }});
   document.getElementById('total').textContent=known===3?sum+' 명':'미측정';document.getElementById('busy').textContent=distanceKnown===3?busy+' 곳':'측정 불가';
@@ -153,19 +156,19 @@ def signage(records,current,t,cfg):
     recs={r:at(records[r],t) if records[r] and t<=float(records[r][-1]['interval_end_s'])+1.1 else None for r in ROOMS}
     vals={}
     for r in ROOMS:
-        vals[r]={**values(recs[r]),'distance':result_at(records[r],result_series(records[r],cfg,r),t)}
+        vals[r]={**values(recs[r]),'distance':result_at(records[r],result_series(records[r],cfg,r,retain_last=True),t)}
         vals[r]['total_time']=signage_total(vals[r]['distance'],cfg.get('walk',{}).get(current,{}).get(r))
     best=recommendation(current,vals,cfg)
     nums={'north':1,'east':2,'south':3}
     dt=cctv_stamp(t,cfg);date=dt.strftime('%Y.%m.%d');clock=dt.strftime('%H:%M:%S')
-    order=[current]+sorted([r for r in ROOMS if r!=current],key=lambda r:(vals[r]['distance']['reached_m'] if vals[r]['distance']['reached_m'] is not None else float('inf'),cfg['walk'][current][r]))
+    order=[current]+sorted([r for r in ROOMS if r!=current],key=lambda r:(rank_value(vals[r]['distance']),cfg['walk'][current][r]))
     panels=[]
     for r in order:
         status,color=label(vals[r],cfg);distance=vals[r]['distance']
-        cls='red' if status in ('혼잡','매우 혼잡') else 'yellow' if status=='보통' else 'green' if status=='여유' else 'gray'
+        cls='red' if status in ('혼잡','매우 혼잡','화면 범위 초과') else 'yellow' if status=='보통' else 'green' if status=='여유' else 'gray'
         badge='<span class="badge">혼잡 단계 낮음</span>' if r==best else ''
         total=vals[r]['total_time']
-        panels.append(f'<div class="sg-item {cls}">{badge}<h3>{nums[r]}번 · {ROOMS[r]} 화장실</h3><div id="sign-state-{r}">{status}</div><div class="minutes" id="sign-wait-{r}">{total}</div><footer>최종 예상 소요시간 · 임의 거리 기준 시연값</footer>{signage_panel(distance,total,element_id="distance-sign-"+r)}</div>')
+        panels.append(f'<div class="sg-item {cls}">{badge}<h3>{nums[r]}번 · {ROOMS[r]} 화장실</h3><div id="sign-state-{r}">{status}</div><div class="minutes" id="sign-wait-{r}">{total}</div><footer>최종 예상 소요시간 · 임의 거리 기준 시연값{' · 시연 추정(대기 15분 이상)' if distance.get('overflow') else ''}</footer>{signage_panel(distance,total,element_id="distance-sign-"+r)}</div>')
     return STYLE+SIGNAGE_FILL_STYLE+f'''<div class="sg-head"><div><div class="small" style="color:#0068e9">● 역내 편의시설 안내 / RESTROOM GUIDE</div><h1>화장실 혼잡도 안내</h1><p>도보 이동을 포함한 최종 예상 소요시간·혼잡도는 임의 거리 기준 시연값입니다.</p></div><div class="date">{date}<strong id="sign-clock">{clock}</strong><span class="pill">시연 · 영상 {t:.1f}초</span></div></div><div class="sg-layout"><div class="map">{floor_map(current,vals,cfg,best)}</div><div class="sg-side"><div class="small" style="color:#0068e9">TOILET STATUS</div><h2>화장실 이용 안내</h2><div id="sign-items">{''.join(panels)}</div></div></div><div class="sg-note">임의 거리 기준 시연값 · 최종 예상 소요시간은 도보 이동을 포함한 시연용 범위입니다. 거리 혼잡 단계가 낮은 곳을 안내하며 동일 단계는 도보시간으로 정렬합니다. 정확한 실제 소요시간이나 가장 빠른 도착을 보장하지 않습니다. 측정 불가가 있으면 추천하지 않습니다.</div>'''
 
 
@@ -182,10 +185,11 @@ function clock(s){{return new Date(Date.UTC(2026,9,14,14,0,0)+Math.max(0,Date.no
 function update(t){{
  const records=rows.filter(r=>r.t<=t+.001);let rec=records.length?records[records.length-1]:null;
  if(rec&&t>rows[rows.length-1].t+1.1)rec=null;
- const d=distanceAt(rows,t);
+ const d=distanceAt(rows,t,distanceMedia(video?[video]:[]));
  paintDistance(document.getElementById('distance-detail'),d,document.getElementById('distance-overlay-{room}'));
  document.getElementById('detail-clock').textContent=clock(t);
- ['outside','inside','queue'].forEach(k=>document.getElementById('detail-'+k).textContent=rec&&rec[k]!=null?rec[k]+'명':'미측정');
+ const shown=d.display_values||rec;
+ ['outside','inside','queue'].forEach(k=>document.getElementById('detail-'+k).textContent=shown&&shown[k]!=null?shown[k]+'명':'미측정');
  document.getElementById('detail-wait').textContent=d.wait;
  const [state,color,cls]=distanceState({{distance:d}});
  const pill=document.getElementById('detail-status');pill.textContent=state;pill.style.color=color;pill.style.background=cls==='gray'?'#edf2f6':cls==='red'?'#fff0ef':cls==='yellow'?'#fff3cd':'#e1f5ee';
@@ -228,13 +232,13 @@ function render(t,end){{
  document.getElementById('sign-clock').textContent=clock(t);document.getElementById('sign-position').textContent='CCTV '+clock(t)+' 기준';
  document.getElementById('sign-timeline').textContent=Math.floor(t)+'초 / '+Math.floor(end)+'초';seek.max=end||1;seek.value=t;
  const vals={{}},ids=[];
- for(const r of rooms){{const available=rows[r].filter(x=>x.t<=t+.001);let rec=available.length?available[available.length-1]:null;if(rec&&t>rows[r][rows[r].length-1].t+1.1)rec=null;vals[r]={{...(rec||{{}}),distance:distanceAt(rows[r],t)}};ids.push(r+':'+vals[r].distance.status+':'+vals[r].distance.stability+':'+vals[r].distance.reason);}}
+ for(const r of rooms){{const available=rows[r].filter(x=>x.t<=t+.001);let rec=available.length?available[available.length-1]:null;if(rec&&t>rows[r][rows[r].length-1].t+1.1)rec=null;vals[r]={{...(rec||{{}}),distance:distanceAt(rows[r],t,distanceMedia([document.getElementById('sign-video-'+r)]))}};ids.push(r+':'+vals[r].distance.status+':'+vals[r].distance.stability+':'+vals[r].distance.last_valid_time_s+':'+vals[r].distance.reason);}}
  const id=ids.join('|');if(id===lastRecords)return;lastRecords=id;
- const best=recommendDistance(current,vals,cfg),rank=r=>distanceValue(vals[r]).reached_m??Infinity;
+ const best=recommendDistance(current,vals,cfg),rank=r=>distanceRank(distanceValue(vals[r]));
  const order=[current,...rooms.filter(r=>r!==current).sort((a,b)=>rank(a)-rank(b)||cfg.walk[current][a]-cfg.walk[current][b])];
  const panels=order.map(r=>{{const d=distanceValue(vals[r]),[state,color,cls]=distanceState(vals[r]),total=signageTotal(d,cfg.walk?.[current]?.[r]);
   document.getElementById('ring-'+r).setAttribute('stroke',color);document.getElementById('dot-'+r).setAttribute('fill',color);document.getElementById('tag-'+r).setAttribute('fill',color);document.getElementById('map-status-'+r).textContent=state;document.getElementById('map-wait-'+r).textContent=total;
-  return `<div class="sg-item ${{cls}}">${{r===best?'<span class="badge">혼잡 단계 낮음</span>':''}}<h3>${{nums[r]}}번 · ${{roomNames[r]}} 화장실</h3><div id="sign-state-${{r}}">${{state}}</div><div class="minutes" id="sign-wait-${{r}}">${{total}}</div><footer>최종 예상 소요시간 · 임의 거리 기준 시연값</footer>${{distancePanel(r)}}</div>`;
+  return `<div class="sg-item ${{cls}}">${{r===best?'<span class="badge">혼잡 단계 낮음</span>':''}}<h3>${{nums[r]}}번 · ${{roomNames[r]}} 화장실</h3><div id="sign-state-${{r}}">${{state}}</div><div class="minutes" id="sign-wait-${{r}}">${{total}}</div><footer>최종 예상 소요시간 · 임의 거리 기준 시연값${{d.overflow?' · 시연 추정(대기 15분 이상)':''}}</footer>${{distancePanel(r)}}</div>`;
  }}).join('');document.getElementById('sign-items').innerHTML=panels;
  rooms.forEach(r=>{{const d=distanceValue(vals[r]);paintDistance(document.getElementById('distance-sign-'+r),{{...d,wait:signageTotal(d,cfg.walk?.[current]?.[r])}});}});
  const route=document.getElementById('sign-route');route.style.display=best?'block':'none';

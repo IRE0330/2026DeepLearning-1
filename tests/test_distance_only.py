@@ -69,13 +69,13 @@ class DistanceOnly(unittest.TestCase):
         records=[{'interval_end_s':1,'csv_row':{'전체대기인원_추정':0},
                   'detail':{'state':{'expected_wait_s':28,'source_time_s':1}}}]
         rows=playback_rows(records,cfg,'north')
-        self.assertEqual(rows[0]['distance']['wait'],'측정 불가')
+        self.assertEqual(rows[0]['distance']['wait'],'대기정보 확인 중')
         self.assertNotIn('wait',rows[0])
         timeline=distance_timeline(records,cfg,'north')
         self.assertEqual(timeline['예상 대기시간'].tolist(),['측정 불가'])
         self.assertEqual(timeline['기준'].tolist(),[DISCLAIMER])
         body=signage({r:records for r in cfg['videos']},'north',1,cfg)
-        self.assertIn('id="sign-wait-north">측정 불가',body)
+        self.assertIn('id="sign-wait-north">대기정보 확인 중',body)
         self.assertNotIn('28초',body)
 
     def test_distance_timeline_and_static_signage_use_exact_same_bands(self):
@@ -94,14 +94,17 @@ class DistanceOnly(unittest.TestCase):
                     'candidate_count':0,'occluded_count':0,'suppressed_count':0}}}})
             for room in cfg['videos']:
                 timeline=distance_timeline(records,cfg,room)
-                self.assertEqual(timeline['예상 대기시간'].tolist(),['5분 미만','5분 미만','5분 미만','5분 이상','5분 이상','10분 이상','10분 이상','15분 이상'])
-                for i,expected in enumerate(['여유','여유','여유','보통','보통','혼잡','혼잡','매우 혼잡'],1):
+                final_wait='15분 이상' if room=='north' else '10분 이상'
+                final_state='매우 혼잡' if room=='north' else '혼잡'
+                self.assertEqual(timeline['예상 대기시간'].tolist(),['5분 미만','5분 미만','5분 미만','5분 이상','5분 이상','10분 이상','10분 이상',final_wait])
+                for i,expected in enumerate(['여유','여유','여유','보통','보통','혼잡','혼잡',final_state],1):
                     body=signage({r:records for r in cfg['videos']},room,i,cfg)
                     self.assertIn(f'id="sign-state-{room}">{expected}',body)
                     self.assertNotIn('28초',body)
                     self.assertIn(DISCLAIMER,body)
                 body=signage({r:records for r in cfg['videos']},room,12,cfg)
-                self.assertIn(f'id="sign-state-{room}">측정 불가',body)
+                self.assertIn(f'id="sign-state-{room}">{final_state}',body)
+                self.assertIn('갱신 지연',body)
 
     def test_count_thresholds_do_not_change_distance_status(self):
         cfg={'warning':1,'crowded':2}

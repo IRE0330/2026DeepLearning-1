@@ -53,8 +53,9 @@ def load_reference():
 
 def _entry(reference, room):
     from distance_demo import validate_lines
+    from distance_policy import active_meters
     entry = reference.get('rooms', {}).get(room)
-    if (not isinstance(entry, dict) or validate_lines(entry)
+    if (not isinstance(entry, dict) or validate_lines(entry,active_meters(room))
             or not isinstance(entry.get('video_sha256'), str)
             or not re.fullmatch('[0-9a-f]{64}', entry['video_sha256'])
             or not isinstance(entry.get('legacy_source_keys', []), list)
@@ -126,11 +127,12 @@ def shared_editor_hidden(cfg):
 def build_reference(cfg):
     """Export validated local annotations without paths, credentials or run data."""
     from distance_demo import DISCLAIMER, validate_lines, video_key
+    from distance_policy import active_meters
     rooms = {}
     for room in ROOMS:
         source = cfg.get('videos', {}).get(room, '')
         setting = cfg.get('distance_demo', {}).get(room, {})
-        issue = validate_lines(setting)
+        issue = validate_lines(setting,active_meters(room))
         legacy_key = video_key(source)
         if issue or not legacy_key or setting.get('source_key') != legacy_key:
             raise ValueError(f'{room}: annotations do not match the connected video: {issue or "source key"}')
@@ -145,5 +147,7 @@ def build_reference(cfg):
             'origin': copy.deepcopy(setting['origin']),
             'lines': copy.deepcopy(setting['lines']), 'frame_s': frame, 'label': DISCLAIMER,
         }
+        for key in ('overflow_boundary','overflow_seconds'):
+            if key in setting:rooms[room][key]=copy.deepcopy(setting[key])
     return {'schema_version': 1, 'fingerprint_algorithm': 'sha256',
             'coordinate_system': 'normalized_xy', 'hide_editor': False, 'rooms': rooms}

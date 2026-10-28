@@ -2,6 +2,7 @@
 import hashlib
 import math
 from pathlib import Path
+from distance_policy import active_meters, overflow_evidence
 
 DISCLAIMER = '임의 거리 기준 시연값'
 BANDS = ((0, '여유', '5분 미만'), (5, '보통', '5분 이상'),
@@ -41,13 +42,14 @@ def signed(p, line):
     return cross(sub(b, a), sub(p, a)) / math.dist(a, b)
 
 
-def validate_lines(setting):
+def validate_lines(setting, meters=None):
     """The start-to-15m axis must cross three finite, nonintersecting lines in order."""
     try:
         if not isinstance(setting, dict):
             raise ValueError('시작점과 기준선 설정이 올바르지 않습니다.')
         origin = point(setting.get('origin'))
-        lines = [[point(p) for p in setting['lines'][str(m)]] for m in (5, 10, 15)]
+        meters = tuple(meters or setting.get('active_meters', (5, 10, 15)))
+        lines = [[point(p) for p in setting['lines'][str(m)]] for m in meters]
         if any(len(line) != 2 or math.dist(*line) < .025 for line in lines):
             raise ValueError('각 기준선의 양 끝점을 충분히 떨어뜨려 지정하세요.')
         target = tuple(sum(p[i] for p in lines[-1])/2 for i in (0, 1))
@@ -61,17 +63,17 @@ def validate_lines(setting):
             offset = sub(line[0], origin)
             t, u = cross(offset, edge)/den, cross(offset, axis)/den
             if not (t > 0 and 0 <= u <= 1):
-                raise ValueError('시작점에서 15m 선 중앙으로 향하는 경로가 모든 기준선을 지나야 합니다.')
+                raise ValueError(f'시작점에서 {meters[-1]}m 선 중앙으로 향하는 경로가 모든 기준선을 지나야 합니다.')
             cuts.append(t)
-        if not (cuts[0] + .01 < cuts[1] and cuts[1] + .01 < cuts[2]):
-            raise ValueError('시작점 → 5m → 10m → 15m 순서로 지정하세요.')
+        if not all(a + .01 < b for a,b in zip(cuts,cuts[1:])):
+            raise ValueError('시작점 → '+' → '.join(str(m)+'m' for m in meters)+' 순서로 지정하세요.')
         for i, line in enumerate(lines):
             for other in lines[i+1:]:
                 if signed(other[0], line)*signed(other[1], line) <= 0 and signed(line[0], other)*signed(line[1], other) <= 0:
                     raise ValueError('기준선끼리 교차하거나 닿지 않게 지정하세요.')
         return None
     except (KeyError, TypeError, ValueError, IndexError) as exc:
-        return str(exc) if isinstance(exc, ValueError) else '시작점과 5m·10m·15m 기준선을 모두 지정하세요.'
+        return str(exc) if isinstance(exc, ValueError) else '시작점과 활성 거리 기준선을 모두 지정하세요.'
 
 
 def unavailable(reason):
@@ -79,16 +81,20 @@ def unavailable(reason):
             'reached': None, 'tail': None, 'reason': reason, 'label': DISCLAIMER}
 
 
-def evaluate(record, setting, source_key):
+def evaluate(record, setting, source_key, room='north'):
     """Use confirmed feet plus independently evidenced distance-only candidates."""
-    issue = validate_lines(setting or {})
+    meters = active_meters(room)
+    issue = validate_lines(setting or {}, meters)
     if issue:
         return unavailable(issue)
     if not source_key or setting.get('source_key') != source_key:
         return unavailable('현재 영상에 저장된 기준선이 없습니다. 영상을 연결하고 다시 지정하세요.')
     if not record:
         return unavailable('이 시점의 분석 기록이 없습니다.')
-    state = record.get('detail', {}).get('state', {})
+    detail=record.get('detail')
+    state=detail.get('state') if isinstance(detail,dict) else None
+    if not isinstance(state,dict):
+        return unavailable('대기자 좌표 기록이 불완전합니다.')
     geometry = state.get('queue_geometry')
     if not isinstance(geometry, dict) or geometry.get('version') not in (1,2):
         return unavailable('대기자 좌표가 없는 이전 기록입니다. 영상을 다시 분석하세요.')
@@ -120,10 +126,10 @@ def evaluate(record, setting, source_key):
                 return unavailable('후보자의 연속 ROI 체류 근거를 수집 중입니다. (시연 기준 2초)')
         points=confirmed+candidates
         origin = point(setting['origin'])
-        lines = [setting['lines'][str(m)] for m in (5, 10, 15)]
+        lines = [setting['lines'][str(m)] for m in meters]
         target = tuple(sum(p[i] for p in lines[-1])/2 for i in (0, 1))
         axis = sub(target, origin)
-        reached = [False]*3
+        reached = [False]*len(meters)
         tail, tail_id, tail_kind, farthest = None, None, None, (-1, -math.inf)
         for observation in points:
             p = point(observation['point'])
@@ -151,22 +157,33 @@ def evaluate(record, setting, source_key):
                 tail_kind='조건부 후보자' if observation in candidates else '확정 대기자'
         band = sum(reached)
         meters, status, wait = BANDS[band]
-        return {'status': status, 'wait': wait, 'reached_m': meters,
-                'reached': {str(m): flag for m, flag in zip((5, 10, 15), reached)},
+        result = {'status': status, 'wait': wait, 'reached_m': meters,
+                'reached': {str(m): flag for m, flag in zip(active_meters(room), reached)},
                 'tail': tail, 'tail_track_id':tail_id, 'tail_kind':tail_kind,
                 'confirmed_count':len(confirmed),'included_candidate_count':len(candidates),
+                'visible_confirmed_ids':[o.get('track_id') for o in confirmed],
                 'reason': f'확정 {len(confirmed)}명 + 조건부 후보 {len(candidates)}명 · 발 위치 기준 (후보 체류 2초)' if points else '거리 분석 대상 대기자 없음',
-                'label': DISCLAIMER}
+                'label': DISCLAIMER, 'overflow':False}
+        if room in ('south', 'east'):
+            evidence, reason = overflow_evidence(result, confirmed, setting)
+            result.update(overflow_evidence=evidence,overflow_reason=reason)
+        return result
     except (KeyError, TypeError, ValueError, ZeroDivisionError):
         return unavailable('대기자 좌표 기록이 불완전합니다.')
 
 
 def settings_for(cfg, room):
     from distance_reference import settings_for as resolve_settings
-    return resolve_settings(cfg, room)
+    setting,key=resolve_settings(cfg, room)
+    return {**setting, "active_meters":list(active_meters(room))},key
 
 
-def result_series(records, cfg, room):
+def result_series(records, cfg, room, *, retain_last=False):
     setting, key = settings_for(cfg, room)
     from distance_stability import stabilize
-    return stabilize(records,[evaluate(rec, setting, key) for rec in records])
+    from distance_policy import overflow_seconds
+    from core import values
+    raw=[{**evaluate(rec, setting, key, room), 'display_values':values(rec)} for rec in records]
+    # Retained presentation values are never exported as fresh observations.
+    return stabilize(records,raw,retain_last=retain_last,
+                     overflow_seconds=overflow_seconds(setting) if room in ('south','east') else None)

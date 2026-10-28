@@ -5,7 +5,7 @@ import json, sqlite3, time, os, uuid, subprocess, sys, math, unicodedata
 
 ROOT = Path(__file__).resolve().parent
 DATA = Path(os.environ.get('CCTV_DASHBOARD_DATA_DIR', ROOT / 'data')).expanduser().resolve()
-ROOMS = {'north': '북쪽', 'east': '동쪽', 'south': '남쪽'}
+ROOMS = {'north': '북쪽', 'east': '신관', 'south': '남쪽'}
 TERMINAL = {'completed', 'failed', 'stopped', 'force_terminated', 'interrupted'}
 COLS = ['촬영시작시각','촬영종료시각','화장실ID','화장실_영상ID','구간_입장인원','구간_퇴장인원','내부잔류인원_추정','현재대기인원_추정','측정상태','추정내부대기인원','전체대기인원_추정','현재이용가능칸수_추정','외부대기인원_추정']
 DEFAULTS = {'videos': {r:'' for r in ROOMS}, 'configs':{r:'' for r in ROOMS},

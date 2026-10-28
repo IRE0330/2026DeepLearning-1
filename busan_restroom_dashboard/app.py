@@ -115,7 +115,7 @@ with st.sidebar:
         st.caption('현재 시각 · 시연 기준')
         st.write(simulation_now().strftime('%Y.%m.%d %H:%M:%S'))
     show_simulation_clock()
-    st.markdown('<div class="sidebar-footer"><span class="connection-dot"></span> MVP · CCTV 시연<br><small>북쪽 · 동쪽 · 남쪽</small></div>',unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-footer"><span class="connection-dot"></span> MVP · CCTV 시연<br><small>북쪽 · 신관 · 남쪽</small></div>',unsafe_allow_html=True)
 
 run_cfg['sim_clock_epoch_ms']=int(start_epoch()*1000)
 run_cfg['playback_key'] += '-clock-'+str(run_cfg['sim_clock_epoch_ms'])+'-'+str(st.session_state.get('_sim_clock_generation',0))
@@ -206,7 +206,7 @@ def analysis_status():
         prior=st.session_state.get('analysis_terminal')
         st.session_state['analysis_terminal']=True
         if prior is False:st.rerun()
-        st.caption('● CCTV 분석 완료 · 북쪽 / 동쪽 / 남쪽 3곳')
+        st.caption('● CCTV 분석 완료 · 북쪽 / 신관 / 남쪽 3곳')
         return
     done=sum(j.get('status')=='completed' for j in jj.values())
     names={'preparing':'준비 중','running':'분석 중','completed':'전체 분석 완료','failed':'분석 실패','stopped':'분석 중지','interrupted':'프로세스 종료'}
@@ -239,7 +239,7 @@ def analysis_controls():
             request_stop(rr['id']);st.rerun()
         if d.button('결과 불러오기',width='stretch'):st.rerun()
         analysis_status()
-        st.caption('북쪽 → 동쪽 → 남쪽 순차 분석 · CCTV 영상의 재생 시점과 현재 시각을 함께 표시')
+        st.caption('북쪽 → 신관 → 남쪽 순차 분석 · CCTV 영상의 재생 시점과 현재 시각을 함께 표시')
         with st.expander('영상·모델 분석 설정',key='analysis_settings'):
             editable=json.loads(json.dumps(cfg))
             for r in ROOMS:

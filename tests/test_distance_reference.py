@@ -77,7 +77,7 @@ class PortableReference(unittest.TestCase):
             setting, key = settings_for(cfg, room)
             self.assertTrue(key.startswith('sha256:'))
             self.assertEqual(evaluate(record(), setting, key)['reached_m'], 10)
-            self.assertEqual(overlay(cfg, room).count('<line '), 3)
+            self.assertEqual(overlay(cfg, room).count('<line '), 3 if room=='north' else 2)
         self.assertTrue(reference.shared_editor_hidden(cfg))
         self.assertEqual(cfg, before)
 
@@ -121,7 +121,7 @@ class PortableReference(unittest.TestCase):
         for contents in ('{bad json', '{}'):
             self.file.write_text(contents, encoding='utf-8')
             setting, key = settings_for(self.cfg, 'north')
-            self.assertEqual(setting, self.cfg['distance_demo']['north'])
+            self.assertEqual({k:v for k,v in setting.items() if k!='active_meters'}, self.cfg['distance_demo']['north'])
             self.assertEqual(key, self.cfg['distance_video_keys']['north'])
             self.assertFalse(reference.shared_editor_hidden(self.cfg))
         with patch.object(reference, 'REFERENCE_PATH', self.root / 'missing.json'):
@@ -159,7 +159,7 @@ render_distance_settings(st.session_state.cfg, lambda cfg: None)
         self.assertFalse(any(w.key == 'distance_room' for w in app.radio))
         self.assertTrue(any('공통 기준선' in w.value for w in app.caption))
         for room in reference.ROOMS:
-            self.assertEqual(overlay(cfg, room).count('<line '), 3)
+            self.assertEqual(overlay(cfg, room).count('<line '), 3 if room=='north' else 2)
 
 
 if __name__ == '__main__':

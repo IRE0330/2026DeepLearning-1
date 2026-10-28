@@ -30,7 +30,7 @@ class SettingsUI(unittest.TestCase):
                 app=AppTest.from_file(str(Path(core.__file__).with_name('app.py')),default_timeout=120).run()
                 def key():
                     self.assertFalse(app.exception,[e.message for e in app.exception])
-                    frames=app.get('iframe')
+                    frames=[f for f in app.get('iframe') if '"playback_key"' in f.proto.srcdoc]
                     self.assertEqual(len(frames),1)
                     return re.search(r'"playback_key"\s*:\s*"([^\"]+)"',frames[0].proto.srcdoc).group(1)
                 first=key()
