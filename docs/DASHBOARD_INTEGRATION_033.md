@@ -33,7 +33,7 @@ Playwright로 화면 열기, n↔북쪽 s 선택, 시작·진행·결과 갱신�
 
 ## 배포물과 제한
 
-`feature/restroom-dashboard1023`의 구버전 추적 배포물은 `dist/busan_cctv_analysis-0.3.2-py3-none-any.whl` 하나입니다. 현재 실행 스크립트는 이를 참조하지 않으며 소스 설치를 검증했습니다. [기존 0.3.2 Release](https://github.com/IRE0330/2026DeepLearning-1/releases/tag/cctv-analysis-v0.3.2)의 같은 wheel과 바이트 일치를 확인한 뒤 Git 추적만 제거합니다. 로컬 파일·기존 Release의 wheel/ZIP·태그·Git 이력과 이전 소스 폴더는 보존합니다.
+`feature/restroom-dashboard1023`의 구버전 추적 배포물은 `dist/busan_cctv_analysis-0.3.2-py3-none-any.whl` 하나였습니다. 현재 실행 스크립트는 이를 참조하지 않으며 소스 설치를 검증했습니다. [기존 0.3.2 Release](https://github.com/IRE0330/2026DeepLearning-1/releases/tag/cctv-analysis-v0.3.2)의 같은 wheel과 바이트 일치를 확인한 뒤 Git 추적만 제거했습니다. 로컬 파일·기존 Release의 wheel/ZIP·태그·Git 이력과 이전 소스 폴더는 보존합니다.
 
 main에는 조사 대상인 추적 wheel·ZIP·압축 배포물이 없어 제거할 경로가 없습니다. main의 현재 0.3.2 분석 소스와 팀 자료는 유지하며 통합 브랜치를 main으로 merge하지 않습니다. 따라서 main 정리 커밋·push·PR은 필요하지 않습니다.
 
