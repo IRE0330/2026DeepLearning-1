@@ -4,11 +4,21 @@ from distance_policy import rank_value
 from signage_time import total_time as original_total, script as original_script
 
 
+def status_text(distance):
+    """Display wording only; use the accepted observation, including while held."""
+    distance=distance or {}
+    queue=distance.get('display_values',{}).get('queue')
+    if (distance.get('reached_m') is not None and not isinstance(queue,bool)
+            and isinstance(queue,(int,float)) and math.isfinite(queue) and queue==0):
+        return '대기 인원 없음'
+    return distance.get('status','측정 불가')
+
+
 def label(value, cfg):
     status=value.get('distance',{}).get('status','측정 불가')
     colors={'여유':'#008b6a','보통':'#c28a00','혼잡':'#d7413e',
             '매우 혼잡':'#8e1b40','화면 범위 초과':'#8e1b40'}
-    return status,colors.get(status,'#8393a5')
+    return status_text(value.get('distance')),colors.get(status,'#8393a5')
 
 
 def recommendation(current, vals, cfg):

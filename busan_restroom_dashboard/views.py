@@ -99,9 +99,10 @@ function render(){{
     const shown=d.display_values||rec;
     ['outside','inside','queue'].forEach(k=>field(r,k,shown&&shown[k]!=null?shown[k]+' 명':'—'));
     field(r,'wait',d.wait);
-    let q=shown?.queue, name=d.status;
+    const [name]=distanceState({{distance:d}});
+    let q=shown?.queue;
     if(d.reached_m!=null){{distanceKnown++;if(d.reached_m>=10)busy++;}}
-    field(r,'status',name);document.getElementById(r+'-status').dataset.state=name;
+    field(r,'status',name);document.getElementById(r+'-status').dataset.state=d.status;
     field(r,'clock',clock(t));
     field(r,'time',d.stability==='재생 종료'?'재생 종료':d.held?'갱신 지연 · 마지막 정상 영상 '+d.last_valid_time_s.toFixed(2)+'초':rec?'영상 '+fmt(rec.t)+' 기록 기준':'대기정보 확인 중');
     if(q!=null){{sum+=q;known++;}}
@@ -165,7 +166,8 @@ def signage(records,current,t,cfg):
     panels=[]
     for r in order:
         status,color=label(vals[r],cfg);distance=vals[r]['distance']
-        cls='red' if status in ('혼잡','매우 혼잡','화면 범위 초과') else 'yellow' if status=='보통' else 'green' if status=='여유' else 'gray'
+        base_status=distance.get('status')
+        cls='red' if base_status in ('혼잡','매우 혼잡','화면 범위 초과') else 'yellow' if base_status=='보통' else 'green' if base_status=='여유' else 'gray'
         badge='<span class="badge">혼잡 단계 낮음</span>' if r==best else ''
         total=vals[r]['total_time']
         panels.append(f'<div class="sg-item {cls}">{badge}<h3>{nums[r]}번 · {ROOMS[r]} 화장실</h3><div id="sign-state-{r}">{status}</div><div class="minutes" id="sign-wait-{r}">{total}</div><footer>최종 예상 소요시간 · 임의 거리 기준 시연값{' · 시연 추정(대기 15분 이상)' if distance.get('overflow') else ''}</footer>{signage_panel(distance,total,element_id="distance-sign-"+r)}</div>')

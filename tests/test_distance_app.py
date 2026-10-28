@@ -14,6 +14,29 @@ from streamlit.testing.v1 import AppTest
 
 
 class SettingsUI(unittest.TestCase):
+    def test_removed_model_menu_redirects_without_discarding_forecast(self):
+        import core
+        import train_ui
+        cfg=copy.deepcopy(core.DEFAULTS)
+        with patch.object(core,'settings',return_value=cfg), \
+             patch.object(core,'latest_run',return_value=None), \
+             patch.object(core,'run_data',return_value=({r:[] for r in core.ROOMS},{})), \
+             patch.object(train_ui,'attach_train_events',side_effect=lambda c,r:{**r,
+                 'train_events':[],'train_db_status':'error','train_day_available':False,
+                 'train_db_message':'Model-free menu test; DB connection excluded'}):
+            app=AppTest.from_file(str(Path(core.__file__).with_name('app.py')),default_timeout=120)
+            app.session_state['nav']='혼잡도 예측모델'
+            app.session_state['_saved_forecast_loaded']=True
+            app.session_state['_persistent_forecast']={'preserved':'existing forecast'}
+            app.run()
+            self.assertFalse(app.exception,[e.message for e in app.exception])
+            self.assertEqual(app.session_state['nav'],'메인 대시보드')
+            self.assertEqual(app.session_state['_persistent_forecast'],{'preserved':'existing forecast'})
+            menus={b.key:b.label for b in app.button if b.key and b.key.startswith('nav_')}
+            self.assertEqual(set(menus),{'nav_'+str(i) for i in [0,1,2,3,4,5,7]})
+            self.assertNotIn('혼잡도 예측모델',menus.values())
+            self.assertEqual(menus['nav_7'],'시연 설정')
+
     def test_playback_identity_tracks_run_and_effective_video_without_layout_changes(self):
         import core
         import preview

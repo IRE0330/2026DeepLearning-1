@@ -92,21 +92,17 @@ run_cfg['playback_key']=hashlib.sha256((str(ROOT)+json.dumps({'run':run['id'] if
 run_cfg['playback_end']=common_end(records) if run and run['status']=='completed' else None
 
 def go_page(page):
-    current=st.session_state.get('nav','메인 대시보드')
-    if current=='혼잡도 예측모델' and page!=current:
-        excluded=('nav','forecast_file_','main_upload_','history_upload','nav_','shared_','clear_forecast_data','primary_forecast_download','reuse_saved_button','reuse_latest_button')
-        st.session_state['_forecast_widget_snapshot']={k:st.session_state[k] for k in list(st.session_state) if not k.startswith('_') and not k.startswith(excluded)}
-    if page=='혼잡도 예측모델' and current!=page:
-        for key,value in st.session_state.get('_forecast_widget_snapshot',{}).items():
-            st.session_state[key]=value
     st.session_state['nav']=page
+
+if st.session_state.get('nav')=='혼잡도 예측모델':
+    st.session_state['nav']='메인 대시보드'
 
 with st.sidebar:
     st.markdown('<div class="eyebrow">BUSAN STATION</div>',unsafe_allow_html=True)
     st.title('RESTROOM')
     st.caption('화장실 혼잡도 모니터링')
     nav=st.session_state.get('nav','메인 대시보드')
-    for index,(page,icon) in enumerate([('메인 대시보드',':material/dashboard:'),('화장실 상세',':material/wc:'),('열차 정보',':material/train:'),('열차 데이터 등록',':material/upload_file:'),('사이니지 보기',':material/monitor:'),('예측 CSV 등록',':material/upload_file:'),('혼잡도 예측모델',':material/analytics:'),('시연 설정',':material/settings:')]):
+    for index,page,icon in [(0,'메인 대시보드',':material/dashboard:'),(1,'화장실 상세',':material/wc:'),(2,'열차 정보',':material/train:'),(3,'열차 데이터 등록',':material/upload_file:'),(4,'사이니지 보기',':material/monitor:'),(5,'예측 CSV 등록',':material/upload_file:'),(7,'시연 설정',':material/settings:')]:
         st.button(page,icon=icon,key='nav_'+str(index),type='primary' if nav==page else 'tertiary',width='stretch',on_click=go_page,args=(page,))
     st.divider()
     from simulation_clock import now as simulation_now, start_epoch
@@ -381,10 +377,6 @@ elif nav=='사이니지 보기':
     with platform_tab:
         from platform_signage import render_platform
         render_platform(run_cfg,media_urls())
-
-elif nav=='혼잡도 예측모델':
-    import runpy
-    runpy.run_module('automodel_lab.app', run_name='automodel_lab.embedded')
 
 else:
     banner('시연 설정','이용 기록과 사이니지 표시 기준을 설정합니다.')

@@ -6,12 +6,14 @@ from distance_policy import active_meters
 
 def panel(result=None, element_id='distance-result'):
     from distance_stability import waiting
+    from cctv_presentation import status_text
     result = result or waiting()
     esc = lambda x: html.escape(str(x), quote=True)
     reached = result.get('reached_m')
     reach = reach_label(result)
     note=DISCLAIMER+(' · 시연 추정' if result.get('overflow') else '')
     stability=result.get('stability','측정 불가' if reached is None else '유효 관측')
+    result={**result,'status':status_text(result)}
     return f'''<section id="{esc(element_id)}" class="distance-demo" aria-live="polite" style="padding:12px;border-top:1px solid #d6e1eb;background:#f5f8fc;line-height:1.7"><strong>거리 기준 혼잡도 · <span data-distance="status">{esc(result['status'])}</span></strong><div>예상 대기시간: <b data-distance="wait">{esc(result['wait'])}</b></div><strong data-distance="stability">{esc(stability)}</strong><div data-distance="reach">{esc(reach)}</div><small data-distance="reason">{esc(result['reason'])}</small><div data-distance="assumption" style="font-size:11px;color:#566b80">{esc(note)}</div></section>'''
 
 
@@ -76,10 +78,14 @@ function distanceAt(rows,t,media={}) {
  if(d.held)d.reason='최근 판정 유지 · 마지막 유효 관측 '+measured.toFixed(2)+'초 · 경과 '+age.toFixed(2)+'초 · '+(d.pending_change||d.raw_reason||'새 관측 없음');
  return d;
 }
+function distanceStatus(d) {
+ const queue=d?.display_values?.queue;
+ return d?.reached_m!=null&&typeof queue==='number'&&Number.isFinite(queue)&&queue===0?'대기 인원 없음':d?.status||'측정 불가';
+}
 function distanceState(record) {
  const state=distanceValue(record).status;
  const colors={'여유':['#008b6a','green'],'보통':['#c28a00','yellow'],'혼잡':['#d7413e','red'],'매우 혼잡':['#8e1b40','red'],'화면 범위 초과':['#8e1b40','red']};
- const [color,cls]=colors[state]||['#8393a5','gray'];return [state,color,cls];
+ const [color,cls]=colors[state]||['#8393a5','gray'];return [distanceStatus(distanceValue(record)),color,cls];
 }
 function recommendDistance(current,vals,cfg) {
  const rooms=Object.keys(vals);
@@ -94,7 +100,7 @@ function totalWaitLabel(d,walkSeconds){return d.wait_lower_bound_minutes==null?n
 function paintDistance(root, value, overlay) {
  if(!root)return;
  const d=value||distanceWaiting();
- for(const k of ['status','wait','reason'])root.querySelector('[data-distance="'+k+'"]').textContent=d[k];
+ for(const k of ['status','wait','reason'])root.querySelector('[data-distance="'+k+'"]').textContent=k==='status'?distanceStatus(d):d[k];
  root.querySelector('[data-distance="stability"]').textContent=d.stability||(d.reached_m==null?'측정 불가':'유효 관측');
  root.querySelector('[data-distance="reach"]').textContent=d.overflow?'10m 초과 · 지정된 화면 경계 접촉':d.reached_m==null?'도달 기준선: 측정 불가':d.reached_m===0?'도달 기준선: 없음 (5m 미만)':'도달 기준선: '+d.reached_m+'m';
  const updated=root.querySelector('[data-distance="updated"]');
