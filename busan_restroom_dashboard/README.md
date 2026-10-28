@@ -1,5 +1,7 @@
 # 부산역 화장실 CCTV 관리자 대시보드
 
+**현재 시작 경로는 [저장소 시작 안내](../README.md)입니다.** 분석 0.3.3을 같은 Python으로 `-m pip install -e './cctv-analysis[analysis,streamlit]'` 설치합니다. 기본 n / 선택 north-gpu-s, 준비 자료와 검증 제한도 위 안내를 우선 적용하세요. `busan_restroom_integrated`와 과거 0.3.2 wheel을 함께 설치하지 않습니다.
+
 저장된 북쪽·동쪽·남쪽 화장실 영상을 순차 분석하고, 분석 결과를 영상 재생 시각에 맞춰 비교하는 Streamlit 관리자 페이지입니다. 열차 정보는 각 컴퓨터의 MySQL에 저장된 부산역 예정 시간표를 조회합니다.
 
 ## 1. 처음 사용하는 팀원이 준비할 것
@@ -7,7 +9,7 @@
 | 항목 | 준비 방법 |
 |---|---|
 | 프로젝트 코드 | 이 저장소의 `feature/restroom-dashboard1023` 브랜치를 내려받습니다. `busan_restroom_dashboard`와 `cctv-analysis`가 함께 있어야 합니다. |
-| Python | **3.13.x**를 설치합니다. 분석 모듈 0.3.2는 Python `>=3.13,<3.14`를 요구합니다. |
+| Python | **3.13.x**를 설치합니다. 분석 모듈 0.3.3은 Python `>=3.13,<3.14`를 요구합니다. |
 | 영상 | 팀에서 공유받은 북쪽·동쪽·남쪽 영상 3개를 로컬에 넣습니다. |
 | 모델 | 팀에서 공유받은 `yolo11n.pt`를 로컬에 넣습니다. |
 | 열차 DB | MySQL 서버와 Workbench를 준비하고, 팀에서 공유받은 SQL로 구조와 데이터를 가져옵니다. |
@@ -44,7 +46,7 @@ python3.13 -m venv .venv-cctv
 source .venv-cctv/bin/activate
 
 python -m pip install --upgrade pip
-python -m pip install './cctv-analysis[analysis,streamlit]'
+python -m pip install -e './cctv-analysis[analysis,streamlit]'
 python -m pip install -r busan_restroom_dashboard/requirements-dashboard.txt
 python -m pip check
 ```
@@ -107,7 +109,7 @@ python -m streamlit run busan_restroom_dashboard/app.py
 cd '프로젝트 폴더 경로'
 py -3.13 -m venv .venv-cctv
 & .\.venv-cctv\Scripts\python.exe -m pip install --upgrade pip
-& .\.venv-cctv\Scripts\python.exe -m pip install './cctv-analysis[analysis,streamlit]'
+& .\.venv-cctv\Scripts\python.exe -m pip install -e './cctv-analysis[analysis,streamlit]'
 & .\.venv-cctv\Scripts\python.exe -m pip install -r busan_restroom_dashboard/requirements-dashboard.txt
 & .\.venv-cctv\Scripts\python.exe -m pip check
 & .\.venv-cctv\Scripts\python.exe -m streamlit run busan_restroom_dashboard/app.py
@@ -219,7 +221,7 @@ DB를 한 번 정상적으로 가져온 후에는 매번 SQL 파일을 가져올
 |---|---|
 | `python: command not found` | 저장소 폴더에서 `source .venv-cctv/bin/activate`를 실행했는지 확인합니다. 옮겨온 가상환경이라면 Python 3.13으로 새로 만듭니다. |
 | Python 버전 오류 | `python --version`으로 **3.13.x**인지 확인합니다. |
-| `cctv` 또는 분석 패키지가 없음 | 저장소 최상위에서 `python -m pip install './cctv-analysis[analysis,streamlit]'`을 실행합니다. |
+| `cctv` 또는 분석 패키지가 없음 | 저장소 최상위에서 같은 Python으로 `python -m pip install -e './cctv-analysis[analysis,streamlit]'`을 실행합니다. |
 | 모델 파일 경로 오류 | `models/yolo11n.pt` 등 프로젝트 안에 실제 파일이 있는지 확인하고 앱을 다시 실행합니다. 자동 탐색은 없는 파일을 다운로드하지 않습니다. |
 | 영상이 없음 | 파일명과 위치, 기존 수동 설정을 확인합니다. 메인의 분석 설정에서 각 경로를 바꿀 수 있습니다. |
 | 영상이 검게 보이거나 형식 오류 | 시연 설정에서 미리보기용 H.264 MP4를 만듭니다. 변환은 재생용이며 분석 원본과 구분됩니다. |
@@ -240,6 +242,6 @@ DB를 한 번 정상적으로 가져온 후에는 매번 SQL 파일을 가져올
 
 현재 구성은 저장 영상 기반 시연입니다. 실제 CCTV 스트림, 실시간 열차 도착·지연 수신, 혼잡도 예측 모델은 연결하지 않았습니다. 내부 잔류 인원은 분석 모듈의 추정값을 보존합니다. 대시보드의 예상 대기시간·혼잡도는 CCTV별 5m·10m·15m 기준선을 이용한 **임의 거리 기준 시연값**만 사용합니다. 거리 판정 불가 시 측정 불가이며 인원 기반 수식으로 대체하지 않습니다. 설정 방법과 검증 범위는 [거리 기준선 안내](DISTANCE_DEMO.md)를 확인하세요.
 
-분석 모듈의 기준 버전은 `busan-cctv-analysis 0.3.2`입니다. 모델·API·설치 및 기존 검증 범위는 [분석 모듈 README](../cctv-analysis/README.md)와 [최종 인계 문서](../cctv-analysis/docs/FINAL_HANDOFF.md)를 참고합니다. 세 영상을 순차 분석하는 것과 세 CCTV를 동시에 실시간 추론하는 것은 다릅니다.
+이 브랜치의 분석 모듈 기준 버전은 `busan-cctv-analysis 0.3.3`이며 현재 소스를 editable 설치합니다. 모델·API·설치 및 기존 검증 범위는 [분석 모듈 README](../cctv-analysis/README.md)와 [최종 인계 문서](../cctv-analysis/docs/FINAL_HANDOFF.md)를 참고합니다. 세 영상을 순차 분석하는 것과 세 CCTV를 동시에 실시간 추론하는 것은 다릅니다.
 
 이 README의 명령과 경로는 작업 브랜치의 소스·패키지 설정을 확인해 정리했습니다. 팀원 컴퓨터의 실제 설치, MySQL 가져오기 및 영상 분석은 해당 환경에서 확인해야 합니다.

@@ -1,11 +1,14 @@
 """Sequential service consumer; runs outside the Streamlit process, spawn-safe."""
 import json, sys, time, traceback
 from core import db, DATA, ROOMS, TERMINAL, demo_profile
+from analysis_runtime import runtime_info, validate_selection, start_room
 
 def run(rid):
     with db() as c:
         request=json.loads(c.execute('SELECT request FROM runs WHERE id=?',(rid,)).fetchone()[0])
     try:
+        runtime_info()
+        validate_selection(request)
         from cctv import AnalysisService
         profile_path=DATA/rid/'cctv_profile.json'
         profile_path.parent.mkdir(parents=True,exist_ok=True)
@@ -15,10 +18,9 @@ def run(rid):
                 with db() as c:
                     if c.execute('SELECT stop FROM runs WHERE id=?',(rid,)).fetchone()[0]:
                         c.execute("UPDATE runs SET status='stopped' WHERE id=?",(rid,));return
-                job=service.start(owner=rid,restroom_id=room,video_path=request['videos'][room],
-                    model_path=request['model'],config_path=request['configs'][room] or None,
+                job=start_room(service,request,room,owner=rid,video_path=request['videos'][room],
                     # Service adds job_<id>/analysis/<run>/shared/<CSV>; keep below MAX_PATH.
-                    output_dir=str(DATA.parent.parent/'analysis_runs'/rid),profile=str(profile_path),device=request['device'],
+                    output_dir=str(DATA.parent.parent/'analysis_runs'/rid),profile=str(profile_path),
                     end=request['end'] or None,save_video=request['save_video'])
                 cursor=0;stop_sent=False
                 while True:

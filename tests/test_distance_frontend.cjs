@@ -51,7 +51,7 @@ function playbackTests(folder){
     const get=id=>{if(/^(v-|sign-video-)/.test(id)||id==='detail-video')return null;if(!nodes.has(id))nodes.set(id,element());return nodes.get(id);};
     const context=vm.createContext({document:{getElementById:get,createElement:()=>element()},
       localStorage:{getItem:()=>null,setItem(){}},window:{addEventListener(){}},
-      requestAnimationFrame(){},performance:{now:()=>100},console,URL});
+      requestAnimationFrame(){},setInterval(){},clearInterval(){},performance:{now:()=>100},console,URL});
     for(const source of scripts)new vm.Script(source).runInContext(context);
     assert.equal(get(panelId).querySelector('[data-distance="status"]').textContent,'측정 불가');
     for(const [t,expected,wait] of [[1,'여유','5분 미만'],[4,'보통','5분 이상'],[6,'혼잡','10분 이상'],[8,'매우 혼잡','15분 이상']]){
@@ -111,8 +111,7 @@ function playbackTests(folder){
     else if(name.startsWith('detail'))vm.runInContext('update(11.001)',context);
     else vm.runInContext('render(11.001,12)',context);
     assert.equal(get(panelId).querySelector('[data-distance="wait"]').textContent,'측정 불가');
-    if(name==='dashboard')get('reset').onclick();
-    else if(name.startsWith('signage'))get('sign-reset').onclick();
+    if(seekId){get(seekId).value=0;get(seekId).oninput();}
     else vm.runInContext('update(0)',context);
     assert.equal(get(panelId).querySelector('[data-distance="status"]').textContent,'측정 불가');
     console.log('PASS playback:',name,'all 4 bands, waiting labels, missing/out-of-range data');

@@ -1,28 +1,35 @@
-"""Persistent run storage and unchanged 0.3.2 record interpretation."""
+"""Persistent run storage and the unchanged 13-column record contract."""
 from pathlib import Path
+from contextlib import contextmanager
 import json, sqlite3, time, os, uuid, subprocess, sys, math, unicodedata
 
 ROOT = Path(__file__).resolve().parent
-DATA = ROOT / 'data'
+DATA = Path(os.environ.get('CCTV_DASHBOARD_DATA_DIR', ROOT / 'data')).expanduser().resolve()
 ROOMS = {'north': '북쪽', 'east': '동쪽', 'south': '남쪽'}
 TERMINAL = {'completed', 'failed', 'stopped', 'force_terminated', 'interrupted'}
 COLS = ['촬영시작시각','촬영종료시각','화장실ID','화장실_영상ID','구간_입장인원','구간_퇴장인원','내부잔류인원_추정','현재대기인원_추정','측정상태','추정내부대기인원','전체대기인원_추정','현재이용가능칸수_추정','외부대기인원_추정']
 DEFAULTS = {'videos': {r:'' for r in ROOMS}, 'configs':{r:'' for r in ROOMS},
  'model': str(ROOT.parent/'models'/'yolo11n.pt'), 'device':'cpu', 'end':0.0,
+ 'runtime_profile':'default-n', 'north_s_model':'',
  'walk': {'north':{'north':0,'east':180,'south':240}, 'east':{'north':180,'east':0,'south':180},'south':{'north':240,'east':180,'south':0}},
  'warning':1,'crowded':6,'minimum_gain':30,'train_path':'','save_video':False,
  'capture_date':'2026-10-14','history_path':'','history_average':105.,
  'history_stalls':{'north':27,'east':23,'south':19}}
 
+@contextmanager
 def db():
-    DATA.mkdir(exist_ok=True)
+    DATA.mkdir(parents=True,exist_ok=True)
     c=sqlite3.connect(DATA/'dashboard.sqlite',timeout=20)
     c.row_factory=sqlite3.Row
     c.execute('PRAGMA journal_mode=WAL')
     c.executescript('''CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY, created REAL, status TEXT, pid INTEGER, heartbeat REAL, request TEXT, error TEXT, stop INTEGER DEFAULT 0);
     CREATE TABLE IF NOT EXISTS jobs(run TEXT, room TEXT, status TEXT, payload TEXT, PRIMARY KEY(run,room));
     CREATE TABLE IF NOT EXISTS records(run TEXT, room TEXT, rid TEXT, t REAL, payload TEXT, PRIMARY KEY(run,rid));''')
-    return c
+    try:
+        with c:
+            yield c
+    finally:
+        c.close()
 
 def discover_videos(root=None):
     """Find named source clips without scanning environments or analysis outputs."""
@@ -93,7 +100,7 @@ def settings():
     return base
 
 def save_settings(value):
-    DATA.mkdir(exist_ok=True)
+    DATA.mkdir(parents=True,exist_ok=True)
     tmp=DATA/'settings.tmp'
     tmp.write_text(json.dumps(value,ensure_ascii=False,indent=2))
     tmp.replace(DATA/'settings.json')
@@ -163,9 +170,9 @@ def validate(cfg):
     resolved=discover_model(cfg.get('model',''))
     if not resolved:raise ValueError('프로젝트 안에서 yolo11n.pt를 찾지 못했습니다. 프로젝트의 models 폴더에 모델 파일을 넣고 다시 실행해주세요.')
     cfg['model']=resolved
-    from importlib.metadata import version
-    if version('busan-cctv-analysis')!='0.3.2':raise ValueError('이 앱은 busan-cctv-analysis 0.3.2와 연동됩니다.')
-    for pkg in ['ultralytics','torch','torchvision','opencv-python','av','lap','streamlit']:version(pkg)
+    from analysis_runtime import runtime_info, validate_selection
+    runtime_info()
+    validate_selection(cfg)
 
 def start_run(cfg):
     validate(cfg)

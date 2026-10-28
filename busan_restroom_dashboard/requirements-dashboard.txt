@@ -1,5 +1,5 @@
-# Use the existing cctv032/.venv-cctv Python 3.13 environment.
-# The CCTV module + analysis extras must already be installed there.
+# Use one Python 3.13 environment for install and dashboard/worker execution.
+# Install the current source first: python -m pip install -e './cctv-analysis[analysis,streamlit]'
 streamlit==1.66.0
 pandas>=2.2,<4
 openpyxl>=3.1,<4

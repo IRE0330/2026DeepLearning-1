@@ -1,23 +1,30 @@
-## CCTV 거리 기반 대시보드 (2026-10-25)
+## CCTV 분석 0.3.3 · 거리 기반 대시보드 시작
 
 부산역 북쪽·동쪽·남쪽 화장실의 CCTV 분석 결과를 영상 시각에 맞춰 보여주는 Streamlit 대시보드입니다. 기존 출입·잔류·대기 인원 카운팅을 유지하며, 혼잡도와 대기시간 표시는 거리 기준으로 통일했습니다.
 
 - CCTV마다 시작점과 5m·10m·15m 기준선을 지정·저장합니다. 확정 대기자와 조건부 후보자 위치를 분석하고 메인·상세·사이니지에 같은 판정을 표시합니다.
-- 5m 미만: 여유/1분 미만, 5m 이상: 보통/1분 이상, 10m 이상: 혼잡/2분 이상, 15m 이상: 매우 혼잡/3분 이상입니다. **5m당 1분의 임의 거리 기준 시연값**이며 실측·실제 대기시간 정확도는 미검증입니다. 판정 실패 시 인원 기반 시간으로 대체하지 않습니다.
+- 기존 화면 기준은 5m 미만: 여유/5분 미만, 5m 이상: 보통/5분 이상, 10m 이상: 혼잡/10분 이상, 15m 이상: 매우 혼잡/15분 이상입니다. **임의 거리 기준 시연값**이며 실측·실제 대기시간 정확도는 미검증입니다. 판정 실패 시 인원 기반 시간으로 대체하지 않습니다.
 - Windows 분석 출력은 프로젝트의 `analysis_runs/<실행ID>`로 분리하여 긴 CSV 경로를 줄였습니다. 프로젝트 경로 자체가 매우 길면 더 짧은 경로를 사용하세요.
 
 Python 3.13 환경에서 저장소 최상위에서 실행합니다.
 
 ```powershell
-python -m venv .venv-cctv
-.\.venv-cctv\Scripts\python.exe -m pip install './cctv-analysis[analysis,streamlit]'
+py -3.13 -m venv .venv-cctv
+.\.venv-cctv\Scripts\python.exe -m pip install -e './cctv-analysis[analysis,streamlit]'
 .\.venv-cctv\Scripts\python.exe -m pip install -r busan_restroom_dashboard/requirements-dashboard.txt
-.\run-dashboard.ps1
+.\.venv-cctv\Scripts\python.exe -m pip check
+.\.venv-cctv\Scripts\python.exe -m streamlit run busan_restroom_dashboard/app.py
 ```
 
 기존 환경은 `./run-dashboard.ps1 -Python '<사용할 Python 실행파일>'` 또는 `DASHBOARD_PYTHON` 환경변수로 선택합니다. 기본 주소는 http://localhost:8501 입니다. macOS 및 MySQL 설치·데이터 공유 안내는 [기존 팀원 가이드](busan_restroom_dashboard/README.md)를 보존했습니다.
 
-영상은 팀에서 별도로 받아 `videos/`에 방향별로 준비하고, `yolo11n.pt`는 별도 전달받아 `models/`에 둡니다. 앱에서 실제 영상·모델을 선택한 뒤 CCTV별 기준선을 저장하세요. 영상·가중치·사용자 설정·SQLite·분석 결과·비밀번호는 이번 커밋에 포함하지 않습니다. 상세 설정은 [거리 기준선 안내](busan_restroom_dashboard/DISTANCE_DEMO.md), 개발 상태는 [LOCAL_PROGRESS.md](LOCAL_PROGRESS.md)를 참고하세요.
+영상은 팀에서 별도로 받아 `videos/`에 방향별로 준비합니다. 공식 [YOLO11n 가중치](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt)를 `models/yolo11n.pt`에 두거나 앱에서 실제 경로를 지정하세요. 설치·실행은 위의 **같은 Python**을 사용합니다. 기존 구버전 wheel 대신 현재 브랜치의 `cctv-analysis`를 editable 소스 설치합니다. 버전과 실제 import 경로는 화면의 시스템 연결 상태에서도 확인합니다.
+
+메인 → **영상·모델 분석 설정**에서 영상·사용자 구역 JSON·기본 n 모델·장치를 지정하고 **분석 설정 저장** 후 시작합니다. 기본은 세 방향 모두 n입니다. 선택 프로필 **north-gpu-s**는 북쪽만 s, 동쪽·남쪽은 기본 n이며 계속 순차 분석합니다. 별도 [공식 YOLO11s 가중치](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s.pt)를 준비하고 북쪽 s 경로와 `cuda:0`을 선택하세요. GPU용 PyTorch는 기존 환경을 덮어쓰지 말고 [공식 선택기](https://pytorch.org/get-started/locally/)로 별도 Python 3.13 환경에 설치합니다. s는 검증된 공식 파일·CUDA·번들 북쪽 구역 전용입니다. 사용자 북쪽 JSON을 지정하면 실행 전 거절하므로 사용자 마스킹은 **기본 n**으로 실행하세요. 자동 모델·CPU 대체는 하지 않습니다.
+
+화면에서 **처음 5초 확인 → CCTV 분석 시작 → 결과 불러오기 / 분석 중지**를 사용할 수 있습니다. 원본 결과는 `analysis_runs/<실행ID>/job_*/analysis/*/shared/`, 상태·수신 기록은 `busan_restroom_dashboard/data/`에 저장됩니다. 기존 거리·대기시간 표시와 영상 재생을 유지하며 예측 전달은 disabled입니다. 영상·가중치·사용자 설정·SQLite·분석 결과는 업로드하지 않습니다.
+
+상세: [팀원 가이드](busan_restroom_dashboard/README.md) · [거리 기준선](busan_restroom_dashboard/DISTANCE_DEMO.md) · [API·CSV 13열 계약](cctv-analysis/docs/DATA_CONTRACT.md) · [이번 통합 검증](docs/DASHBOARD_INTEGRATION_033.md). 기존 단일 입력 시험은 세 환경 동시 분석 성능과 다르며 **세 환경 동시 실시간 처리는 보장하지 않습니다**. 실제 CCTV·네트워크·장시간 운영은 미검증입니다. 정확도 수치는 개발 영상 평가로 다른 영상의 성능을 보장하지 않습니다. 내부 인원·빈 칸·대기시간에는 가정이 포함됩니다.
 
 현재 미해결 문제는 북쪽 영상의 2분 이상/측정 불가 표시 불안정, 실제 거리·대기시간·전체 영상 정확도 미검증, 로컬 MySQL의 `auth_gssapi_client` 인증 방식 호환 오류입니다. 최대 3초 최근 판정 유지로 일부 완화했으나 실제 CCTV 스트림·동시 실시간 처리·예측 모델은 미검증입니다.
 

@@ -22,6 +22,7 @@ def build(folder):
                     'lines':{str(m):[[.1,y],[.9,y]] for m,y in [(5,.3),(10,.5),(15,.7)]}}
         cfg['distance_demo']={r:copy.deepcopy(annotation) for r in cfg['videos']}
         cfg['playback_key']='synthetic-distance-test';cfg['train_db_status']='error'
+        cfg['sim_clock_epoch_ms']=0
         records={r:[] for r in cfg['videos']}
         for r in records:
             for t,y in enumerate([.2,.2,.4,.4,.6,.6,.8,.8],1):

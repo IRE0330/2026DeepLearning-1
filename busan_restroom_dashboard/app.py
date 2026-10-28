@@ -192,6 +192,8 @@ def begin_analysis(selection):
     for field in ['videos','configs']:
         request[field]={r:str(Path(v).expanduser().resolve()) if v else '' for r,v in request[field].items()}
     request['model']=str(Path(request['model']).expanduser().resolve())
+    if request.get('north_s_model'):
+        request['north_s_model']=str(Path(request['north_s_model']).expanduser().resolve())
     start_run(request);save_settings(request)
 
 
@@ -238,7 +240,7 @@ def analysis_controls():
         if d.button('결과 불러오기',width='stretch'):st.rerun()
         analysis_status()
         st.caption('북쪽 → 동쪽 → 남쪽 순차 분석 · CCTV 영상의 재생 시점과 현재 시각을 함께 표시')
-        with st.expander('영상·모델 분석 설정'):
+        with st.expander('영상·모델 분석 설정',key='analysis_settings'):
             editable=json.loads(json.dumps(cfg))
             for r in ROOMS:
                 editable['videos'][r]=st.text_input(ROOMS[r]+' CCTV 원본 경로',value=cfg['videos'][r],key='main_video_'+r,disabled=active).strip().strip('"').strip("'")
@@ -246,6 +248,14 @@ def analysis_controls():
                 if video:editable['videos'][r]=upload_save(video,'videos')
                 editable['configs'][r]=st.text_input(ROOMS[r]+' 구역 JSON · 기본 구역은 비우기',value=cfg['configs'][r],key='main_config_'+r,disabled=active).strip()
             editable['model']=st.text_input('YOLO 모델 경로',value=cfg['model'],key='main_model',disabled=active).strip()
+            editable['runtime_profile']=st.selectbox('모델 실행 프로필',['default-n','north-gpu-s'],
+                index=1 if cfg.get('runtime_profile')=='north-gpu-s' else 0,
+                format_func=lambda p:'기본 n (모든 방향)' if p=='default-n' else 'north-gpu-s (북쪽만 s / 동쪽·남쪽 n)',
+                key='main_runtime_profile',disabled=active)
+            if editable['runtime_profile']=='north-gpu-s':
+                editable['north_s_model']=st.text_input('북쪽 s 가중치 경로 (공식 yolo11s.pt)',
+                    value=cfg.get('north_s_model',''),key='main_north_s_model',disabled=active).strip()
+                st.caption('cuda:0 + 검증된 공식 YOLO11s + 번들 북쪽 구역 전용입니다. 사용자 북쪽 JSON은 기본 n을 사용하세요. 동쪽·남쪽은 위 기본 n 가중치를 사용합니다.')
             editable['device']=st.selectbox('분석 장치',['cpu','cuda:0'],index=0 if cfg['device']=='cpu' else 1,key='main_device',disabled=active)
             day=st.date_input('CCTV 시연 날짜',value=datetime.fromisoformat(cfg['capture_date']).date(),key='capture_date',disabled=active)
             editable['capture_date']=day.isoformat()
@@ -289,7 +299,14 @@ if nav=='메인 대시보드':
                 st.session_state.pop('_train_schedule_cache',None);st.rerun()
         with right:
             st.subheader('시스템 연결 상태')
-            st.write('CCTV 분석: 설치된 0.3.2 모듈을 직접 호출')
+            from analysis_runtime import runtime_info
+            try:
+                runtime=runtime_info()
+                st.write('CCTV 분석: '+runtime['version']+' · '+cfg.get('runtime_profile','default-n'))
+                st.caption('Python: '+runtime['python'])
+                st.caption('분석 소스: '+runtime['source'])
+            except Exception as error:
+                st.error(str(error))
             st.write('저장: 분석 원본 CSV + 대시보드 SQLite')
             st.write('열차: MySQL 예정 시간표 조회 · '+('연결됨' if train_run_cfg['train_db_status']=='connected' else '연결 확인 필요'))
             st.caption('예측모델 미연동 · 미측정값을 0명으로 대체하지 않습니다.')

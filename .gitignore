@@ -70,6 +70,7 @@ Thumbs.db
 
 # Local CCTV dashboard runtime and private settings
 .local-run/
+.playwright-cli/
 analysis_runs/
 rr313/
 *.sqlite

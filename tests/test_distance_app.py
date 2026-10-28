@@ -32,9 +32,9 @@ class SettingsUI(unittest.TestCase):
                     self.assertFalse(app.exception,[e.message for e in app.exception])
                     frames=app.get('iframe')
                     self.assertEqual(len(frames),1)
-                    return re.search(r'"playback_key"\s*:\s*"([a-f0-9]+)"',frames[0].proto.srcdoc).group(1)
+                    return re.search(r'"playback_key"\s*:\s*"([^\"]+)"',frames[0].proto.srcdoc).group(1)
                 first=key()
-                for page in (1,3,0):
+                for page in (1,4,0):
                     app.button(key='nav_'+str(page)).click().run()
                     self.assertEqual(key(),first)
                 video.write_bytes(b'a different source at exactly the same path')
