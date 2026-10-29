@@ -11,6 +11,9 @@ CCTV 영상 분석과 AI 예측 모델을 활용하여 화장실별 혼잡도를
 
 본 저장소에는 **각각 별도로 실행하는 두 개의 Streamlit 프로그램**이 포함되어 있다.
 
+→ CCTV 영상 파일 다운 링크 - https://drive.google.com/drive/folders/1f_L75p_mGss3CF1pISXS_32fe3Kp27j9?usp=drive_link
+
+
 | 프로그램 | 폴더 | 주요 기능 |
 |---|---|---|
 | 관리자 대시보드 | `busan_restroom_dashboard/` | CCTV 분석, 화장실 혼잡도 확인, 사이니지 안내 |
@@ -56,7 +59,6 @@ python -m streamlit run app.py --theme.base light --server.port 8502
 - `.venv` 등의 가상환경 폴더는 각 컴퓨터에서 생성하고 필요한 패키지를 설치한다.
 - 시연에는 더미데이터와 대체 CCTV 영상을 활용하며, 실제 운영 환경에서의 정확도는 추가 검증이 필요하다.
   
-→ CCTV 영상 파일 다운 링크 - https://drive.google.com/drive/folders/1f_L75p_mGss3CF1pISXS_32fe3Kp27j9?usp=drive_link
 
 ## CCTV 분석 0.3.3 · 거리 기반 대시보드 시작
 
