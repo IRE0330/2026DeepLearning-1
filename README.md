@@ -55,6 +55,7 @@ python -m streamlit run app.py --theme.base light --server.port 8502
 - 다른 컴퓨터에서는 영상·모델 경로를 실행 환경에 맞게 지정해야 한다.
 - `.venv` 등의 가상환경 폴더는 각 컴퓨터에서 생성하고 필요한 패키지를 설치한다.
 - 시연에는 더미데이터와 대체 CCTV 영상을 활용하며, 실제 운영 환경에서의 정확도는 추가 검증이 필요하다.
+  
 → CCTV 영상 파일 다운 링크 - https://drive.google.com/drive/folders/1f_L75p_mGss3CF1pISXS_32fe3Kp27j9?usp=drive_link
 
 ## CCTV 분석 0.3.3 · 거리 기반 대시보드 시작
