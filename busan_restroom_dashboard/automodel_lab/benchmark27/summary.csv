@@ -1,0 +1,9 @@
+﻿dataset,model,MAE
+busan,calendar_profile,93.15173284094487
+busan,calendar_tree,84.39245424543094
+busan,regime_daytype,96.61005876398059
+busan,regime_daytype_hour,95.60136454820015
+parking,calendar_profile,6.138679714634098
+parking,calendar_tree,6.267639029076112
+parking,regime_daytype,6.474154480673632
+parking,regime_daytype_hour,6.521325279936235

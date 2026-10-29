@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "busan-cctv-analysis"
-version = "0.3.2"
+version = "0.3.3"
 description = "Single saved-video restroom counting module and minimal Streamlit adapter"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
@@ -22,4 +22,4 @@ cctv-analysis = "cctv.__main__:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-cctv = ["data/configs/*.json", "data/configs/profiles/*.json", "data/ground_truth/*/*.csv", "data/ground_truth/*/*.json"]
+cctv = ["data/configs/*.json", "data/configs/profiles/*.json", "data/configs/runtime_profiles/*.json", "data/ground_truth/*/*.csv", "data/ground_truth/*/*.json"]
