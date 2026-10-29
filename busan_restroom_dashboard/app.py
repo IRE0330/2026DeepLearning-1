@@ -97,25 +97,23 @@ def go_page(page):
 if st.session_state.get('nav')=='혼잡도 예측모델':
     st.session_state['nav']='메인 대시보드'
 
+from simulation_clock import now as simulation_now, start_epoch, clock_frame
+run_cfg['sim_clock_epoch_ms']=int(start_epoch()*1000)
+run_cfg['playback_key'] += '-clock-'+str(run_cfg['sim_clock_epoch_ms'])+'-'+str(st.session_state.get('_sim_clock_generation',0))
+run_cfg['capture_date']=cfg.get('capture_date',simulation_now().date().isoformat())
+run_cfg['playback_key'] += '-day-'+run_cfg['capture_date']
+
 with st.sidebar:
     st.markdown('<div class="eyebrow">BUSAN STATION</div>',unsafe_allow_html=True)
     st.title('RESTROOM')
     st.caption('화장실 혼잡도 모니터링')
     nav=st.session_state.get('nav','메인 대시보드')
     for index,page,icon in [(0,'메인 대시보드',':material/dashboard:'),(1,'화장실 상세',':material/wc:'),(2,'열차 정보',':material/train:'),(3,'열차 데이터 등록',':material/upload_file:'),(4,'사이니지 보기',':material/monitor:'),(5,'예측 CSV 등록',':material/upload_file:'),(7,'시연 설정',':material/settings:')]:
-        st.button(page,icon=icon,key='nav_'+str(index),type='primary' if nav==page else 'tertiary',width='stretch',on_click=go_page,args=(page,))
+        st.button('예측 파일 등록' if page=='예측 CSV 등록' else page,icon=icon,key='nav_'+str(index),type='primary' if nav==page else 'tertiary',width='stretch',on_click=go_page,args=(page,))
     st.divider()
-    from simulation_clock import now as simulation_now, start_epoch
-    @st.fragment(run_every='1s')
-    def show_simulation_clock():
-        st.caption('현재 시각 · 시연 기준')
-        st.write(simulation_now().strftime('%Y.%m.%d %H:%M:%S'))
-    show_simulation_clock()
+    st.iframe(clock_frame(run_cfg,sidebar=True),height=68)
     st.markdown('<div class="sidebar-footer"><span class="connection-dot"></span> MVP · CCTV 시연<br><small>북쪽 · 신관 · 남쪽</small></div>',unsafe_allow_html=True)
 
-run_cfg['sim_clock_epoch_ms']=int(start_epoch()*1000)
-run_cfg['playback_key'] += '-clock-'+str(run_cfg['sim_clock_epoch_ms'])+'-'+str(st.session_state.get('_sim_clock_generation',0))
-run_cfg['capture_date']=simulation_now().date().isoformat()
 
 
 
@@ -272,10 +270,7 @@ if nav=='메인 대시보드':
           <div style="font-size:12px;line-height:1.5;color:#718797">저장 영상 3곳의 분석 결과를 같은 영상 시점으로 확인합니다.</div>
         </div>''',unsafe_allow_html=True)
     with clock_col:
-        @st.fragment(run_every='1s')
-        def dashboard_clock():
-            st.markdown(f"<div style='text-align:right;white-space:nowrap'><div style='font-size:14px;color:#718797;font-weight:600'>현재 시각</div><div style='font-size:clamp(32px,3vw,46px);line-height:1.15;font-weight:750;font-variant-numeric:tabular-nums;color:#172431'>{simulation_now():%H:%M:%S}</div></div>",unsafe_allow_html=True)
-        dashboard_clock()
+        st.iframe(clock_frame(run_cfg),height=85)
     analysis_controls()
     train_run_cfg=attach_train_events(cfg,run_cfg)
     if st.button('처음부터',key='reset_video_clock_main'):
@@ -328,29 +323,9 @@ elif nav=='화장실 상세':
             st.json({k:job[k] for k in ['status','phase','processed_frames','run_dir','error'] if k in job})
 
 elif nav=='예측 CSV 등록':
-    banner('예측 CSV 등록','AutoModelLab의 예측을 CCTV 재생 날짜·시간과 화장실ID에 맞춰 표시합니다.')
-    st.caption('TOILET_A=북쪽 · TOILET_B=동쪽 · TOILET_C=남쪽. 같은 분의 기록만 사용하며 다른 날짜나 빈 시간은 예측 정보 없음으로 표시합니다.')
-    candidate=st.file_uploader('미래 예측 CSV 업로드',type=['csv'],key='prediction_upload')
-    if candidate is not None:
-        try:
-            checked=load_predictions(candidate.getvalue())
-            st.success(f"{len(checked):,}행 · {checked['시각'].min()} ~ {checked['시각'].max()}")
-            st.dataframe(checked.head(15),hide_index=True,width='stretch')
-            if st.button('이 예측 CSV 적용',type='primary'):
-                cfg['prediction_csv_path']=upload_save(candidate,'predictions')
-                save_settings(cfg);st.rerun()
-        except (ValueError,UnicodeError) as error:st.error(str(error))
-    if cfg.get('prediction_csv_path'):
-        if run_cfg.get('prediction_error'):st.error('예측 파일 확인 필요: '+run_cfg['prediction_error'])
-        elif run_cfg.get('uploaded_predictions'):
-            keys=sorted(run_cfg['uploaded_predictions'])
-            st.info('적용 중: '+keys[0]+' ~ '+keys[-1])
-        if st.button('예측 CSV 연결 해제'):
-            cfg.pop('prediction_csv_path',None);save_settings(cfg);st.rerun()
-    day=st.date_input('CCTV 시연 날짜 (예측 날짜와 맞추기)',value=datetime.fromisoformat(cfg['capture_date']).date(),key='prediction_capture_date')
-    if st.button('시연 날짜 적용'):
-        cfg['capture_date']=day.isoformat();save_settings(cfg);st.rerun()
-    st.caption('영상 시작은 선택한 날짜 14:00:00입니다. 예: 9월 18일 예측 CSV라면 시연 날짜도 9월 18일로 설정하세요. 거리 환산 대기시간은 실제 측정 대기시간이 아닙니다.')
+    banner('화장실별 예측 파일 등록','화장실별 엑셀·CSV를 올리면 사이니지에 맞게 자동 변환합니다.')
+    from prediction_ui import render_prediction_registration
+    render_prediction_registration(cfg,save_settings)
 
 elif nav=='열차 정보':
     banner('열차 운행 정보','MySQL에 저장된 부산역 시간표를 날짜·운행구분·열차종류로 조회합니다.')
@@ -365,7 +340,8 @@ elif nav=='사이니지 보기':
     st.markdown('<style>.block-container{max-width:none!important}iframe{width:100%!important;border:0!important;background:#edf5f8}</style>',unsafe_allow_html=True)
     realtime_tab,platform_tab=st.tabs(['화장실 실시간 대기 현황 사이니지','플랫폼 구역 사이니지'])
     with realtime_tab:
-        current=st.radio('현재 사이니지 위치',list(ROOMS),format_func=lambda r:ROOMS[r]+' 화장실',horizontal=True)
+        current='north'
+        st.caption('현재 위치: 1번 · 북쪽 화장실 / 2번 남쪽 · 3번 신관')
         if st.button('처음부터',key='reset_video_clock_signage'):
             from simulation_clock import reset
             reset();st.rerun()

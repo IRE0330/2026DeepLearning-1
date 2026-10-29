@@ -1,7 +1,15 @@
+/* A single clock source: the confirmed media timeline, never page-open time. */
+function playbackClock(seconds,cfg={}) {
+  const base=Date.parse((cfg.capture_date||'2026-10-14')+'T14:00:00Z');
+  const t=Number.isFinite(seconds)?Math.max(0,seconds):0;
+  return new Date(base+t*1000).toISOString().slice(11,19);
+}
 /* Keep iframe-local media; persist a timestamped timeline across menu reruns. */
 function createPlayback(opts) {
   const videos=(opts.videos||[]).filter(Boolean);
-  const key='busan-cctv-playback-v5:'+opts.key,gestures=new WeakMap();
+  const key='busan-cctv-playback-v6:'+opts.key,gestures=new WeakMap();
+  const sharedKey='busan-platform-clock:'+opts.key;
+  function syncClock(running,seconds){try{const previous=JSON.parse(localStorage.getItem(sharedKey)||"null")||{};localStorage.setItem(sharedKey,JSON.stringify({running,t:Math.max(0,seconds),speed:Number(previous.speed)||1,savedAt:Date.now()}));}catch{}}
   let t=0,end=Number(opts.fallbackEnd)||0,wanted=false,epoch=0,lead=videos[0];
   let gone=false,lastPaint=-1,lastWrite=0,interacted=false,confirmed=false;
   let restore=null,resumeButton=null;
@@ -14,7 +22,7 @@ function createPlayback(opts) {
   function duration(){const ds=videos.map(v=>v.duration).filter(d=>Number.isFinite(d)&&d>0);if(ds.length)end=Math.min(...ds);if(Number(opts.limit)>0)end=end>0?Math.min(end,Number(opts.limit)):Number(opts.limit);if(end>0)t=Math.min(t,end);}
   function align(v,force=false){if(v.readyState<1||!Number.isFinite(v.duration))return;const at=Math.min(t,v.duration);if(force||Math.abs(v.currentTime-at)>.3){try{v.currentTime=at;}catch{}}}
   function stopMedia(){videos.forEach(v=>v.pause());}
-  function pause(){videos.forEach(v=>gestures.set(v,0));interacted=true;restore=null;sample();epoch++;wanted=false;confirmed=false;stopMedia();videos.forEach(v=>align(v));clearResume();paint(true);save(true);}
+  function pause(){syncClock(false,t);videos.forEach(v=>gestures.set(v,0));interacted=true;restore=null;sample();epoch++;wanted=false;confirmed=false;stopMedia();videos.forEach(v=>align(v));clearResume();paint(true);save(true);}
   function errorMessage(error){return error?.name==='NotAllowedError'?'브라우저가 자동 재생을 차단했습니다. 현재 위치에서 재개 버튼 또는 재생 버튼을 눌러주세요.':error?.name==='NotSupportedError'?'영상 형식을 재생할 수 없습니다. 시연 설정에서 재생용 MP4를 만든 뒤 다시 연결해주세요.':'영상 재생에 실패했습니다. 영상 연결과 재생용 MP4를 확인하고 다시 재생해주세요.';}
   function report(v,error){const text=errorMessage(error);if(opts.onError)opts.onError(text);if(opts.onVideoError&&v)opts.onVideoError(v,text);
     // The detail view only has native controls. Offer a gesture inside its iframe.
@@ -43,7 +51,7 @@ function createPlayback(opts) {
       if(rejected>=0){wanted=false;confirmed=false;epoch++;stopMedia();videos.forEach(v=>align(v,true));paint(true);save(true);report(videos[rejected],results[rejected].reason);return;}
       if(!wanted){stopMedia();return;}
       if(videos.some(v=>v.paused||v.ended)){wanted=false;stopMedia();paint(true);save(true);report(videos[0],{name:'AbortError'});return;}
-      confirmed=true;
+      confirmed=true;syncClock(true,t);
       lead=videos.find(v=>!v.paused&&!v.ended)||videos[0];paint(true);save(true);
     });
     save(true);
@@ -52,7 +60,7 @@ function createPlayback(opts) {
     t=Math.max(0,state.t);
     if(state.playing===true&&Number.isFinite(state.savedAt)&&state.savedAt>0)restore=state;
   }}catch{}
-  function restoreTime(){if(restore)t=Math.max(0,restore.t)+Math.max(0,(Date.now()-restore.savedAt)/1000);duration();}
+  function restoreTime(){if(restore)t=Math.max(0,restore.t);duration();}
   function tryRestore(){
     if(!restore||gone||interacted)return;
     restoreTime();videos.forEach(v=>align(v));
@@ -64,7 +72,7 @@ function createPlayback(opts) {
     try{if(v.getAttribute&&v.getAttribute('src'))v.src=new URL(v.getAttribute('src'),document.baseURI).href;}catch{}
     v.addEventListener('loadedmetadata',()=>{duration();align(v);tryRestore();paint(true);});
     v.addEventListener('seeked',()=>{if(v===lead&&!wanted&&interacted){t=Math.min(end||v.currentTime,v.currentTime);videos.filter(x=>x!==v).forEach(x=>align(x));paint(true);save(true);}});
-    v.addEventListener('ended',()=>{if(wanted&&v===lead&&v.ended){t=end||v.currentTime;wanted=false;confirmed=false;epoch++;stopMedia();paint(true);save(true);}});
+    v.addEventListener('ended',()=>{if(wanted&&v===lead&&v.ended){t=end||v.currentTime;syncClock(true,t);wanted=false;confirmed=false;epoch++;stopMedia();paint(true);save(true);}});
     v.addEventListener('error',()=>{if(!wanted&&!restore)return;restore=null;sample();wanted=false;confirmed=false;epoch++;stopMedia();paint(true);save(true);report(v,v.error);});
     // Only an actual interaction with native video controls may command the group.
     const gesture=()=>{gestures.set(v,performance.now()+1500);};
@@ -81,7 +89,7 @@ function createPlayback(opts) {
     if(!wanted)for(const v of videos)if(!v.paused)v.pause();
     if(confirmed&&wanted&&lead&&lead.readyState>=2&&!lead.paused&&!lead.seeking){
       t=Math.min(end||lead.currentTime,lead.currentTime);
-      if(end>0&&t>=end){wanted=false;epoch++;stopMedia();paint(true);save(true);}
+      if(end>0&&t>=end){syncClock(true,t);wanted=false;epoch++;stopMedia();paint(true);save(true);}
       else for(const v of videos)if(v!==lead&&v.readyState>=2&&!v.seeking&&Math.abs(v.currentTime-t)>.35)align(v);
       save();
     }
@@ -92,7 +100,7 @@ function createPlayback(opts) {
     play(){start();},pause,
     toggle(){if(wanted)pause();else start();},
     seek(value){value=Number(value);if(!Number.isFinite(value))return;interacted=true;restore=null;t=Math.max(0,Math.min(end||value,value));videos.forEach(v=>align(v,true));paint(true);save(true);},
-    reset(){interacted=true;restore=null;epoch++;wanted=false;confirmed=false;stopMedia();clearResume();t=0;videos.forEach(v=>align(v,true));paint(true);save(true);},
+    reset(){syncClock(false,0);interacted=true;restore=null;epoch++;wanted=false;confirmed=false;stopMedia();clearResume();t=0;videos.forEach(v=>align(v,true));paint(true);save(true);},
     getState(){return {t,playing:isPlaying(),end};}
   };
 }

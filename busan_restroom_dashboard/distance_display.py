@@ -80,11 +80,17 @@ function distanceAt(rows,t,media={}) {
 }
 function distanceStatus(d) {
  const queue=d?.display_values?.queue;
- return d?.reached_m!=null&&typeof queue==='number'&&Number.isFinite(queue)&&queue===0?'대기 인원 없음':d?.status||'측정 불가';
+ if(d?.reached_m!=null){
+  if(typeof queue==='number'&&Number.isFinite(queue)&&queue===0)return '대기없음';
+  if(d.overflow)return '매우 혼잡';
+  const match=String(d.wait||'').match(/^([0-9]+)분 (미만|이상)$/);
+  if(match){const minutes=Number(match[1]);if(match[2]==='미만')return minutes<=5?'여유':minutes<=10?'보통':minutes<=15?'혼잡':'매우 혼잡';return minutes>=15?'매우 혼잡':minutes>=10?'혼잡':minutes>=5?'보통':'여유';}
+ }
+ return d?.status||'측정 불가';
 }
 function distanceState(record) {
- const state=distanceValue(record).status;
- const colors={'여유':['#008b6a','green'],'보통':['#c28a00','yellow'],'혼잡':['#d7413e','red'],'매우 혼잡':['#8e1b40','red'],'화면 범위 초과':['#8e1b40','red']};
+ const state=distanceStatus(distanceValue(record));
+ const colors={'대기없음':['#0284c7','blue'],'여유':['#008b6a','green'],'보통':['#c28a00','yellow'],'혼잡':['#dc2626','red'],'매우 혼잡':['#991b1b','darkred'],'화면 범위 초과':['#991b1b','darkred']};
  const [color,cls]=colors[state]||['#8393a5','gray'];return [distanceStatus(distanceValue(record)),color,cls];
 }
 function recommendDistance(current,vals,cfg) {

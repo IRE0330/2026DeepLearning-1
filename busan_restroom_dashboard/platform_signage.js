@@ -50,6 +50,40 @@ function drawPlatform(now){
   card.append(head,bottom,arrival);el('alternatives').appendChild(card);
  }
 }
+// Shared simulation clock starts with confirmed CCTV playback and continues after video ends.
+const sharedClockKey='busan-platform-clock:'+pc.key;
+const sharedBase=Date.parse(pc.day+'T14:00:00Z');
+function readShared(){
+ try{return JSON.parse(localStorage.getItem(sharedClockKey)||'null')||{};}catch{return {};}
+}
+function sharedSeconds(state=readShared()){
+ const t=Number.isFinite(state.t)?Math.max(0,state.t):0;
+ const elapsed=state.running&&Number.isFinite(state.savedAt)?Math.max(0,(Date.now()-state.savedAt)/1000):0;
+ return t+elapsed*(Number(state.speed)||1);
+}
+function writeShared(t,running,speed){
+ try{localStorage.setItem(sharedClockKey,JSON.stringify({t:Math.max(0,t),running,speed,savedAt:Date.now()}));}catch{}
+}
+function runSharedPlatform(){
+ el('play-controls').innerHTML='<div class="bar"><button id="platform-play">재생</button><button id="platform-pause">일시정지</button><button id="platform-reset">처음부터</button><select id="platform-speed" aria-label="재생 배속"><option value="1">1배속</option><option value="10">10배속</option><option value="30">30배속</option><option value="60">60배속</option></select><input id="platform-seek" type="range" min="0" max="86399" step="1" aria-label="시연 시간 이동"></div><div class="note" id="platform-clock-state"></div>';
+ const seek=el('platform-seek'),speedEl=el('platform-speed');
+ function tick(){
+  const state=readShared(),seconds=sharedSeconds(state),speed=Number(state.speed)||1;
+  drawPlatform(new Date(sharedBase+seconds*1000));
+  if(document.activeElement!==seek)seek.value=Math.min(86399,Math.floor(seconds));
+  speedEl.value=String([1,10,30,60].includes(speed)?speed:1);
+  el('platform-play').disabled=!!state.running;
+  el('platform-pause').disabled=!state.running;
+  text('platform-clock-state',state.running?'시연 시각 재생 중 · '+speed+'배속':'시연 시각 일시정지 · CCTV 재생 버튼과 연동');
+  setTimeout(tick,250);
+ }
+ el('platform-play').onclick=()=>{const s=readShared();writeShared(sharedSeconds(s),true,Number(s.speed)||1);};
+ el('platform-pause').onclick=()=>{const s=readShared();writeShared(sharedSeconds(s),false,Number(s.speed)||1);};
+ el('platform-reset').onclick=()=>{writeShared(0,false,Number(readShared().speed)||1);};
+ seek.oninput=e=>{const s=readShared();writeShared(Number(e.target.value),!!s.running,Number(s.speed)||1);};
+ speedEl.onchange=e=>{const s=readShared();writeShared(sharedSeconds(s),!!s.running,Number(e.target.value));};
+ tick();
+}
 // Independent CSV clock: never clamped to a CCTV duration.
 function createCsvClock(start,end,initial){
  let current=Math.max(start,Math.min(end,initial)),running=false,speed=1,last=null;
@@ -61,7 +95,8 @@ function createCsvClock(start,end,initial){
   state(){return {current,running,speed};}
  };
 }
-if(pc.follow){
+if(pc.syncWithCctv){runSharedPlatform();}
+else if(pc.follow){
  const keys=Object.keys(pc.forecasts).filter(k=>k.startsWith(pc.day+' ')).sort();
  if(!keys.length){drawPlatform(new Date(pc.day+'T'+pc.start+'Z'));el('play-controls').textContent='선택한 날짜의 CSV 기록이 없습니다.';}
  else{
