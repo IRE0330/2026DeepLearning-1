@@ -11,7 +11,7 @@ CCTV 영상 분석과 AI 예측 모델을 활용하여 화장실별 혼잡도를
 
 본 저장소에는 **각각 별도로 실행하는 두 개의 Streamlit 프로그램**이 포함되어 있다.
 
-→ CCTV 영상 파일 다운 링크 - https://drive.google.com/drive/folders/1f_L75p_mGss3CF1pISXS_32fe3Kp27j9?usp=drive_link
+→ CCTV 영상 파일 다운 링크 - https://drive.google.com/drive/folders/1f_L75p_mGss3CF1pISXS_32fe3Kp27j9?usp=sharing
 
 
 | 프로그램 | 폴더 | 주요 기능 |
