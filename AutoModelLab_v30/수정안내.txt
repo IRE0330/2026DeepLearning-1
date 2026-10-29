@@ -1,0 +1,8 @@
+AutoModelLab v30 시트 통합 수정본
+- 업로드된 모든 엑셀 시트를 읽고 목록에 표시
+- 예측 대상이 있는 기준 시트 선택
+- 다른 시트의 숫자 데이터를 시간 단위로 집계해 기준 시트에 연결
+- 날짜가 없거나 겹치지 않는 시트는 별도 보고
+- 기존 모델/예측 모듈 보존
+주의: 같은 시간대에 화장실/열차/대상 구분이 여럿인 경우 합계가 의미에 맞는지 확인해야 합니다. 10초 대기인원 스냅샷은 단순 합계가 적절하지 않을 수 있습니다.
+실행: cd ~/Downloads/AutoModelLab_v30 && source .venv/bin/activate && python -m streamlit run app.py --theme.base light
