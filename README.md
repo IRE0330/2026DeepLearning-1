@@ -30,7 +30,6 @@ CCTV 영상 분석과 AI 예측 모델을 활용하여 화장실별 혼잡도를
 python -m streamlit run busan_restroom_dashboard/app.py --theme.base light --server.port 8501
 ```
 
-접속 주소: http://localhost:8501
 
 ### 2. 예측 모델 학습 프로그램
 
@@ -41,14 +40,6 @@ cd AutoModelLab_v30
 python -m streamlit run app.py --theme.base light --server.port 8502
 ```
 
-접속 주소: http://localhost:8502
-
-### 동시 실행
-
-두 프로그램을 동시에 사용하려면 **터미널 창 두 개에서 각각 실행**하고, 각 터미널에서 해당 프로그램의 가상환경을 활성화한다.
-
-포트는 관리자 대시보드 `8501`, 예측 모델 학습 프로그램 `8502`로 구분한다. 프로그램을 사용하는 동안 각 터미널을 유지하며, 종료할 때는 해당 터미널에서 `Control + C`를 누른다.
-
 ## 두 프로그램의 사용 흐름
 
 1. **예측 모델 학습 프로그램**에서 데이터를 업로드하고 모델을 학습·비교한다.
@@ -56,6 +47,7 @@ python -m streamlit run app.py --theme.base light --server.port 8502
 3. **관리자 대시보드**에서 결과를 불러와 혼잡도 및 사이니지 안내에 활용한다.
 
 두 프로그램을 실행하는 것만으로 결과가 자동 전송되지는 않는다. 예측 결과를 대시보드에서 별도로 불러와야 한다.
+→ 부산역 더미 데이터를 활용한 예측 결과 파일 : '화장실 예측 모델 결과'
 
 ## 실행 시 참고 사항
 
@@ -63,7 +55,7 @@ python -m streamlit run app.py --theme.base light --server.port 8502
 - 다른 컴퓨터에서는 영상·모델 경로를 실행 환경에 맞게 지정해야 한다.
 - `.venv` 등의 가상환경 폴더는 각 컴퓨터에서 생성하고 필요한 패키지를 설치한다.
 - 시연에는 더미데이터와 대체 CCTV 영상을 활용하며, 실제 운영 환경에서의 정확도는 추가 검증이 필요하다.
-
+→ CCTV 영상 파일 다운 링크 - https://drive.google.com/drive/folders/1f_L75p_mGss3CF1pISXS_32fe3Kp27j9?usp=drive_link
 
 ## CCTV 분석 0.3.3 · 거리 기반 대시보드 시작
 
